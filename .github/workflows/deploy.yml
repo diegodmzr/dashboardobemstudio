@@ -1,0 +1,14 @@
+name: Deploy Dashboard (Production)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Deploy to VPS
+        run: |
+          /home/deploy/apps/dashboard/deploy.sh
