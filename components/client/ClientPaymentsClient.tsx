@@ -41,12 +41,12 @@ export type Quote = {
 
 type Props = {
     initialPayments: Payment[];
-    initialQuotes: Quote[];
+    initialQuotes?: Quote[];
     userName?: string;
     userEmail?: string;
 };
 
-export default function ClientPaymentsClient({ initialPayments, initialQuotes, userName, userEmail }: Props) {
+export default function ClientPaymentsClient({ initialPayments, initialQuotes = [], userName, userEmail }: Props) {
     const router = useRouter();
     const [view, setView] = useState<"PAYMENTS" | "QUOTES">("PAYMENTS");
 
