@@ -77,6 +77,7 @@ export default async function PaymentsPage() {
             />
         );
     }
+    // End of CLIENT VIEW
 
     // ADMIN VIEW: Show all payments with stats
     const payments = await prisma.payment.findMany({
