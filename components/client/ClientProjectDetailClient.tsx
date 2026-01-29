@@ -206,7 +206,7 @@ export default function ClientProjectDetailClient({ project }: Props) {
                             Étapes du projet
                         </h2>
                         <div className="space-y-4">
-                            {steps.map((step, index) => {
+                            {steps.map((step: { label: string; description: string }, index: number) => {
                                 const isDone = index < currentStepIndex;
                                 const isCurrent = index === currentStepIndex;
 
