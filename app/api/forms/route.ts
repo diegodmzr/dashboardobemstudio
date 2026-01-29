@@ -1,0 +1,40 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
+
+export async function POST(request: Request) {
+    const user = await getCurrentUser();
+    if (user?.role !== "ADMIN") return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+
+    const body = await request.json();
+    const { title, description } = body;
+
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Math.random().toString(36).substring(2, 7);
+
+    const form = await prisma.form.create({
+        data: {
+            title,
+            description,
+            slug,
+            fields: JSON.stringify([
+                { label: "Nom complet", type: "text", required: true },
+                { label: "Email", type: "email", required: true },
+                { label: "Message", type: "textarea", required: true }
+            ])
+        }
+    });
+
+    return NextResponse.json(form);
+}
+
+export async function GET(request: Request) {
+    const user = await getCurrentUser();
+    if (user?.role !== "ADMIN") return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+
+    // @ts-ignore - Prisma client outdated in current session
+    const forms = await prisma.form.findMany({
+        orderBy: { createdAt: "desc" },
+        include: { _count: { select: { submissions: true } } }
+    });
+    return NextResponse.json(forms);
+}

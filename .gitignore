@@ -38,4 +38,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+.next/
+node_modules/
+.turbo/
+prisma/dev.db
 next-env.d.ts

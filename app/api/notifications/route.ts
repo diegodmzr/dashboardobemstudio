@@ -1,0 +1,57 @@
+import { NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+export async function GET(req: Request) {
+    try {
+        const user = await getCurrentUser();
+        if (!user) return new NextResponse("Unauthorized", { status: 401 });
+
+        const { searchParams } = new URL(req.url);
+        const filter = searchParams.get("filter"); // ALL, PROJECT, PAYMENT, etc.
+
+        const where: any = { userId: user.id };
+        if (filter && filter !== "ALL") {
+            where.type = filter;
+        }
+
+        const notifications = await prisma.notification.findMany({
+            where,
+            orderBy: { createdAt: "desc" },
+            take: 50 // Limit to 50 for now
+        });
+
+        return NextResponse.json(notifications);
+
+    } catch (error) {
+        console.error("Failed to fetch notifications", error);
+        return new NextResponse("Internal Error", { status: 500 });
+    }
+}
+
+// Helper to generate system notification (for testing or manual trigger)
+export async function POST(req: Request) {
+    try {
+        const user = await getCurrentUser();
+        // Only Admin should probably trigger manual notifications via API, but for dev we allow it or check role
+        if (!user || user.role !== "ADMIN") return new NextResponse("Unauthorized", { status: 401 });
+
+        const body = await req.json();
+        const { targetUserId, type, title, message, entityType, entityId } = body;
+
+        const notif = await prisma.notification.create({
+            data: {
+                userId: targetUserId || user.id, // Self notification if no target
+                type,
+                title,
+                message,
+                entityType,
+                entityId
+            }
+        });
+
+        return NextResponse.json(notif);
+    } catch (error) {
+        return new NextResponse("Error creating notification", { status: 500 });
+    }
+}

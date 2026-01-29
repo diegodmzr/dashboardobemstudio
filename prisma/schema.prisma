@@ -1,0 +1,441 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String
+  firstName   String?
+  lastName    String?
+  avatar      String?
+  address     String?
+  theme       String?  @default("light")
+  role        String   @default("CLIENT")
+  password    String?  // Hashed password
+  phone       String?
+  companyName String?
+  companyLogo String?  // URL to logo
+  siret       String?
+  sector      String?
+  status      String   @default("Active") // Active, Inactive
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt @default(now())
+
+  projects    Project[]
+  auditLogs   AuditLog[]
+  quotes      Quote[]
+  payments    Payment[]
+  tickets     Ticket[]
+  subscriptions Subscription[]
+  goals         Goal[]
+
+  // Discussion Relations
+  conversationParticipations Participant[] @relation("ConversationParticipations")
+  messagesSent               Message[]     @relation("MessagesSent")
+  
+  notifications Notification[]
+  formSubmissions FormSubmission[]
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  name         String
+  clientId     String
+  client       User     @relation(fields: [clientId], references: [id])
+  status       String   @default("En cours")
+  progress     Int      @default(0) // 0-100
+  amount       Float    @default(0)
+  type         String?
+  technology   String?
+  paymentType  String?
+  deadline     DateTime?
+  cpp          Float?
+  commission   Float?
+  attributes   String? // JSON stringified array for sqlite
+  level        String?
+  progressConfig String? // JSON: custom progress bar configuration (steps, labels, descriptions)
+  statusHistory ProjectStatusHistory[]
+  payments     Payment[] // Relation with payments
+  
+  formSubmissionId String?
+  formSubmission   FormSubmission? @relation(fields: [formSubmissionId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  quotes       Quote[]
+  conversations Conversation[]
+}
+
+model ProjectStatusHistory {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  oldStatus String?
+  newStatus String
+  changedBy String   // UserId
+  reason    String?  // Optionnel: note de changement
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String   // ex: "CREATE_PROJECT", "PAYMENT_RECEIVED"
+  entity    String   // ex: "Project", "Payment"
+  entityId  String
+  metadata  String?  // JSON details
+  createdAt DateTime @default(now())
+}
+
+model Quote {
+  id          String   @id @default(cuid())
+  reference   String   @unique // ex: D-2024-001
+  status      String   @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
+  
+  // Relations
+  clientId    String
+  client      User     @relation(fields: [clientId], references: [id])
+  projectId   String?  // Linked project (optional)
+  project     Project? @relation(fields: [projectId], references: [id])
+  
+  // Dates
+  issuedAt    DateTime @default(now())
+  validUntil  DateTime?
+
+  // Content (JSON for SQLite)
+  // Structure: [{ description: string, quantity: number, unitPrice: number, total: number }]
+  items       String   @default("[]")
+
+  // Financials
+  subtotal    Float    @default(0)
+  taxRate     Float    @default(0)
+  taxAmount   Float    @default(0)
+  total       Float    @default(0)
+
+  // Texts
+  notes       String?
+  terms       String?
+
+  // Dynamic Terms Configuration (JSON)
+  // Stores [{ title: string, content: string, enabled: boolean }]
+  termsConfig String @default("[]")
+
+  pdfUrl      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Payment Configuration
+  paymentType   String   @default("ONESHOT") // ONESHOT, RECURRING, SPLIT
+  isRecurring   Boolean  @default(false)
+  stripeAutoSend Boolean @default(false) // If true, auto-send stripe link
+  
+  // Signature
+  signature     String?  // Base64 signature data
+  signedAt      DateTime?
+
+  payments    Payment[]
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  
+  // Payment info
+  amount          Float
+  currency        String   @default("EUR")
+  description     String   @default("")
+  type            String   @default("DEPOSIT") // DEPOSIT, BALANCE, SUBSCRIPTION, MILESTONE
+  
+  // Status
+  status          String   // PENDING, PAID, SCHEDULED, OVERDUE, FAILED, REFUNDED
+  
+  // Dates
+  dueDate         DateTime?
+  paidAt          DateTime?
+  scheduledDate   DateTime?
+  
+  // Stripe Specifics
+  stripePaymentIntentId String?  @unique // payment intent ID
+  stripeInvoiceId       String?
+  stripeReceiptUrl      String?  // receipt URL from Stripe
+  invoiceUrl            String?  // hosted invoice URL
+  
+  // Payment method details
+  method          String?  // card, sepa_debit, bank_transfer
+  last4           String?  // last 4 digits of card
+  
+  // Relations
+  clientId        String
+  client          User     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  projectId       String?
+  project         Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  quoteId         String?
+  quote           Quote?   @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+
+  metadata        String?  // JSON for additional data
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([clientId])
+  @@index([projectId])
+  @@index([status])
+}
+
+
+model Subscription {
+  id                  String   @id @default(cuid())
+  
+  // Stripe IDs
+  stripeSubscriptionId String  @unique
+  stripeCustomerId     String
+  stripePriceId        String
+  stripeProductId      String?
+  
+  // Status
+  status              String   // active, canceled, past_due, unpaid, incomplete
+  
+  // Billing
+  amount              Float    // Monthly/Yearly amount
+  currency            String   @default("EUR")
+  interval            String   // month, year
+  intervalCount       Int      @default(1)
+  
+  // Dates
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  canceledAt          DateTime?
+  endedAt             DateTime?
+  
+  // Relations
+  clientId            String
+  client              User     @relation(fields: [clientId], references: [id])
+  projectId           String?
+  
+  metadata            String?  // JSON for extra info
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  title       String
+  status      String   // OPEN, IN_PROGRESS, CLOSED
+  priority    String   // LOW, MEDIUM, HIGH, URGENT
+  category    String?  // SUPPORT, BUG, FEATURE, OTHER
+  
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  
+  assignedTo  String?  // Optional: who is handling this ticket
+  resolvedAt  DateTime? // When the ticket was closed/resolved
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FixedCost {
+  id          String   @id @default(cuid())
+  name        String   // Ex: "Abonnement Figma", "Loyer Bureau"
+  amount      Float    // Monthly cost
+  currency    String   @default("EUR")
+  category    String   // SAAS, RENT, SALARY, OTHER
+  recurring   Boolean  @default(true) // Is it a monthly recurring cost?
+  startDate   DateTime
+  endDate     DateTime? // Null if still active
+  
+  metadata    String?  // JSON for extra info
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Goal {
+  id            String   @id @default(cuid())
+  
+  // Identification
+  title         String
+  description   String?
+  
+  // Configuration
+  type          String   // REVENUE, PROFIT, MRR, etc.
+  targetValue   Float
+  currentValue  Float    @default(0)
+  
+  // Période & Comportement
+  startDate     DateTime
+  endDate       DateTime
+  recurrence    String?  // NONE, MONTHLY, QUARTERLY, YEARLY
+  rollover      Boolean  @default(false) // Si true, le reste à faire est reporté sur la période suivante (si pertinent)
+  
+  // Scope (Global vs Personnel)
+  scope         String   @default("GLOBAL") // GLOBAL, PERSONAL
+  userId        String?  // Si PERSONAL, lié à un user
+  user          User?    @relation(fields: [userId], references: [id])
+  
+  // Notifications (JSON: { email: boolean, app: boolean, widget: boolean })
+  notificationConfig String? @default("{\"email\":false,\"app\":true,\"widget\":true}")
+  
+  // Tracking
+  autoTracking  Boolean  @default(true)
+  
+  // Statut
+  status        String   @default("ACTIVE") // ACTIVE, COMPLETED, ARCHIVED, FAILED
+  completedAt   DateTime?
+  
+  // Historique
+  progress      GoalProgress[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model GoalProgress {
+  id        String   @id @default(cuid())
+  goalId    String
+  goal      Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  
+  value     Float    // Valeur enregistrée ce jour-là
+  date      DateTime @default(now())
+  
+  isManual  Boolean  @default(false)
+  note      String?
+  
+  createdAt DateTime @default(now())
+  
+  
+  @@index([goalId, date])
+}
+
+model Conversation {
+  id          String        @id @default(cuid())
+  subject     String?
+  status      String        @default("OPEN") // OPEN, IN_PROGRESS, CLOSED
+  category    String?       // PROJET, SUPPORT, FACTURATION, AUTRE
+  type        String?       // QUESTION, PROBLEME, etc.
+
+  // Relations
+  projectId   String?
+  project     Project?      @relation(fields: [projectId], references: [id])
+
+  metadata    String?       // JSON
+
+  participants Participant[]
+  messages     Message[]
+
+  lastMessageAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Participant {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  userId         String
+  user           User         @relation("ConversationParticipations", fields: [userId], references: [id])
+
+  role           String?      // OWNER, ADMIN, OBSERVER
+  lastReadAt     DateTime?
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId       String
+  sender         User         @relation("MessagesSent", fields: [senderId], references: [id])
+
+  content        String
+  isInternal     Boolean      @default(false)
+
+  attachments    Attachment[]
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  messageId String
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  filename  String
+  url       String
+  mimeType  String
+  size      Int
+
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type      String   // PROJECT, PAYMENT, DISCUSSION, SYSTEM, GOAL
+  title     String
+  message   String
+  
+  // Link to entities
+  entityType String? // "Project", "Payment", "Conversation"
+  entityId   String?
+  
+  isRead    Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+}
+
+model Form {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  slug        String   @unique // Le lien public identifier
+  isActive    Boolean  @default(true)
+  
+  // Configuration des champs (pour l'instant simple, peut être étendu)
+  // JSON: [{ label: "Nom", type: "text" }, { label: "Email", type: "email" }]
+  fields      String   @default("[]") 
+  
+  submissions FormSubmission[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FormSubmission {
+  id        String   @id @default(cuid())
+  
+  formId    String
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  
+  // Les réponses en JSON: { "Nom": "Jean", "Email": "jean@test.com" }
+  content   String   
+  
+  status    String   @default("NEW") // NEW, READ, ARCHIVED
+  
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  projects  Project[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([formId])
+  @@index([userId])
+}
