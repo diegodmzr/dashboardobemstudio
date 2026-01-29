@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Set Cookie for compatibility with lib/auth.ts (cookie-based session)
-        const cookieStore = cookies();
+        const cookieStore = await cookies();
 
         cookieStore.set("userId", user.id, {
             httpOnly: true,
