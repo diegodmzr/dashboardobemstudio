@@ -208,7 +208,7 @@ export default function ClientProjectsClient({ projects, userName, userEmail }: 
 
                                     {/* Steps */}
                                     <div className="mb-4 flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-hide">
-                                        {steps.map((step, index) => {
+                                        {steps.map((step: { label: string; description: string }, index: number) => {
                                             const isDone = index < currentStepIndex;
                                             const isCurrent = index === currentStepIndex;
 
