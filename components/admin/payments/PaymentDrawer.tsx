@@ -13,7 +13,7 @@ type Payment = {
     createdAt: string;
     dueDate: string | null;
     paidAt: string | null;
-    stripePaymentId: string | null;
+    stripePaymentIntentId: string | null;
     invoiceUrl: string | null;
     projectId?: string | null;
 };
@@ -139,12 +139,12 @@ export default function PaymentDrawer({ isOpen, onClose, payment, onSave, onRemi
                             </div>
 
                             {/* Stripe Info */}
-                            {payment.stripePaymentId && (
+                            {payment.stripePaymentIntentId && (
                                 <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 dark:bg-[#1a1a1a] dark:border-[#333]">
                                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2 dark:text-gray-400">
                                         Stripe
                                     </h3>
-                                    <div className="text-xs text-mono text-gray-600 truncate mb-2 dark:text-gray-400">ID: {payment.stripePaymentId}</div>
+                                    <div className="text-xs text-mono text-gray-600 truncate mb-2 dark:text-gray-400">ID: {payment.stripePaymentIntentId}</div>
                                     {payment.invoiceUrl && (
                                         <a href={payment.invoiceUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-blue-600 hover:underline dark:text-blue-400">
                                             Voir la facture Stripe ↗

@@ -17,7 +17,7 @@ type Payment = {
     createdAt: string;
     dueDate: string | null;
     paidAt: string | null;
-    stripePaymentId: string | null;
+    stripePaymentIntentId: string | null;
     invoiceUrl: string | null;
     projectId?: string | null;
 };
