@@ -9,19 +9,22 @@ import Toast from "@/components/Toast";
 // Types matching what we expect from the server
 export type Payment = {
     id: string;
-    projectId?: string;
+    projectId?: string | null;
     projectName: string;
     description: string;
     amount: number;
     currency: string;
     status: string;
     type: string;
-    dueDate?: string;
-    paidAt?: string;
-    invoiceUrl?: string;
-    method?: string;
-    last4?: string;
+    dueDate?: string | null;
+    paidAt?: string | null;
+    scheduledDate?: string | null;
+    invoiceUrl?: string | null;
+    method?: string | null;
+    last4?: string | null;
     createdAt: string;
+    stripeInvoiceId?: string | null;
+    stripeReceiptUrl?: string | null;
 };
 
 export type Quote = {

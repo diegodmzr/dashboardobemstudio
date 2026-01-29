@@ -51,9 +51,27 @@ export default async function PaymentsPage() {
             createdAt: p.createdAt.toISOString(),
         }));
 
+        const quotes = await prisma.quote.findMany({
+            where: { clientId: user.id },
+            include: { project: { select: { name: true } } },
+            orderBy: { createdAt: "desc" },
+        });
+
+        const formattedQuotes = quotes.map((q) => ({
+            id: q.id,
+            reference: q.reference,
+            projectName: q.project?.name || "Sans projet",
+            issuedAt: q.issuedAt.toISOString(),
+            validUntil: q.validUntil ? q.validUntil.toISOString() : undefined,
+            total: q.total,
+            status: q.status,
+            items: typeof q.items === 'string' ? q.items : JSON.stringify(q.items),
+        }));
+
         return (
             <ClientPaymentsClient
                 initialPayments={formattedPayments}
+                initialQuotes={formattedQuotes}
                 userName={user.name}
                 userEmail={user.email}
             />
