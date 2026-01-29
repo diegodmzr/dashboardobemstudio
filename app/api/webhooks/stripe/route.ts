@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
             case "payment_intent.payment_failed": {
                 const paymentIntent = event.data.object as Stripe.PaymentIntent;
-                // You could search for payment by stripePaymentId and mark as FAILED
+                // You could search for payment by stripePaymentIntentId and mark as FAILED
                 console.error(`❌ Payment failed: ${paymentIntent.id}`);
                 break;
             }
@@ -161,7 +161,7 @@ export async function POST(req: NextRequest) {
                                 status: "PAID",
                                 method: "CARD",
                                 paidAt: new Date(invoice.status_transitions.paid_at! * 1000),
-                                stripePaymentId: invoice.payment_intent as string,
+                                stripePaymentIntentId: invoice.payment_intent as string,
                                 stripeInvoiceId: invoice.id,
                                 invoiceUrl: invoice.hosted_invoice_url || undefined,
                                 clientId: subscription.clientId,

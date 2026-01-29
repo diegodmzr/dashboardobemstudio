@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
             where.OR = [
                 { client: { name: { contains: search } } },
                 { client: { companyName: { contains: search } } },
-                { stripePaymentId: { contains: search } },
+                { stripePaymentIntentId: { contains: search } },
             ];
         }
 
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
                 projectId: body.projectId || null,
                 dueDate: body.dueDate ? new Date(body.dueDate) : null,
                 paidAt: body.paidAt ? new Date(body.paidAt) : null,
-                stripePaymentId: body.stripePaymentId || null,
+                stripePaymentIntentId: body.stripePaymentId || null,
                 invoiceUrl: body.invoiceUrl || null,
                 description: body.description || "",
             },

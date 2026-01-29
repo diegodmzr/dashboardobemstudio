@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         await prisma.payment.update({
             where: { id: paymentId },
             data: {
-                stripePaymentId: session.id,
+                stripePaymentIntentId: session.id,
                 method: "CARD", // We anticipate card payment
             },
         });
