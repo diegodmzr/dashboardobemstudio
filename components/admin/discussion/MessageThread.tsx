@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Send, Paperclip, X, FileIcon, Download, ArrowLeft } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
@@ -38,6 +39,18 @@ export default function MessageThread({ conversationId, currentUserId, onBack }:
     const scrollRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const fetchConversation = async () => {
+        try {
+            const res = await fetch(`/api/discussions/${conversationId}`);
+            if (res.ok) {
+                const json = await res.json();
+                setData(json);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         if (conversationId) {
             fetchConversation();
@@ -57,17 +70,7 @@ export default function MessageThread({ conversationId, currentUserId, onBack }:
         }
     }, [data?.messages]);
 
-    const fetchConversation = async () => {
-        try {
-            const res = await fetch(`/api/discussions/${conversationId}`);
-            if (res.ok) {
-                const json = await res.json();
-                setData(json);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
+
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {

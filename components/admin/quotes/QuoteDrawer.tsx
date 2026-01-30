@@ -69,14 +69,14 @@ type Props = {
 };
 
 export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clients, projects }: Props) {
-    const defaultLines: QuoteLine[] = [{ id: Math.random().toString(), description: "", quantity: 1, unitPrice: 0, total: 0, stripeAuto: false }];
+    const createDefaultLines = (): QuoteLine[] => [{ id: Math.random().toString(), description: "", quantity: 1, unitPrice: 0, total: 0, stripeAuto: false }];
 
     // State
     const [clientId, setClientId] = useState("");
     const [projectId, setProjectId] = useState("");
     const [issuedAt, setIssuedAt] = useState(new Date().toISOString().split("T")[0]);
     const [validUntil, setValidUntil] = useState("");
-    const [lines, setLines] = useState<QuoteLine[]>(defaultLines);
+    const [lines, setLines] = useState<QuoteLine[]>(createDefaultLines);
 
     // Dynamic Terms
     const [termSections, setTermSections] = useState<TermSection[]>([]);
@@ -112,9 +112,9 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                     if (Array.isArray(parsedItems) && parsedItems.length > 0) {
                         setLines(parsedItems.map((i: any) => ({ ...i, id: Math.random().toString() })));
                     } else {
-                        setLines(defaultLines);
+                        setLines(createDefaultLines());
                     }
-                } catch (e) { setLines(defaultLines); }
+                } catch (e) { setLines(createDefaultLines()); }
 
                 setNotes(initialData.notes || "");
                 setTerms(initialData.terms || "");

@@ -48,8 +48,8 @@ const NavLink = ({ item, isCollapsed, onMobileClose }: { item: NavItem, isCollap
 
   // Auto-expand if a child becomes active
   useEffect(() => {
-    if (isActive) setIsOpen(true);
-  }, [isActive]);
+    if (isActive && !isOpen) setIsOpen(true);
+  }, [isActive, isOpen]);
 
   const hasChildren = item.children && item.children.length > 0;
 

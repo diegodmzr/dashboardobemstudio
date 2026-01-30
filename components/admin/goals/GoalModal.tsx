@@ -27,7 +27,7 @@ type Props = {
     isOpen: boolean;
     onClose: () => void;
     goal?: Goal | null;
-    onSubmit: (data: any) => void;
+    onSubmit: (data: Goal) => void;
 };
 
 const GOAL_TYPES = [
@@ -44,11 +44,11 @@ const GOAL_TYPES = [
 ];
 
 export default function GoalModal({ isOpen, onClose, goal, onSubmit }: Props) {
-    const [formData, setFormData] = useState<any>({
+    const [formData, setFormData] = useState<Goal>({
         title: "",
         description: "",
         type: "REVENUE",
-        targetValue: "",
+        targetValue: 0,
         currentValue: 0,
         startDate: new Date().toISOString().split("T")[0],
         endDate: new Date(new Date().getFullYear(), 11, 31).toISOString().split("T")[0], // End of year default
@@ -65,12 +65,16 @@ export default function GoalModal({ isOpen, onClose, goal, onSubmit }: Props) {
 
     useEffect(() => {
         if (goal) {
-            setFormData({
-                ...goal,
-                startDate: goal.startDate ? new Date(goal.startDate).toISOString().split("T")[0] : "",
-                endDate: goal.endDate ? new Date(goal.endDate).toISOString().split("T")[0] : "",
-                // Ensure notifications object exists
-                notifications: goal.notifications || { email: false, app: true, widget: true }
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setFormData((prev: Goal) => {
+                if (prev.id === goal.id) return prev;
+                return {
+                    ...goal,
+                    startDate: goal.startDate ? new Date(goal.startDate).toISOString().split("T")[0] : "",
+                    endDate: goal.endDate ? new Date(goal.endDate).toISOString().split("T")[0] : "",
+                    notifications: goal.notifications || { email: false, app: true, widget: true }
+                };
             });
         }
     }, [goal]);
@@ -134,7 +138,7 @@ export default function GoalModal({ isOpen, onClose, goal, onSubmit }: Props) {
                             <input
                                 type="number"
                                 value={formData.targetValue}
-                                onChange={(e) => setFormData({ ...formData, targetValue: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, targetValue: parseFloat(e.target.value) || 0 })}
                                 placeholder="50000"
                                 className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-black transition dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white dark:focus:border-white"
                             />
@@ -222,8 +226,8 @@ export default function GoalModal({ isOpen, onClose, goal, onSubmit }: Props) {
                                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 dark:border-[#333] dark:hover:bg-[#1a1a1a]">
                                     <input
                                         type="checkbox"
-                                        checked={formData.notifications.email}
-                                        onChange={(e) => setFormData({ ...formData, notifications: { ...formData.notifications, email: e.target.checked } })}
+                                        checked={formData.notifications?.email ?? false}
+                                        onChange={(e) => setFormData({ ...formData, notifications: { ...formData.notifications!, email: e.target.checked } })}
                                         className="rounded text-black focus:ring-black dark:bg-[#111] dark:border-[#333]"
                                     />
                                     <span className="text-sm dark:text-gray-300">Email</span>
@@ -231,8 +235,8 @@ export default function GoalModal({ isOpen, onClose, goal, onSubmit }: Props) {
                                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 dark:border-[#333] dark:hover:bg-[#1a1a1a]">
                                     <input
                                         type="checkbox"
-                                        checked={formData.notifications.app}
-                                        onChange={(e) => setFormData({ ...formData, notifications: { ...formData.notifications, app: e.target.checked } })}
+                                        checked={formData.notifications?.app ?? true}
+                                        onChange={(e) => setFormData({ ...formData, notifications: { ...formData.notifications!, app: e.target.checked } })}
                                         className="rounded text-black focus:ring-black dark:bg-[#111] dark:border-[#333]"
                                     />
                                     <span className="text-sm dark:text-gray-300">App (Toast)</span>
@@ -240,8 +244,8 @@ export default function GoalModal({ isOpen, onClose, goal, onSubmit }: Props) {
                                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 dark:border-[#333] dark:hover:bg-[#1a1a1a]">
                                     <input
                                         type="checkbox"
-                                        checked={formData.notifications.widget}
-                                        onChange={(e) => setFormData({ ...formData, notifications: { ...formData.notifications, widget: e.target.checked } })}
+                                        checked={formData.notifications?.widget ?? true}
+                                        onChange={(e) => setFormData({ ...formData, notifications: { ...formData.notifications!, widget: e.target.checked } })}
                                         className="rounded text-black focus:ring-black dark:bg-[#111] dark:border-[#333]"
                                     />
                                     <span className="text-sm dark:text-gray-300">Widget</span>

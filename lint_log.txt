@@ -1,0 +1,787 @@
+
+> dashboard@0.1.0 lint
+> eslint
+
+
+C:\Users\diego\Documents\dashboardobemstudio\add-client-cols.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\add-column.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\add-updated-at.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\app\(admin)\dashboard\clients\page.tsx
+  30:15  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  46:51  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  72:18  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\(admin)\dashboard\projets\page.tsx
+   95:5  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  110:5  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  112:5  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\admin\users\route.ts
+  5:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\client\payments\[id]\pay\route.ts
+   7:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  48:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  53:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\client\payments\route.ts
+  22:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\client\quotes\[id]\sign\route.ts
+  48:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  51:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  55:27  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\client\quotes\route.ts
+  22:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\clients\[id]\route.ts
+  26:17  warning  'password' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  55:27  error    Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  88:17  warning  'password' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\clients\route.ts
+  29:21  warning  'password' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  90:17  warning  'password' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\conversations\project-request\route.ts
+  93:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\dashboard\overview\route.ts
+  16:13  error  'data' is never reassigned. Use 'const' instead  prefer-const
+  18:29  error  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  19:29  error  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  20:29  error  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\discussions\[id]\messages\route.ts
+  47:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\discussions\route.ts
+   14:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\forms\[slug]\route.ts
+   7:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  26:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  30:13  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  44:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  56:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\forms\route.ts
+  30:27  warning  'request' is defined but never used                                                                                  @typescript-eslint/no-unused-vars
+  34:5   error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\forms\submissions\[id]\route.ts
+  12:5  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  27:5  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\forms\submissions\route.ts
+  5:27  warning  'request' is defined but never used                                                                                  @typescript-eslint/no-unused-vars
+  9:5   error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\goals\[id]\progress\route.ts
+  45:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  45:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\goals\[id]\route.ts
+  45:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  45:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  73:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  73:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  97:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  97:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\goals\compute-progress\route.ts
+   9:22  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  26:23  warning  'updated' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  48:27  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  58:14  warning  'error' is defined but never used             @typescript-eslint/no-unused-vars
+  58:21  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  63:41  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\goals\route.ts
+   12:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   54:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\notifications\route.ts
+  13:22  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  54:14  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\payments\create-session\route.ts
+  4:10  warning  'getCurrentUser' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\payments\route.ts
+   3:10  warning  'getCurrentUser' is defined but never used  @typescript-eslint/no-unused-vars
+  11:22  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  91:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\projects\[id]\route.ts
+  64:27  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  89:9   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\projects\route.ts
+  71:11  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\quotes\[id]\route.ts
+  25:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\quotes\route.ts
+   3:10  warning  'getCurrentUser' is defined but never used  @typescript-eslint/no-unused-vars
+  62:21  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  77:22  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\stats\overview\route.ts
+  182:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\stats\timeseries\route.ts
+   3:10  warning  'startOfDay' is defined but never used    @typescript-eslint/no-unused-vars
+  80:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\stats\top-clients\route.ts
+  83:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\stats\top-projects\route.ts
+  44:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\subscriptions\cancel\route.ts
+  41:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\subscriptions\create-session\route.ts
+  46:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\subscriptions\route.ts
+  9:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\upload\route.ts
+  21:18  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\users\autocomplete\route.ts
+  19:13  error  'whereClause' is never reassigned. Use 'const' instead  prefer-const
+  19:26  error  Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\api\webhooks\stripe\route.ts
+   28:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   62:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  147:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\app\f\[slug]\page.tsx
+  20:5  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\app\login\page.tsx
+   2:8   warning  'Image' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  16:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\diego\Documents\dashboardobemstudio\check-users.js
+  2:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\components\Sidebar.tsx
+    4:8   warning  'Image' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    8:37  warning  'PanelLeftClose' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+    8:53  warning  'PanelLeftOpen' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   51:19  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\diego\Documents\dashboardobemstudio\components\Sidebar.tsx:51:19
+  49 |   // Auto-expand if a child becomes active
+  50 |   useEffect(() => {
+> 51 |     if (isActive) setIsOpen(true);
+     |                   ^^^^^^^^^ Avoid calling setState() directly within an effect
+  52 |   }, [isActive]);
+  53 |
+  54 |   const hasChildren = item.children && item.children.length > 0;  react-hooks/set-state-in-effect
+  155:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @next/next/no-img-element
+  185:36  warning  'index' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  200:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @next/next/no-img-element
+
+C:\Users\diego\Documents\dashboardobemstudio\components\Topbar.tsx
+  18:3  warning  'userName' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  19:3  warning  'userEmail' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\ClientDetailModal.tsx
+   3:10   warning  'useMemo' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   4:8    warning  'Link' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   7:13   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  40:33   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  66:146  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  84:64   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\ClientModal.tsx
+  18:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  70:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\ClientsAdminClient.tsx
+    6:8   warning  'Link' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  125:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  148:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  170:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  302:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\ProgressBarEditor.tsx
+  90:33  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\ProjectModal.tsx
+   48:52  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  225:46  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\ProjectsAdminClient.tsx
+   10:8    warning  'Toast' is defined but never used                   @typescript-eslint/no-unused-vars
+   47:11   warning  'toasts' is assigned a value but never used         @typescript-eslint/no-unused-vars
+   47:19   warning  'removeToast' is assigned a value but never used    @typescript-eslint/no-unused-vars
+   80:9    warning  'clientOptions' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  179:19   error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  196:19   error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  210:19   error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  222:87   error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  223:16   warning  'e' is defined but never used                       @typescript-eslint/no-unused-vars
+  235:87   error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  236:16   warning  'e' is defined but never used                       @typescript-eslint/no-unused-vars
+  262:19   error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  497:101  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\discussion\ConversationDetail.tsx
+    3:10  warning  'User' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+    3:26  warning  'Clock' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+    3:33  warning  'CheckCircle' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   20:38  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   31:8   warning  React Hook useEffect has a missing dependency: 'fetchConversation'. Either include it or remove the dependency array                                                                                                                                                                     react-hooks/exhaustive-deps
+   79:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  122:75  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  148:57  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  152:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  152:45  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+  203:61  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  203:61  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+  226:39  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  227:36  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  238:47  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\discussion\ConversationList.tsx
+  16:56  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  99:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  99:49  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\discussion\MessageThread.tsx
+   25:38  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   26:12  warning  'loading' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   26:21  warning  'setLoading' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   29:12  warning  'mentionQuery' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+   30:58  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   43:13  error    Error: Cannot access variable before it is declared
+
+`fetchConversation` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\discussion\MessageThread.tsx:43:13
+  41 |     useEffect(() => {
+  42 |         if (conversationId) {
+> 43 |             fetchConversation();
+     |             ^^^^^^^^^^^^^^^^^ `fetchConversation` accessed before it is declared
+  44 |         }
+  45 |     }, [conversationId]);
+  46 |
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\discussion\MessageThread.tsx:60:5
+  58 |     }, [data?.messages]);
+  59 |
+> 60 |     const fetchConversation = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 61 |         try {
+     | ^^^^^^^^^^^^^
+> 62 |             const res = await fetch(`/api/discussions/${conversationId}`);
+     …
+     | ^^^^^^^^^^^^^
+> 69 |         }
+     | ^^^^^^^^^^^^^
+> 70 |     };
+     | ^^^^^^^ `fetchConversation` is declared here
+  71 |
+  72 |     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  73 |         if (e.target.files && e.target.files.length > 0) {  react-hooks/immutability
+   45:8   warning  React Hook useEffect has a missing dependency: 'fetchConversation'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         react-hooks/exhaustive-deps
+  108:26  warning  'error' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  157:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  159:56  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  165:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  246:34  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  261:58  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  284:43  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  375:68  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  379:57  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @next/next/no-img-element
+  411:41  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @next/next/no-img-element
+  411:41  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    jsx-a11y/alt-text
+  451:53  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @next/next/no-img-element
+  451:53  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    jsx-a11y/alt-text
+  492:68  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\discussion\NewConversationModal.tsx
+    4:20  warning  'Search' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+    4:36  warning  'UserIcon' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  229:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  229:45  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+  273:53  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  273:53  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+  351:45  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  351:45  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\forms\FormsClient.tsx
+    4:10   warning  'Plus' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+    4:87   warning  'Users' is defined but never used                                                                                    @typescript-eslint/no-unused-vars
+   33:11   warning  'router' is assigned a value but never used                                                                          @typescript-eslint/no-unused-vars
+   37:12   warning  'isLoading' is assigned a value but never used                                                                       @typescript-eslint/no-unused-vars
+   45:40   error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   51:12   warning  'newFormTitle' is assigned a value but never used                                                                    @typescript-eslint/no-unused-vars
+   51:26   warning  'setNewFormTitle' is assigned a value but never used                                                                 @typescript-eslint/no-unused-vars
+   52:12   warning  'isCreating' is assigned a value but never used                                                                      @typescript-eslint/no-unused-vars
+   52:24   warning  'setIsCreating' is assigned a value but never used                                                                   @typescript-eslint/no-unused-vars
+  238:118  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                      react/no-unescaped-entities
+  247:84   error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  377:46   warning  'e' is defined but never used                                                                                        @typescript-eslint/no-unused-vars
+  390:50   error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  394:62   error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  397:58   error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  448:42   error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  466:46   warning  'e' is defined but never used                                                                                        @typescript-eslint/no-unused-vars
+  477:34   error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\forms\SubmissionPDF.tsx
+  61:72  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:14  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  81:69  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\GoalCard.tsx
+  3:28  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+  3:43  warning  'ArrowUpRight' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\GoalDetailsDrawer.tsx
+    4:25   warning  'Calendar' is defined but never used                             @typescript-eslint/no-unused-vars
+   15:20   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   21:38   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   22:40   error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   71:18   warning  'err' is defined but never used                                  @typescript-eslint/no-unused-vars
+  174:131  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  207:100  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  251:55   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\GoalModal.tsx
+  30:22  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  47:46  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  68:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\GoalModal.tsx:68:13
+  66 |     useEffect(() => {
+  67 |         if (goal) {
+> 68 |             setFormData({
+     |             ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  69 |                 ...goal,
+  70 |                 startDate: goal.startDate ? new Date(goal.startDate).toISOString().split("T")[0] : "",
+  71 |                 endDate: goal.endDate ? new Date(goal.endDate).toISOString().split("T")[0] : "",  react-hooks/set-state-in-effect
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\GoalProgressChart.tsx
+  17:11  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  37:64  warning  'startDate' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  37:75  warning  'endDate' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  47:56  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  97:40  error    Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\GoalProgressChart.tsx:97:40
+   95 |                         tickLine={false}
+   96 |                     />
+>  97 |                     <Tooltip content={<CustomTooltip />} />
+      |                                        ^^^^^^^^^^^^^ This component is created during render
+   98 |                     <ReferenceLine
+   99 |                         y={targetValue}
+  100 |                         stroke={color}
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\GoalProgressChart.tsx:47:27
+  45 |     };
+  46 |
+> 47 |     const CustomTooltip = ({ active, payload, label }: any) => {
+     |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 48 |         if (active && payload && payload.length) {
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 49 |             return (
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 63 |         return null;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |     };
+     | ^^^^^^ The component is created during render here
+  65 |
+  66 |     // Prepare data
+  67 |     const chartData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(d => ({  react-hooks/static-components
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\GoalsClient.tsx
+    4:27  warning  'Archive' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+    4:36  warning  'Trash2' is defined but never used                                                                             @typescript-eslint/no-unused-vars
+    4:44  warning  'SlidersHorizontal' is defined but never used                                                                  @typescript-eslint/no-unused-vars
+    4:63  warning  'ArrowUpDown' is defined but never used                                                                        @typescript-eslint/no-unused-vars
+   13:40  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+   16:54  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+   39:18  warning  'err' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+   39:23  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+   48:8   warning  React Hook useEffect has a missing dependency: 'fetchGoals'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+   50:39  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+   62:23  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+   67:39  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+   81:23  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+   97:18  warning  'err' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+   97:23  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+  108:18  warning  'err' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\goals\ManualProgressModal.tsx
+  4:20  warning  'Calculator' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\notifications\NotificationList.tsx
+  3:68  warning  'CheckCircle' is defined but never used   @typescript-eslint/no-unused-vars
+  8:20  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\notifications\NotificationsClient.tsx
+   4:10  warning  'Filter' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+   4:25  warning  'Trash2' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+   9:56  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  15:8   warning  React Hook useEffect has a missing dependency: 'fetchNotifications'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\payments\PaymentDrawer.tsx
+    4:10   warning  'X' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   25:20   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+   27:14   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+   28:15   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+   43:21   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\payments\PaymentDrawer.tsx:43:21
+  41 |
+  42 |     useEffect(() => {
+> 43 |         if (isOpen) setIsClosing(false);
+     |                     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  44 |         // Reset form
+  45 |         if (!payment) {
+  46 |             setClientId("");  react-hooks/set-state-in-effect
+  280:118  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\payments\PaymentsClient.tsx
+  32:14  error    Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  33:15  error    Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  37:22  warning  'setPayments' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  38:19  warning  'setStats' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  64:37  error    Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  78:18  warning  'e' is defined but never used                     @typescript-eslint/no-unused-vars
+  83:35  warning  'paymentId' is defined but never used             @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\quotes\QuoteDrawer.tsx
+   66:19   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+   67:14   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+   68:15   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+   72:46   error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\quotes\QuoteDrawer.tsx:72:46
+  70 |
+  71 | export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clients, projects }: Props) {
+> 72 |     const defaultLines: QuoteLine[] = [{ id: Math.random().toString(), description: "", quantity: 1, unitPrice: 0, total: 0, stripeAuto: false }];
+     |                                              ^^^^^^^^^^^^^ Cannot call impure function
+  73 |
+  74 |     // State
+  75 |     const [clientId, setClientId] = useState("");  react-hooks/purity
+  113:54   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  117:26   warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  130:26   warning  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  162:8    warning  React Hook useEffect has a missing dependency: 'defaultLines'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react-hooks/exhaustive-deps
+  164:74   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  278:118  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react/no-unescaped-entities
+  287:124  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react/no-unescaped-entities
+  303:47   warning  'index' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  643:34   error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/ban-ts-comment
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\quotes\QuotePDF.tsx
+  230:12  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  247:18  warning  'e' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+  253:28  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  259:30  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  274:18  warning  'e' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+  282:18  warning  'e' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+  287:10  warning  'ImagePaths' is defined but never used                                                                       @typescript-eslint/no-unused-vars
+  293:31  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  294:35  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  295:36  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  307:25  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  319:74  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                              react/no-unescaped-entities
+  341:43  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  400:21  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  407:46  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  407:79  error    Unexpected any. Specify a different type                                                                     @typescript-eslint/no-explicit-any
+  442:41  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  459:37  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\quotes\QuotePDFDownloadButton.tsx
+   8:53  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  15:17  warning  'blob' is defined but never used          @typescript-eslint/no-unused-vars
+  15:23  warning  'url' is defined but never used           @typescript-eslint/no-unused-vars
+  15:37  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\quotes\QuoteRowActions.tsx
+  7:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  8:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  9:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\quotes\QuotesClient.tsx
+  32:14  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  33:15  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  37:20  warning  'setQuotes' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  97:19  warning  'savedQuote' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\stats\KPICard.tsx
+  43:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\stats\ProfitChart.tsx
+  13:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  77:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\stats\RevenueChart.tsx
+  13:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  82:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\stats\StatsClient.tsx
+  33:50  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+  34:52  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+  61:23  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+  70:8   warning  React Hook useEffect has a missing dependency: 'fetchStats'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\subscriptions\SubscriptionDrawer.tsx
+   23:14  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   24:15  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   41:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\subscriptions\SubscriptionDrawer.tsx:41:21
+  39 |
+  40 |     useEffect(() => {
+> 41 |         if (isOpen) setIsClosing(false);
+     |                     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  42 |         if (!subscription) {
+  43 |             setClientId("");
+  44 |             setProjectId("");  react-hooks/set-state-in-effect
+  102:45  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react/no-unescaped-entities
+  199:46  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react/no-unescaped-entities
+  303:52  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\admin\subscriptions\SubscriptionsClient.tsx
+   3:20  warning  'useEffect' is defined but never used                  @typescript-eslint/no-unused-vars
+  33:14  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  34:15  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  43:27  warning  'setSubscriptions' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  44:19  warning  'setStats' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  79:18  warning  'e' is defined but never used                          @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ClientPaymentsClient.tsx
+   99:8   warning  React Hook useEffect has missing dependencies: 'error', 'router', and 'success'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  172:18  warning  'e' is defined but never used                                                                                                        @typescript-eslint/no-unused-vars
+  191:18  warning  'e' is defined but never used                                                                                                        @typescript-eslint/no-unused-vars
+  244:79  error    Unexpected any. Specify a different type                                                                                             @typescript-eslint/no-explicit-any
+  405:69  error    Unexpected any. Specify a different type                                                                                             @typescript-eslint/no-explicit-any
+  414:50  warning  'e' is defined but never used                                                                                                        @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ClientProjectDetailClient.tsx
+  42:22  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ClientProjectsClient.tsx
+  38:22  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ClientQuoteViewer.tsx
+   10:12  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   11:11  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   14:52  warning  'user' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   19:30  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   80:30  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                                                                      @typescript-eslint/ban-ts-comment
+  120:91  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  129:46  warning  'e' is defined but never used                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  180:49  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  208:97  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  242:61  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  242:94  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  248:42  warning  'e' is defined but never used                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ClientQuotesClient.tsx
+   20:13  error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  184:35  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ClientRequestsClient.tsx
+   25:12   warning  'tickets' is assigned a value but never used                     @typescript-eslint/no-unused-vars
+   25:21   warning  'setTickets' is assigned a value but never used                  @typescript-eslint/no-unused-vars
+   77:18   warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+  107:94   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  107:104  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestForm.tsx
+  34:67  warning  'userId' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestStep2.tsx
+  45:11  warning  'isValid' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestStep3.tsx
+   93:11  warning  'handleNext' is assigned a value but never used                  @typescript-eslint/no-unused-vars
+  163:34  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestStep4.tsx
+  22:11  warning  'handleNext' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestStep5.tsx
+  77:50  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestStepContact.tsx
+  4:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  5:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestStepFeatures.tsx
+  82:11  warning  'handleNext' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestStepPages.tsx
+  36:62  warning  Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images  jsx-a11y/alt-text
+  79:11  warning  'handleNext' is assigned a value but never used                                                              @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\ProjectRequestSuccess.tsx
+  32:84  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  40:35  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\PublicProjectRequestForm.tsx
+  139:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\diego\Documents\dashboardobemstudio\components\client\SignatureModal.tsx
+  114:149  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\dashboard\ActivityBlock.tsx
+  3:20  warning  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\components\dashboard\DashboardClient.tsx
+  14:11  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  15:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\dashboard\PaymentsBlock.tsx
+  8:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\dashboard\ProjectsBlock.tsx
+   8:15  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  57:53  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  57:53  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+C:\Users\diego\Documents\dashboardobemstudio\components\dashboard\StatsBlock.tsx
+  7:11  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\forms\PublicFormClient.tsx
+   4:8   warning  'Image' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  12:60  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  35:18  warning  'e' is defined but never used                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  62:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\diego\Documents\dashboardobemstudio\components\settings\AppearanceTab.tsx
+   9:41  warning  'user' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  15:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\diego\Documents\dashboardobemstudio\components\settings\AppearanceTab.tsx:15:9
+  13 |     // Avoid hydration mismatch
+  14 |     useEffect(() => {
+> 15 |         setMounted(true);
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  16 |     }, []);
+  17 |
+  18 |     if (!mounted) return null;  react-hooks/set-state-in-effect
+  24:45  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\components\settings\ProfileTab.tsx
+   13:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   14:32  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   30:29  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   31:29  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   32:31  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   96:31  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+   97:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+   97:44  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  209:49  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\components\settings\SecurityTab.tsx
+   6:39  warning  'user' is defined but never used                                 @typescript-eslint/no-unused-vars
+  48:66  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\diego\Documents\dashboardobemstudio\debug-notifs.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\debug-payments-v2.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\debug-payments.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\debug-quotes-2.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\debug-quotes-access.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\debug-quotes.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\fix-quote-status.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\diego\Documents\dashboardobemstudio\lib\admin-dashboard.ts
+   2:10  warning  'Prisma' is defined but never used        @typescript-eslint/no-unused-vars
+  15:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  17:23  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:24  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\lib\auth.ts
+  1:19  warning  'headers' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\diego\Documents\dashboardobemstudio\lib\email.ts
+  5:90  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\lib\stripe.ts
+  8:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\diego\Documents\dashboardobemstudio\prisma\seed.js
+  1:26  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  2:16  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+✖ 401 problems (243 errors, 158 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+

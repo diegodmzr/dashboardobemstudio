@@ -13,6 +13,30 @@ import {
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
+const formatValue = (value: number, isFinancial: boolean) => {
+    if (isFinancial) return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value);
+    return value.toString();
+};
+
+const CustomTooltip = ({ active, payload, label, isFinancial }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-100 text-sm dark:bg-[#111] dark:border-[#333]">
+                <p className="font-medium text-gray-900 mb-1 dark:text-gray-300">
+                    {label ? format(new Date(label), "d MMMM yyyy", { locale: fr }) : ""}
+                </p>
+                <p className="font-bold text-lg dark:text-white" style={{ color: payload[0].stroke }}>
+                    {formatValue(payload[0].value, isFinancial)}
+                </p>
+                <p className="text-xs text-gray-500 mt-1 dark:text-gray-500">
+                    {payload[0].payload.isManual ? "✏️ Ajustement Manuel" : "🔄 Calcul Auto"}
+                </p>
+            </div>
+        );
+    }
+    return null;
+};
+
 type Props = {
     data: any[];
     targetValue: number;
@@ -39,29 +63,11 @@ export default function GoalProgressChart({ data, targetValue, startDate, endDat
     const color = getColor(goalType);
 
     // Format formatter
-    const formatValue = (value: number) => {
-        if (isFinancial) return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value);
-        return value.toString();
-    };
-
-    const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-100 text-sm dark:bg-[#111] dark:border-[#333]">
-                    <p className="font-medium text-gray-900 mb-1 dark:text-gray-300">
-                        {label ? format(new Date(label), "d MMMM yyyy", { locale: fr }) : ""}
-                    </p>
-                    <p className="font-bold text-lg dark:text-white" style={{ color: payload[0].stroke }}>
-                        {formatValue(payload[0].value)}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1 dark:text-gray-500">
-                        {payload[0].payload.isManual ? "✏️ Ajustement Manuel" : "🔄 Calcul Auto"}
-                    </p>
-                </div>
-            );
-        }
-        return null;
-    };
+    // Format formatter
+    // const formatValue = (value: number) => {
+    //     if (isFinancial) return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value);
+    //     return value.toString();
+    // };
 
     // Prepare data
     const chartData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(d => ({
@@ -94,7 +100,7 @@ export default function GoalProgressChart({ data, targetValue, startDate, endDat
                         axisLine={false}
                         tickLine={false}
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip content={<CustomTooltip isFinancial={isFinancial} />} />
                     <ReferenceLine
                         y={targetValue}
                         stroke={color}
