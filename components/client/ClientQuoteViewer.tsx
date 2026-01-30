@@ -5,6 +5,8 @@ import SignatureCanvas from "react-signature-canvas";
 import { Download, CheckCircle, X, Eye, FileText } from "lucide-react";
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import QuotePDF from "@/components/admin/quotes/QuotePDF"; // Reuse Admin PDF or create shared one
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/Toast";
 
 type Props = {
     quote: any;
@@ -18,9 +20,11 @@ export default function ClientQuoteViewer({ quote, user }: Props) {
     const [showPDFModal, setShowPDFModal] = useState(false);
     const sigCanvas = useRef<any>(null);
 
+    const { toasts, error, success, removeToast } = useToast();
+
     const handleSign = async () => {
         if (sigCanvas.current.isEmpty()) {
-            alert("Veuillez signer avant de valider.");
+            error("Veuillez signer avant de valider.");
             return;
         }
 
@@ -36,15 +40,15 @@ export default function ClientQuoteViewer({ quote, user }: Props) {
 
             if (res.ok) {
                 setStatus("ACCEPTED");
-
+                success("Devis signé avec succès !");
                 // Force reload to show signed state nicely
-                window.location.reload();
+                setTimeout(() => window.location.reload(), 1500);
             } else {
                 throw new Error("Erreur");
             }
-        } catch (error) {
-            console.error(error);
-            alert("Une erreur est survenue.");
+        } catch (err) {
+            console.error(err);
+            error("Une erreur est survenue lors de la signature.");
         } finally {
             setIsSubmitting(false);
         }
@@ -56,6 +60,7 @@ export default function ClientQuoteViewer({ quote, user }: Props) {
 
     return (
         <div className="min-h-screen bg-[#f8f6fb] p-6 lg:p-10 dark:bg-black">
+            <Toast toasts={toasts} onRemove={removeToast} />
             <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden dark:bg-[#111] dark:border dark:border-[#333]">
                 {/* Header */}
                 <div className="p-8 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 dark:border-[#333]">

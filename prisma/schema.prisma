@@ -39,8 +39,18 @@ model User {
   conversationParticipations Participant[] @relation("ConversationParticipations")
   messagesSent               Message[]     @relation("MessagesSent")
   
+  assignedProjects Project[] @relation("ProjectAssignees")
+  
   notifications Notification[]
   formSubmissions FormSubmission[]
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  email     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Project {
@@ -71,6 +81,8 @@ model Project {
 
   quotes       Quote[]
   conversations Conversation[]
+  
+  assignees    User[]   @relation("ProjectAssignees")
 }
 
 model ProjectStatusHistory {
@@ -116,6 +128,7 @@ model Quote {
 
   // Financials
   subtotal    Float    @default(0)
+  discount    Float    @default(0) // Percentage (0-100)
   taxRate     Float    @default(0)
   taxAmount   Float    @default(0)
   total       Float    @default(0)
@@ -193,24 +206,28 @@ model Payment {
 model Subscription {
   id                  String   @id @default(cuid())
   
-  // Stripe IDs
-  stripeSubscriptionId String  @unique
-  stripeCustomerId     String
-  stripePriceId        String
+  // Stripe IDs (Optional for manual subscriptions)
+  stripeSubscriptionId String?  @unique
+  stripeCustomerId     String?
+  stripePriceId        String?
   stripeProductId      String?
   
   // Status
-  status              String   // active, canceled, past_due, unpaid, incomplete
+  status              String   @default("active") // active, canceled, past_due, unpaid, incomplete, ended
   
   // Billing
   amount              Float    // Monthly/Yearly amount
   currency            String   @default("EUR")
-  interval            String   // month, year
+  interval            String   // month, year, quarter
   intervalCount       Int      @default(1)
   
   // Dates
-  currentPeriodStart  DateTime
-  currentPeriodEnd    DateTime
+  startDate           DateTime @default(now())
+  endDate             DateTime? // If fixed duration (e.g. 12 months)
+  commitmentEndDate   DateTime? // If there is a minimum commitment period
+    
+  currentPeriodStart  DateTime?
+  currentPeriodEnd    DateTime?
   canceledAt          DateTime?
   endedAt             DateTime?
   

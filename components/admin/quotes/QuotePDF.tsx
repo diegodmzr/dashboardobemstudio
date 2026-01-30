@@ -373,6 +373,17 @@ const QuotePDF = ({ quote }: QuotePDFProps) => {
                                 <Text style={styles.totalLabel}>TOTAL HT</Text>
                                 <Text style={styles.totalValue}>{formatCurrency(subtotal)}</Text>
                             </View>
+
+                            {/* DISCOUNT ROW */}
+                            {safeNumber(quote.discount) > 0 && (
+                                <View style={styles.totalRow}>
+                                    <Text style={[styles.totalLabel, { color: '#059669' }]}>REDUCTION ({safeNumber(quote.discount)}%)</Text>
+                                    <Text style={[styles.totalValue, { color: '#059669' }]}>
+                                        - {formatCurrency(subtotal * (safeNumber(quote.discount) / 100))}
+                                    </Text>
+                                </View>
+                            )}
+
                             {taxAmount > 0 && (
                                 <View style={styles.totalRow}>
                                     <Text style={styles.totalLabel}>TVA ({taxRate}%)</Text>

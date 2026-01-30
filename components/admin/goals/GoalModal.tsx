@@ -260,17 +260,15 @@ export default function GoalModal({ isOpen, onClose, goal, onSubmit }: Props) {
                             <h4 className="font-semibold text-blue-900 text-sm dark:text-blue-400">Tracking Automatique</h4>
                             <p className="text-xs text-blue-700 mt-1 dark:text-blue-500">Calculer automatiquement la progression depuis les données.</p>
                         </div>
-                        <div className="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <label className="relative inline-flex items-center cursor-pointer">
                             <input
                                 type="checkbox"
-                                name="toggle"
-                                id="toggle"
                                 checked={formData.autoTracking}
                                 onChange={(e) => setFormData({ ...formData, autoTracking: e.target.checked })}
-                                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-blue-200 checked:right-0 checked:border-blue-600 transition-all duration-300 transform translate-x-0 checked:translate-x-full dark:border-blue-900/50 dark:bg-gray-200"
+                                className="sr-only peer"
                             />
-                            <label htmlFor="toggle" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${formData.autoTracking ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'}`}></label>
-                        </div>
+                            <div className="w-11 h-6 bg-gray-300 rounded-full peer dark:bg-gray-600 peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                        </label>
                     </div>
 
                 </div>

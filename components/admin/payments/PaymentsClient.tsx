@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { CalendarDays, CreditCard, Building, HandCoins, Landmark } from "lucide-react";
 import Topbar from "@/components/Topbar";
 import { useToast } from "@/hooks/useToast";
@@ -41,6 +42,19 @@ export default function PaymentsClient({ initialPayments, initialStats, clients,
     const { toasts, success, error, removeToast } = useToast();
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("ALL");
+    const searchParams = useSearchParams();
+
+    // Check query params for deep linking
+    useEffect(() => {
+        const paymentId = searchParams.get("paymentId");
+        if (paymentId) {
+            const paymentToOpen = initialPayments.find(p => p.id === paymentId);
+            if (paymentToOpen) {
+                setSelectedPayment(paymentToOpen);
+                setIsDrawerOpen(true);
+            }
+        }
+    }, [searchParams, initialPayments]);
 
     const filteredPayments = payments.filter(p => {
         const matchesSearch =

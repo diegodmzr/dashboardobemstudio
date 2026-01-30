@@ -254,6 +254,11 @@ const clientNavItems: NavItem[] = [
         label: "Mes Paiements",
         href: "/dashboard/finances/paiements",
         icon: null
+      },
+      {
+        label: "Mes Abonnements",
+        href: "/dashboard/finances/abonnements",
+        icon: null
       }
     ]
   },

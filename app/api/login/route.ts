@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL("/login?error=invalid_credentials", request.url));
   }
 
-  const redirectPath = user.role === "ADMIN" ? "/dashboard" : "/dashboard/client";
+  const redirectPath = "/dashboard";
 
   const res = NextResponse.redirect(new URL(redirectPath, request.url));
   res.cookies.set({

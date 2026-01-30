@@ -35,6 +35,7 @@ export type ProjectFormData = {
 
     progressConfig?: ProgressConfig | null;
     formSubmissionId?: string | null;
+    assigneeIds: string[];
 };
 
 const statusOptions = ["Brief", "Design", "Dev", "Tests", "Livré"];
@@ -65,6 +66,8 @@ export default function ProjectModal({ project, onClose, onSave }: Props) {
         level: project?.level || "", // Keep as 'level' for DB compatibility
         progressConfig: null,
         formSubmissionId: project?.formSubmissionId || "",
+        // @ts-ignore
+        assigneeIds: project?.assignees ? project.assignees.map((a: any) => a.id) : [],
     });
 
     useEffect(() => {
@@ -142,6 +145,21 @@ export default function ProjectModal({ project, onClose, onSave }: Props) {
         }
     };
 
+    const toggleAssignee = (userId: string) => {
+        setFormData(prev => {
+            const currentIds = prev.assigneeIds;
+            if (currentIds.includes(userId)) {
+                return { ...prev, assigneeIds: currentIds.filter(id => id !== userId) };
+            } else {
+                return { ...prev, assigneeIds: [...currentIds, userId] };
+            }
+        });
+    };
+
+    // Filter potential admins (exclude the selected client if possible, or just show all except pure 'CLIENT' maybe? 
+    // Usually admin role check is better but since roles are loose, I'll show all users but highlight roles)
+    // For now, list all users as potential assignees.
+
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fadeIn"
@@ -204,6 +222,38 @@ export default function ProjectModal({ project, onClose, onSave }: Props) {
                             {errors.clientId && (
                                 <p className="mt-1 text-xs text-rose-500">{errors.clientId}</p>
                             )}
+                        </div>
+
+                        {/* Assignees Selection */}
+                        <div className="md:col-span-2">
+                            <label className="mb-2 block text-sm font-semibold text-[#4a4a4a] dark:text-gray-400">
+                                Attribué à (Admins / Staff)
+                            </label>
+                            <div className="flex flex-wrap gap-2 p-3 rounded-xl border border-[#e0e0e0] bg-[#f5f5f5] dark:bg-[#1a1a1a] dark:border-[#333]">
+                                {users.filter(u => u.role !== 'CLIENT').length === 0 && <p className="text-xs text-gray-400">Aucun admin disponible.</p>}
+                                {users.filter(u => u.role !== 'CLIENT').map(user => {
+                                    const isSelected = formData.assigneeIds.includes(user.id);
+                                    return (
+                                        <button
+                                            type="button"
+                                            key={user.id}
+                                            onClick={() => toggleAssignee(user.id)}
+                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition border ${isSelected
+                                                    ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
+                                                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-[#222] dark:text-gray-300 dark:border-[#444]"
+                                                }`}
+                                        >
+                                            {/* Avatar if available else Initials */}
+                                            {/* We don't have avatar URL here easily unless we fetch it, assuming users has it */}
+                                            <div className="w-5 h-5 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center text-[9px] text-gray-500 dark:bg-gray-700 dark:text-gray-300">
+                                                {/* @ts-ignore */}
+                                                {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : user.name.charAt(0)}
+                                            </div>
+                                            {user.name}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         {/* Link to Brief/Form */}

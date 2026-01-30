@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -120,11 +121,13 @@ export default async function PaymentsPage() {
     }));
 
     return (
-        <PaymentsClient
-            initialPayments={serializedPayments}
-            initialStats={stats}
-            clients={clients}
-            projects={projects}
-        />
+        <Suspense fallback={<div>Chargement...</div>}>
+            <PaymentsClient
+                initialPayments={serializedPayments}
+                initialStats={stats}
+                clients={clients}
+                projects={projects}
+            />
+        </Suspense>
     );
 }

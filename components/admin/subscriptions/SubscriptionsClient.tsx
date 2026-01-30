@@ -21,6 +21,8 @@ type Subscription = {
     client: { id: string; name: string; companyName: string | null; email: string };
     createdAt: string;
     projectId?: string | null;
+    startDate: string;
+    endDate?: string | null;
 };
 
 type Props = {

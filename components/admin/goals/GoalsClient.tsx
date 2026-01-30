@@ -8,6 +8,7 @@ import Toast from "@/components/Toast";
 import GoalCard from "./GoalCard";
 import GoalModal from "./GoalModal";
 import GoalDetailsDrawer from "./GoalDetailsDrawer";
+import ConfirmModal from "@/components/ConfirmModal";
 
 export default function GoalsClient() {
     const [goals, setGoals] = useState<any[]>([]);
@@ -16,6 +17,15 @@ export default function GoalsClient() {
     const [selectedGoal, setSelectedGoal] = useState<any | null>(null);
 
     const [detailGoalId, setDetailGoalId] = useState<string | null>(null);
+
+    const [confirmState, setConfirmState] = useState<{
+        open: boolean;
+        title: string;
+        message: string;
+        onConfirm: () => void;
+        variant: "danger" | "warning";
+        confirmLabel: string;
+    }>({ open: false, title: "", message: "", onConfirm: () => { }, variant: "danger", confirmLabel: "Confirmer" });
 
     // Filters
     const [statusFilter, setStatusFilter] = useState("ACTIVE"); // ACTIVE, ARCHIVED, ALL
@@ -83,9 +93,20 @@ export default function GoalsClient() {
         }
     };
 
-    const handleDelete = async (id: string, permanent: boolean) => {
-        if (!confirm(permanent ? "Êtes-vous sûr de vouloir supprimer définitivement cet objectif ?" : "Voulez-vous archiver cet objectif ?")) return;
+    const confirmDelete = (id: string, permanent: boolean) => {
+        setConfirmState({
+            open: true,
+            title: permanent ? "Supprimer l'objectif ?" : "Archiver l'objectif ?",
+            message: permanent
+                ? "Cette action est irréversible. L'objectif sera définitivement supprimé."
+                : "L'objectif sera déplacé dans les archives. Vous pourrez le restaurer plus tard.",
+            confirmLabel: permanent ? "Supprimer" : "Archiver",
+            variant: permanent ? "danger" : "warning",
+            onConfirm: () => handleDelete(id, permanent)
+        });
+    };
 
+    const handleDelete = async (id: string, permanent: boolean) => {
         try {
             const res = await fetch(`/api/goals/${id}?permanent=${permanent}`, {
                 method: "DELETE",
@@ -93,6 +114,7 @@ export default function GoalsClient() {
             if (!res.ok) throw new Error("Failed to delete goal");
 
             success(permanent ? "Objectif supprimé définitivement" : "Objectif archivé");
+            setConfirmState(prev => ({ ...prev, open: false }));
             fetchGoals();
         } catch (err: any) {
             error("Erreur suppression");
@@ -234,10 +256,20 @@ export default function GoalsClient() {
                     setIsModalOpen(true);
                 }}
                 onDelete={(id, permanent) => {
-                    handleDelete(id, permanent);
+                    confirmDelete(id, permanent);
                     setDetailGoalId(null);
                 }}
                 onRefreshParent={fetchGoals}
+            />
+
+            <ConfirmModal
+                isOpen={confirmState.open}
+                title={confirmState.title}
+                message={confirmState.message}
+                confirmLabel={confirmState.confirmLabel}
+                onConfirm={confirmState.onConfirm}
+                onCancel={() => setConfirmState(prev => ({ ...prev, open: false }))}
+                variant={confirmState.variant}
             />
         </div>
     );

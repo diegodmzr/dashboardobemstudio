@@ -76,6 +76,13 @@ export default async function ProjectsPage({
           name: true,
         },
       },
+      assignees: {
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+        }
+      },
       formSubmission: {
         select: {
           id: true,
@@ -110,7 +117,9 @@ export default async function ProjectsPage({
     // @ts-ignore
     formSubmissionId: p.formSubmissionId,
     // @ts-ignore
-    formSubmissionTitle: p.formSubmission?.form.title
+    formSubmissionTitle: p.formSubmission?.form.title,
+    // @ts-ignore
+    assignees: p.assignees || []
   }));
 
   return <ProjectsAdminClient projects={projects} />;

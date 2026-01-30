@@ -89,13 +89,20 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         // @ts-ignore
         if (body.formSubmissionId !== undefined) updateData.formSubmissionId = body.formSubmissionId;
 
+        // Handle assignees update if provided
+        if (body.assigneeIds !== undefined && Array.isArray(body.assigneeIds)) {
+            updateData.assignees = {
+                set: body.assigneeIds.map((id: string) => ({ id }))
+            };
+        }
+
         // Transaction
         const project = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             // 1. Update Project
             const updated = await tx.project.update({
                 where: { id },
                 data: updateData,
-                include: { client: true },
+                include: { client: true, assignees: true },
             });
 
             // 2. Status History if changed

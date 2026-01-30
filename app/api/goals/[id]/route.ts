@@ -59,10 +59,27 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             notificationConfig = JSON.stringify(body.notifications);
         }
 
+        const updateData = { ...body };
+
+        // Fix Date objects
+        if (updateData.startDate) {
+            updateData.startDate = new Date(updateData.startDate);
+        }
+        if (updateData.endDate) {
+            updateData.endDate = new Date(updateData.endDate);
+        }
+
+        // Cleanup fields that shouldn't be updated directly
+        delete updateData.id;
+        delete updateData.createdAt;
+        delete updateData.updatedAt;
+        delete updateData.progress;
+        delete updateData.notifications;
+
         const goal = await prisma.goal.update({
             where: { id },
             data: {
-                ...body,
+                ...updateData,
                 notificationConfig: notificationConfig || undefined,
                 // cleanup
                 notifications: undefined,

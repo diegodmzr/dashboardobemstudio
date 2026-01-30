@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, CreditCard } from "lucide-react";
+import { X, CreditCard, Calendar, Check, Layers } from "lucide-react";
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/Toast";
 
 type Subscription = {
     id: string;
@@ -9,10 +11,12 @@ type Subscription = {
     amount: number;
     currency: string;
     interval: string;
-    currentPeriodEnd: string;
-    stripeSubscriptionId: string;
+    currentPeriodEnd: string | null;
+    stripeSubscriptionId: string | null;
     client: { id: string; name: string; companyName: string | null; email: string };
     projectId?: string | null;
+    startDate: string;
+    endDate?: string | null;
 };
 
 type Props = {
@@ -33,16 +37,32 @@ export default function SubscriptionDrawer({
     projects,
 }: Props) {
     const [isClosing, setIsClosing] = useState(false);
+    const { toasts, success, error, removeToast } = useToast();
+
+    // Form state
+    const [creationMode, setCreationMode] = useState<"MANUAL" | "STRIPE">("MANUAL");
     const [clientId, setClientId] = useState("");
     const [projectId, setProjectId] = useState("");
-    const [priceId, setPriceId] = useState("");
+    const [amount, setAmount] = useState("");
+    const [interval, setInterval] = useState("month");
+    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [durationMonths, setDurationMonths] = useState<number | "">(""); // Empty for indefinite
+    const [commitmentMonths, setCommitmentMonths] = useState<number | "">(""); // Empty for no commitment
+    const [priceId, setPriceId] = useState(""); // For Stripe mode
 
     useEffect(() => {
         if (isOpen) setIsClosing(false);
         if (!subscription) {
+            // Reset form
             setClientId("");
             setProjectId("");
+            setAmount("");
+            setInterval("month");
+            setStartDate(new Date().toISOString().split('T')[0]);
+            setDurationMonths("");
+            setCommitmentMonths("");
             setPriceId("");
+            setCreationMode("MANUAL");
         }
     }, [isOpen, subscription]);
 
@@ -57,25 +77,51 @@ export default function SubscriptionDrawer({
         d ? new Date(d).toLocaleDateString("fr-FR", { dateStyle: "long" }) : "—";
 
     const handleCreateSubscription = async () => {
-        if (!clientId || !priceId) return alert("Veuillez sélectionner un client et un produit.");
+        if (!clientId) return error("Veuillez sélectionner un client.");
 
         try {
-            const res = await fetch("/api/subscriptions/create-session", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ clientId, priceId, projectId }),
-            });
-
-            const data = await res.json();
-            if (data.url) {
-                await navigator.clipboard.writeText(data.url);
-                alert("✅ Lien d'abonnement copié dans le presse-papier !\n\nEnvoyez-le au client.");
+            if (creationMode === "STRIPE") {
+                if (!priceId) return error("Veuillez entrer un Price ID Stripe.");
+                const res = await fetch("/api/subscriptions/create-session", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ clientId, priceId, projectId }),
+                });
+                const data = await res.json();
+                if (data.url) {
+                    await navigator.clipboard.writeText(data.url);
+                    success("Lien d'abonnement copié !");
+                }
             } else {
-                alert("❌ Erreur lors de la génération du lien");
+                // MANUAL CREATION
+                if (!amount) return error("Veuillez entrer un montant.");
+
+                const res = await fetch("/api/subscriptions", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        clientId,
+                        projectId,
+                        amount: parseFloat(amount),
+                        interval,
+                        startDate,
+                        durationMonths: durationMonths === "" ? null : Number(durationMonths),
+                        commitmentMonths: commitmentMonths === "" ? null : Number(commitmentMonths)
+                    }),
+                });
+
+                if (res.ok) {
+                    success("Abonnement créé avec succès !");
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    throw new Error("Erreur création");
+                }
             }
         } catch (err) {
             console.error(err);
-            alert("❌ Erreur réseau");
+            error("Une erreur est survenue.");
         }
     };
 
@@ -91,6 +137,7 @@ export default function SubscriptionDrawer({
                     }`}
                 onClick={handleClose}
             >
+                <Toast toasts={toasts} onRemove={removeToast} />
                 <div
                     className={`w-full max-w-lg h-full bg-white shadow-2xl overflow-y-auto dark:bg-black dark:shadow-none dark:ring-1 dark:ring-[#333] ${isClosing ? "animate-slideOutRight" : "animate-slideInRight"
                         }`}
@@ -152,6 +199,24 @@ export default function SubscriptionDrawer({
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+                                        Début
+                                    </h3>
+                                    <div className="text-black dark:text-white">
+                                        {formatDate(subscription.startDate)}
+                                    </div>
+                                </div>
+                                {subscription.endDate && (
+                                    <div>
+                                        <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+                                            Fin prévue
+                                        </h3>
+                                        <div className="text-black dark:text-white">
+                                            {formatDate(subscription.endDate)}
+                                        </div>
+                                    </div>
+                                )}
+                                <div>
+                                    <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
                                         Prochaine Facturation
                                     </h3>
                                     <div className="text-black dark:text-white">
@@ -160,33 +225,27 @@ export default function SubscriptionDrawer({
                                             : "—"}
                                     </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
-                                        Périodicité
-                                    </h3>
-                                    <div className="text-black dark:text-white">
-                                        {subscription.interval === "month" ? "Mensuel" : "Annuel"}
-                                    </div>
-                                </div>
                             </div>
 
                             {/* Stripe Info */}
-                            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 dark:bg-black dark:border-[#333]">
-                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
-                                    Stripe
-                                </h3>
-                                <div className="text-xs text-mono text-gray-600 truncate mb-2">
-                                    ID: {subscription.stripeSubscriptionId}
+                            {subscription.stripeSubscriptionId && (
+                                <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 dark:bg-black dark:border-[#333]">
+                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
+                                        Stripe
+                                    </h3>
+                                    <div className="text-xs text-mono text-gray-600 truncate mb-2">
+                                        ID: {subscription.stripeSubscriptionId}
+                                    </div>
+                                    <a
+                                        href={`https://dashboard.stripe.com/test/subscriptions/${subscription.stripeSubscriptionId}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs font-bold text-blue-600 hover:underline"
+                                    >
+                                        Voir dans Stripe Dashboard ↗
+                                    </a>
                                 </div>
-                                <a
-                                    href={`https://dashboard.stripe.com/test/subscriptions/${subscription.stripeSubscriptionId}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs font-bold text-blue-600 hover:underline"
-                                >
-                                    Voir dans Stripe Dashboard ↗
-                                </a>
-                            </div>
+                            )}
                         </div>
 
                         {/* Actions */}
@@ -213,6 +272,7 @@ export default function SubscriptionDrawer({
                 }`}
             onClick={handleClose}
         >
+            <Toast toasts={toasts} onRemove={removeToast} />
             <div
                 className={`w-full max-w-lg h-full bg-white shadow-2xl overflow-y-auto dark:bg-black dark:shadow-none dark:ring-1 dark:ring-[#333] ${isClosing ? "animate-slideOutRight" : "animate-slideInRight"
                     }`}
@@ -223,7 +283,7 @@ export default function SubscriptionDrawer({
                         <div>
                             <h2 className="text-xl font-bold text-black dark:text-white">Nouvel abonnement</h2>
                             <p className="text-sm text-gray-400">
-                                Créer un lien de paiement récurrent pour un client
+                                Créer un contrat ou un abonnement récurrent
                             </p>
                         </div>
                         <button
@@ -234,13 +294,34 @@ export default function SubscriptionDrawer({
                         </button>
                     </div>
 
+                    <div className="flex bg-gray-100 p-1 rounded-xl mb-6 dark:bg-[#1a1a1a]">
+                        <button
+                            onClick={() => setCreationMode("MANUAL")}
+                            className={`flex-1 py-2 text-sm font-medium rounded-lg transition ${creationMode === "MANUAL"
+                                ? "bg-white text-black shadow-sm dark:bg-[#333] dark:text-white"
+                                : "text-gray-500 hover:text-black dark:text-gray-400"
+                                }`}
+                        >
+                            Manuel / Dashboard
+                        </button>
+                        <button
+                            onClick={() => setCreationMode("STRIPE")}
+                            className={`flex-1 py-2 text-sm font-medium rounded-lg transition ${creationMode === "STRIPE"
+                                ? "bg-white text-black shadow-sm dark:bg-[#333] dark:text-white"
+                                : "text-gray-500 hover:text-black dark:text-gray-400"
+                                }`}
+                        >
+                            Via Stripe Link
+                        </button>
+                    </div>
+
                     <div className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Client</label>
                             <select
                                 value={clientId}
                                 onChange={(e) => setClientId(e.target.value)}
-                                className="w-full rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition"
+                                className="w-full rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
                             >
                                 <option value="">Sélectionner un client...</option>
                                 {clients.map((c) => (
@@ -252,7 +333,7 @@ export default function SubscriptionDrawer({
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                                 Projet (Optionnel)
                             </label>
                             <select
@@ -271,36 +352,142 @@ export default function SubscriptionDrawer({
                             </select>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Produit Stripe (Price ID)
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="price_xxxxx"
-                                value={priceId}
-                                onChange={(e) => setPriceId(e.target.value)}
-                                className="w-full rounded-xl border border-gray-200 px-3 py-3 text-sm font-mono outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
-                            />
-                            <p className="text-xs text-gray-400 mt-1">
-                                Récupérez le Price ID depuis votre{" "}
-                                <a
-                                    href="https://dashboard.stripe.com/test/products"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-500 hover:underline"
-                                >
-                                    Stripe Dashboard
-                                </a>
-                            </p>
-                        </div>
+                        {creationMode === "MANUAL" ? (
+                            <>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                        Montant (€)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        placeholder="ex: 1000"
+                                        value={amount}
+                                        onChange={(e) => setAmount(e.target.value)}
+                                        className="w-full rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                            Récurrence
+                                        </label>
+                                        <select
+                                            value={interval}
+                                            onChange={(e) => setInterval(e.target.value)}
+                                            className="w-full rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                        >
+                                            <option value="month">Mensuel</option>
+                                            <option value="year">Annuel</option>
+                                            <option value="quarter">Trimestriel</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                            Date de début
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={startDate}
+                                            onChange={(e) => setStartDate(e.target.value)}
+                                            className="w-full rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                        Durée du contrat
+                                    </label>
+                                    <div className="flex gap-4 items-center">
+                                        <select
+                                            value={durationMonths === "" ? "indefinite" : "fixed"}
+                                            onChange={(e) => setDurationMonths(e.target.value === "indefinite" ? "" : 12)}
+                                            className="w-1/2 rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                        >
+                                            <option value="indefinite">Indéterminée (Sans fin)</option>
+                                            <option value="fixed">Durée fixe</option>
+                                        </select>
+                                        {durationMonths !== "" && (
+                                            <div className="flex-1 flex items-center gap-2">
+                                                <input
+                                                    type="number"
+                                                    value={durationMonths}
+                                                    onChange={(e) => setDurationMonths(Number(e.target.value))}
+                                                    className="w-20 rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                                />
+                                                <span className="text-sm text-gray-500">mois</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className="text-[10px] text-gray-400 mt-2 leading-tight">
+                                        Définit quand le service s'arrête automatiquement (ex: 12 mois). Si "Indéterminée", l'abonnement continue tant qu'il n'est pas résilié.
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                        Engagement (Optionnel)
+                                    </label>
+                                    <div className="flex gap-4 items-center">
+                                        <select
+                                            value={commitmentMonths === "" ? "none" : "months"}
+                                            onChange={(e) => setCommitmentMonths(e.target.value === "none" ? "" : 12)}
+                                            className="w-1/2 rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                        >
+                                            <option value="none">Sans engagement</option>
+                                            <option value="months">Avec engagement</option>
+                                        </select>
+                                        {commitmentMonths !== "" && (
+                                            <div className="flex-1 flex items-center gap-2">
+                                                <input
+                                                    type="number"
+                                                    value={commitmentMonths}
+                                                    onChange={(e) => setCommitmentMonths(Number(e.target.value))}
+                                                    className="w-20 rounded-xl border border-gray-200 px-3 py-3 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                                />
+                                                <span className="text-sm text-gray-500">mois</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className="text-[10px] text-gray-400 mt-2 leading-tight">
+                                        Période minimale durant laquelle le client ne peut pas résilier. (ex: Engagement 12 mois sur un contrat à durée indéterminée).
+                                    </p>
+                                </div>
+                            </>
+                        ) : (
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                    Produit Stripe (Price ID)
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="price_xxxxx"
+                                    value={priceId}
+                                    onChange={(e) => setPriceId(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-200 px-3 py-3 text-sm font-mono outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                />
+                                <p className="text-xs text-gray-400 mt-1">
+                                    Récupérez le Price ID depuis votre Dashboard Stripe.
+                                </p>
+                            </div>
+                        )}
 
                         <button
                             onClick={handleCreateSubscription}
-                            className="w-full bg-[#635BFF] text-white py-3.5 rounded-full font-bold hover:bg-[#5145E5] transition shadow-lg shadow-[#635BFF]/20 mt-8 flex items-center justify-center gap-2"
+                            className="w-full bg-black text-white py-3.5 rounded-full font-bold hover:bg-gray-800 transition shadow-lg shadow-black/20 mt-8 flex items-center justify-center gap-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                         >
-                            <CreditCard className="w-4 h-4" />
-                            <span>Générer le lien d'abonnement</span>
+                            {creationMode === "STRIPE" ? (
+                                <>
+                                    <CreditCard className="w-4 h-4" />
+                                    <span>Générer le lien Stripe</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Check className="w-4 h-4" />
+                                    <span>Créer l'abonnement</span>
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>

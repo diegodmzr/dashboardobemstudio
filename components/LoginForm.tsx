@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +56,14 @@ export default function LoginForm() {
                         className="block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-black focus:ring-black focus:bg-white text-sm outline-none transition-all"
                         placeholder="••••••••"
                     />
+                    <div className="flex justify-end mt-2">
+                        <Link
+                            href="/forgot-password"
+                            className="text-xs font-medium text-gray-500 hover:text-black transition-colors"
+                        >
+                            Mot de passe oublié ?
+                        </Link>
+                    </div>
                 </div>
             </div>
 

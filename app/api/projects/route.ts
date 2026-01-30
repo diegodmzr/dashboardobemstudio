@@ -70,9 +70,13 @@ export async function POST(req: NextRequest) {
           progressConfig: progressConfigJson,
           // @ts-ignore
           formSubmissionId: body.formSubmissionId || null,
+          assignees: body.assigneeIds && Array.isArray(body.assigneeIds) ? {
+            connect: body.assigneeIds.map((id: string) => ({ id }))
+          } : undefined,
         },
         include: {
           client: true,
+          assignees: true,
         },
       });
 
@@ -115,6 +119,7 @@ export async function GET() {
     const projects = await prisma.project.findMany({
       include: {
         client: true,
+        assignees: true,
       },
       orderBy: {
         createdAt: "desc",

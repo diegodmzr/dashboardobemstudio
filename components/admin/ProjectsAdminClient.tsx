@@ -31,6 +31,7 @@ export type AdminProject = {
   progressConfig?: string | null;
   formSubmissionId?: string | null;
   formSubmissionTitle?: string | null;
+  assignees?: { id: string; name: string; avatar: string | null }[];
 };
 
 type Props = {
@@ -397,6 +398,24 @@ export default function ProjectsAdminClient({ projects }: Props) {
                     )}
                   </div>
                   <p className="text-sm text-[#6a6a6a] dark:text-gray-400">{p.clientName}</p>
+
+                  {/* Assignees Avatars */}
+                  {p.assignees && p.assignees.length > 0 && (
+                    <div className="flex -space-x-2 my-1">
+                      {p.assignees.map((a) => (
+                        <div key={a.id} className="relative group/avatar">
+                          <div className="w-6 h-6 rounded-full border-2 border-[#f8f6fb] dark:border-[#1a1a1a] bg-gray-200 dark:bg-gray-700 overflow-hidden flex items-center justify-center text-[9px] text-gray-500 font-bold">
+                            {a.avatar ? <img src={a.avatar} alt={a.name} className="w-full h-full object-cover" /> : a.name.charAt(0)}
+                          </div>
+                          {/* Tooltip */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/avatar:block whitespace-nowrap rounded bg-black px-2 py-1 text-xs text-white z-10 shadow-lg">
+                            {a.name}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-2 text-xs text-[#8a8a8a] dark:text-gray-500">
                     <span>{p.status}</span>
                     <span>•</span>

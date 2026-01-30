@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar, { type NavItem } from "@/components/Sidebar";
 import { Menu } from "lucide-react";
 
@@ -16,9 +16,51 @@ type Props = {
 
 export default function DashboardShell({ children, navItems, user }: Props) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [progress, setProgress] = useState(0);
+
+    // Initial Load Effect
+    useEffect(() => {
+        // Start progress
+        const start = Date.now();
+        const duration = 2000; // 2 seconds
+
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - start;
+            const p = Math.min((elapsed / duration) * 100, 100);
+            setProgress(p);
+
+            if (p >= 100) {
+                clearInterval(interval);
+                setTimeout(() => setIsLoading(false), 200); // Small delay to show full bar
+            }
+        }, 16); // ~60fps
+
+        return () => clearInterval(interval);
+    }, []);
+
+    // Loader Overlay
+    if (isLoading) {
+        return (
+            <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-[#f2eff3] dark:bg-black text-[#4a4a4a] dark:text-gray-100">
+                <div className="flex flex-col items-center gap-6 animate-fadeIn">
+                    <div className="relative h-16 w-16">
+                        <img src="/iconlogo.png" alt="Obem Studio" className="h-full w-full object-contain" />
+                    </div>
+
+                    <div className="w-48 h-1 bg-gray-300 dark:bg-gray-800 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-black dark:bg-white transition-all ease-out"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="flex h-screen overflow-hidden bg-[#f2eff3] text-[#4a4a4a] dark:bg-black dark:text-gray-100">
+        <div className="flex h-screen overflow-hidden bg-[#f2eff3] text-[#4a4a4a] dark:bg-black dark:text-gray-100 animate-fadeIn">
             {/* Mobile Sidebar Overlay */}
             {mobileMenuOpen && (
                 <div

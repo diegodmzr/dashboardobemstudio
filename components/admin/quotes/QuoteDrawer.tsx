@@ -78,6 +78,10 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
     const [validUntil, setValidUntil] = useState("");
     const [lines, setLines] = useState<QuoteLine[]>(createDefaultLines);
 
+    // NEW: Discount state
+    const [hasDiscount, setHasDiscount] = useState(false);
+    const [discount, setDiscount] = useState(0);
+
     // Dynamic Terms
     const [termSections, setTermSections] = useState<TermSection[]>([]);
 
@@ -95,8 +99,10 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
 
     // Derived Calculations
     const subtotal = lines.reduce((sum, line) => sum + line.total, 0);
-    const taxAmount = subtotal * (taxRate / 100);
-    const total = subtotal + taxAmount;
+    const discountAmount = hasDiscount ? subtotal * (discount / 100) : 0;
+    const subtotalAfterDiscount = subtotal - discountAmount;
+    const taxAmount = subtotalAfterDiscount * (taxRate / 100);
+    const total = subtotalAfterDiscount + taxAmount;
 
     // Reset or Load Data
     useEffect(() => {
@@ -134,6 +140,11 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                 setTaxRate(initialData.taxRate || 0);
                 setStatus(initialData.status);
 
+                // Load Discount
+                const savedDiscount = initialData.discount || 0;
+                setDiscount(savedDiscount);
+                setHasDiscount(savedDiscount > 0);
+
                 setPaymentType(initialData.paymentType || "ONESHOT");
                 setIsRecurring(initialData.isRecurring || false);
                 setStripeAutoSend(initialData.stripeAutoSend || false);
@@ -144,6 +155,10 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                 setIssuedAt(new Date().toISOString().split("T")[0]);
                 setValidUntil("");
                 setLines([{ id: Math.random().toString(), description: "", quantity: 1, unitPrice: 0, total: 0 }]);
+
+                // Reset Discount
+                setDiscount(0);
+                setHasDiscount(false);
 
                 // Default to Project Template for new quote
                 setTermSections(JSON.parse(JSON.stringify(TEMPLATES.PROJECT)));
@@ -196,6 +211,9 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
             notes,
             terms,
             subtotal,
+            // SAVE DISCOUNT
+            // @ts-ignore
+            discount: hasDiscount ? discount : 0,
             taxRate,
             taxAmount,
             total,
@@ -401,6 +419,40 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                             <span className="text-gray-500 dark:text-gray-400">Sous-total HT</span>
                             <span className="font-medium dark:text-white">{subtotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
                         </div>
+
+                        {/* DISCOUNT UI */}
+                        <div className="flex justify-between w-48 text-sm items-center">
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="hasDiscount"
+                                    checked={hasDiscount}
+                                    onChange={e => {
+                                        setHasDiscount(e.target.checked);
+                                        if (!e.target.checked) setDiscount(0);
+                                    }}
+                                    className="h-3 w-3 rounded border-gray-300 text-black focus:ring-black dark:bg-[#222] dark:border-[#444]"
+                                />
+                                <label htmlFor="hasDiscount" className="text-gray-500 dark:text-gray-400 select-none cursor-pointer">Réduction (%)</label>
+                            </div>
+                            {hasDiscount && (
+                                <input
+                                    type="number"
+                                    value={discount}
+                                    onChange={e => setDiscount(parseFloat(e.target.value) || 0)}
+                                    className="w-16 bg-gray-50 rounded px-2 py-1 text-right text-xs border border-gray-200 dark:bg-black dark:border-[#333] dark:text-white"
+                                    min="0"
+                                    max="100"
+                                />
+                            )}
+                        </div>
+                        {hasDiscount && discount > 0 && (
+                            <div className="flex justify-between w-48 text-sm text-green-600 dark:text-green-500">
+                                <span>- Réduction</span>
+                                <span>{discountAmount.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span>
+                            </div>
+                        )}
+
                         <div className="flex justify-between w-48 text-sm items-center">
                             <span className="text-gray-500 dark:text-gray-400">TVA (%)</span>
                             <input

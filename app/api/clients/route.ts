@@ -67,9 +67,16 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        let rawPassword = body.password;
+        if (!rawPassword && body.sendLoginEmail) {
+            // Generate a random password if not provided but email is requested
+            const { randomBytes } = await import("crypto");
+            rawPassword = randomBytes(8).toString("hex"); // 16 chars
+        }
+
         let hashedPassword = null;
-        if (body.password) {
-            hashedPassword = await hash(body.password, 12);
+        if (rawPassword) {
+            hashedPassword = await hash(rawPassword, 12);
         }
 
         const client = await prisma.user.create({
@@ -86,6 +93,48 @@ export async function POST(req: NextRequest) {
                 password: hashedPassword,
             },
         });
+
+        // Send Email if requested
+        if (body.sendLoginEmail && rawPassword) {
+            try {
+                const { sendEmail } = await import("@/lib/email");
+                await sendEmail(
+                    body.email,
+                    "Vos identifiants de connexion - Dashboard Obem Studio",
+                    `
+                    <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+                        <div style="text-align: center; margin-bottom: 24px;">
+                             <h1 style="font-size: 24px; font-weight: bold;">Bienvenue sur votre Espace Client</h1>
+                        </div>
+                        
+                        <div style="background-color: #f9f9f9; padding: 24px; border-radius: 12px; border: 1px solid #eee;">
+                            <p style="margin-bottom: 16px;">Bonjour <strong>${body.name}</strong>,</p>
+                            <p style="margin-bottom: 16px;">Votre compte client a été créé avec succès. Vous pouvez désormais accéder à votre tableau de bord pour suivre vos projets, devis et factures.</p>
+                            
+                            <p style="margin-bottom: 8px;">Voici vos identifiants de connexion :</p>
+                            <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
+                                <li style="margin-bottom: 8px;">Email : <strong>${body.email}</strong></li>
+                                <li>Mot de passe : <strong>${rawPassword}</strong></li>
+                            </ul>
+
+                            <div style="text-align: center;">
+                                <a href="${req.headers.get("origin") || "https://dashboard.obem.studio"}/login" 
+                                   style="display: inline-block; background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                                   Se connecter
+                                </a>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 24px; font-size: 12px; color: #888;">
+                            Nous vous recommandons de modifier votre mot de passe lors de votre première connexion.
+                        </p>
+                    </div>
+                    `
+                );
+            } catch (emailError) {
+                console.error("Failed to send login email:", emailError);
+                // Do not fail the request, just log
+            }
+        }
 
         const { password, ...clientWithoutPassword } = client;
 

@@ -85,6 +85,23 @@ export async function POST(req: NextRequest) {
             },
         });
 
+        // Create Notification for Client
+        try {
+            await prisma.notification.create({
+                data: {
+                    userId: body.clientId,
+                    type: "PAYMENT", // or ACTION based on your schema comments, but PAYMENT is specific
+                    title: "Nouveau Paiement",
+                    message: `Un nouveau paiement de ${parsedAmount} € a été créé.`,
+                    entityType: "Payment",
+                    entityId: payment.id,
+                }
+            });
+        } catch (notifError) {
+            console.error("Failed to create notification:", notifError);
+            // Don't fail the request
+        }
+
         console.log("✅ Payment created:", payment.id);
 
         return NextResponse.json(payment, { status: 201 });

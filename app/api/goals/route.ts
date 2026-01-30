@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { calculateGoalValue } from "@/lib/goals";
 
 // GET /api/goals
 export async function GET(req: NextRequest) {
@@ -38,17 +39,41 @@ export async function GET(req: NextRequest) {
             },
         });
 
-        // Compute additional fields for frontend
-        const enrichedGoals = goals.map((goal) => {
+        // Compute additional fields & refresh progress if needed
+        const enrichedGoals = await Promise.all(goals.map(async (goal) => {
+            let currentValue = goal.currentValue;
+
+            // If autoTracking is enabled, we could re-check the value to ensure it's up to date.
+            // This ensures user sees real-time data without manual refresh.
+            if (goal.autoTracking && goal.status === 'ACTIVE') {
+                try {
+                    const newValue = await calculateGoalValue(goal);
+                    if (newValue !== currentValue) {
+                        currentValue = newValue;
+                        // Async update DB to keep it in sync, but don't await to block response too much?
+                        // Actually better to await to ensure consistency or just fire and forget.
+                        // Let's await to be safe.
+                        await prisma.goal.update({ where: { id: goal.id }, data: { currentValue: newValue } });
+
+                        // We might not create a "GoalProgress" entry on every view to avoid spamming the history table with identical or frequent updates.
+                        // But if the value changed significantly, maybe we should?
+                        // For now, just updating the definition is enough for the "Card" view.
+                    }
+                } catch (e) {
+                    console.error("Error auto-calculating goal in GET:", e);
+                }
+            }
+
             const daysRemaining = Math.max(0, Math.ceil((new Date(goal.endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
-            const progressPercent = goal.targetValue > 0 ? (goal.currentValue / goal.targetValue) * 100 : 0;
+            const progressPercent = goal.targetValue > 0 ? (currentValue / goal.targetValue) * 100 : 0;
 
             return {
                 ...goal,
+                currentValue, // Use the potentially updated value
                 daysRemaining,
                 progressPercent,
             };
-        });
+        }));
 
         return NextResponse.json({ goals: enrichedGoals });
     } catch (error: any) {
