@@ -23,6 +23,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Abonnement introuvable" }, { status: 404 });
         }
 
+        if (!subscription.stripeSubscriptionId) {
+            return NextResponse.json({ error: "Cet abonnement n'est pas lié à Stripe" }, { status: 400 });
+        }
+
         // Cancel in Stripe
         await stripe.subscriptions.update(subscription.stripeSubscriptionId, {
             cancel_at_period_end: true, // Cancel at the end of the billing period
