@@ -1,10 +1,13 @@
 import Stripe from 'stripe';
 
+// Prevent build failures if variable is missing (it will fail at runtime if not set)
+const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_build_placeholder";
+
 if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error('STRIPE_SECRET_KEY is missing. Please set it in your .env file.');
+    console.warn("⚠️ STRIPE_SECRET_KEY is missing. Using placeholder for build.");
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2024-09-30.acacia' as any, // Use latest stable version or '2023-10-16'
+export const stripe = new Stripe(stripeKey, {
+    apiVersion: '2024-09-30.acacia' as any,
     typescript: true,
 });
