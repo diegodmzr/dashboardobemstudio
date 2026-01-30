@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
+  console.log("DEBUG: DATABASE_URL =", process.env.DATABASE_URL);
   const formData = await request.formData();
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();

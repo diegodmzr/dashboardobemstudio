@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
     try {
+        console.log("DEBUG AUTH: DATABASE_URL =", process.env.DATABASE_URL);
         const { email, password } = await req.json();
 
         const user = await prisma.user.findUnique({
