@@ -22,14 +22,14 @@ export default function SettingsMain({ user }: { user: User }) {
     return (
         <div className="space-y-6 w-full">
             {/* Tabs Header */}
-            <div className="border-b border-[#ece7ef] dark:border-[#333] overflow-x-auto">
+            <div className="border-b border-[#ece7ef] dark:border-[#333] overflow-x-auto overflow-y-hidden scrollbar-hide">
                 <nav className="-mb-px flex space-x-6 md:space-x-8" aria-label="Tabs">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={cn(
-                                "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200",
+                                "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors duration-200 outline-none",
                                 activeTab === tab.id
                                     ? "border-[#2f2f2f] text-[#2f2f2f] dark:border-white dark:text-white"
                                     : "border-transparent text-[#8a8a8a] hover:border-gray-300 hover:text-[#2f2f2f] dark:text-gray-400 dark:hover:text-white"

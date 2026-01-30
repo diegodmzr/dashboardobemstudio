@@ -26,12 +26,25 @@ export async function POST(request: Request) {
   const isValid = await bcrypt.compare(password, user.password);
 
   if (!isValid) {
-    return NextResponse.redirect(new URL("/login?error=invalid_credentials", request.url));
+    return NextResponse.json({ error: "Identifiants invalides" }, { status: 401 });
+  }
+
+  // Check if 2FA is enabled using Raw SQL to bypass stale Prisma Client on Windows
+  const dbUsers = await (prisma as any).$queryRawUnsafe(
+    `SELECT twoFactorEnabled FROM User WHERE id = ? LIMIT 1`,
+    user.id
+  );
+
+  // Note: on SQLite/MariaDB, boolean might be returned as 1/0 or true/false
+  if (dbUsers[0]?.twoFactorEnabled && (dbUsers[0].twoFactorEnabled === true || dbUsers[0].twoFactorEnabled === 1)) {
+    return NextResponse.json({
+      requires2FA: true,
+      userId: user.id
+    });
   }
 
   const redirectPath = "/dashboard";
-
-  const res = NextResponse.redirect(new URL(redirectPath, request.url));
+  const res = NextResponse.json({ success: true, redirect: redirectPath });
   res.cookies.set({
     name: "userId",
     value: user.id,

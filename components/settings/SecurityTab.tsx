@@ -2,10 +2,30 @@
 
 import { User } from "@prisma/client";
 import { useState } from "react";
+import TwoFactorSetupModal from "./TwoFactorSetupModal";
 
 export default function SecurityTab({ user }: { user: User }) {
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoading2FA, setIsLoading2FA] = useState(false);
+    const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+    const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState((user as any).twoFactorEnabled);
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+    const handleDisable2FA = async () => {
+        if (!confirm("Voulez-vous vraiment désactiver la double authentification ?")) return;
+
+        setIsLoading2FA(true);
+        try {
+            const res = await fetch("/api/settings/2fa/disable", { method: "POST" });
+            if (res.ok) {
+                setIsTwoFactorEnabled(false);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading2FA(false);
+        }
+    };
 
     const [formData, setFormData] = useState({
         currentPassword: "",
@@ -119,6 +139,48 @@ export default function SecurityTab({ user }: { user: User }) {
                     </button>
                 </div>
             </form>
+
+            <div className="mt-12 pt-10 border-t border-[#ece7ef] dark:border-[#333]">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <h3 className="text-base font-bold leading-7 text-[#2f2f2f] dark:text-white">Authentification à deux facteurs (2FA)</h3>
+                        <p className="mt-1 text-sm leading-6 text-[#8a8a8a] dark:text-gray-400">
+                            Ajoutez une couche de sécurité supplémentaire à votre compte en configurant un code à usage unique.
+                        </p>
+                    </div>
+                    <div>
+                        {isTwoFactorEnabled ? (
+                            <button
+                                onClick={handleDisable2FA}
+                                disabled={isLoading2FA}
+                                className="rounded-full border border-red-200 bg-white px-6 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50 disabled:opacity-50 dark:bg-transparent dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/30"
+                            >
+                                {isLoading2FA ? "Désactivation..." : "Désactiver la 2FA"}
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => setIsSetupModalOpen(true)}
+                                className="rounded-full bg-black px-6 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                            >
+                                Activer la 2FA
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {isTwoFactorEnabled && (
+                    <div className="mt-4 flex items-center gap-2 text-sm text-green-600 bg-green-50 dark:bg-green-900/10 dark:text-green-400 p-3 rounded-xl border border-green-100 dark:border-green-900/30 w-fit">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        La double authentification est activée sur votre compte.
+                    </div>
+                )}
+            </div>
+
+            <TwoFactorSetupModal
+                isOpen={isSetupModalOpen}
+                onClose={() => setIsSetupModalOpen(false)}
+                onSuccess={() => setIsTwoFactorEnabled(true)}
+            />
         </div>
     );
 }

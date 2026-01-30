@@ -1,0 +1,49 @@
+import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
+import { getCurrentUser } from "@/lib/auth";
+const { authenticator } = require("otplib");
+
+export async function POST(request: Request) {
+    const prisma = new PrismaClient();
+    try {
+        const user = await getCurrentUser();
+        if (!user) {
+            return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        }
+
+        const { token } = await request.json();
+
+        // Use Raw SQL to find the user's 2FA secret
+        const users = await (prisma as any).$queryRawUnsafe(
+            `SELECT twoFactorSecret FROM User WHERE id = ? LIMIT 1`,
+            user.id
+        );
+        const dbUser = users[0];
+
+        if (!dbUser?.twoFactorSecret) {
+            return NextResponse.json({ error: "Aucune configuration 2FA en cours" }, { status: 400 });
+        }
+
+        const isValid = authenticator.verify({
+            token,
+            secret: dbUser.twoFactorSecret
+        });
+
+        if (!isValid) {
+            return NextResponse.json({ error: "Code invalide" }, { status: 400 });
+        }
+
+        // Enable 2FA using Raw SQL
+        await (prisma as any).$executeRawUnsafe(
+            `UPDATE User SET twoFactorEnabled = 1 WHERE id = ?`,
+            user.id
+        );
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("2FA Verify Error:", error);
+        return NextResponse.json({ error: "Erreur lors de la vérification du code" }, { status: 500 });
+    } finally {
+        await prisma.$disconnect();
+    }
+}

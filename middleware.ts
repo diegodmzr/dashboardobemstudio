@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/api/login", "/api/logout", "/forbidden", "/", "/f", "/api/forms", "/forgot-password", "/reset-password", "/api/forgot-password", "/api/reset-password"];
+const PUBLIC_PATHS = ["/login", "/api/login", "/api/logout", "/forbidden", "/", "/f", "/api/forms", "/forgot-password", "/reset-password", "/api/forgot-password", "/api/reset-password", "/api/login/2fa"];
 
 // Routes accessible uniquement aux ADMIN
 const ADMIN_ONLY_ROUTES = [

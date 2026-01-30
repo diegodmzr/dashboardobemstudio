@@ -4,8 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import NotificationBadge from "./admin/notifications/NotificationBadge";
 import { ChevronLeft, ChevronRight, PanelLeftClose, PanelLeftOpen, LogOut } from "lucide-react";
+import { AnimatedSettings } from "./ui/AnimatedIcons";
 
 export type NavItem = {
   label: string;
@@ -19,24 +21,7 @@ const utilityItems: NavItem[] = [
   {
     label: "Parametres",
     href: "/dashboard/parametres",
-    icon: (
-      <svg
-        aria-hidden
-        className="h-5 w-5 stroke-current"
-        fill="none"
-        strokeWidth="1.6"
-        viewBox="0 0 24 24"
-      >
-        <circle cx="12" cy="12" r="2.5" />
-        <path
-          d="m6 9.5-.9-1.6 1.6-.9M18 9.5l.9-1.6-1.6-.9M6 14.5l-.9 1.6 1.6.9M18 14.5l.9 1.6-1.6.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path d="M12 5.5V4" strokeLinecap="round" />
-        <path d="M12 20v-1.5" strokeLinecap="round" />
-      </svg>
-    ),
+    icon: <AnimatedSettings />,
   },
 ];
 
@@ -58,14 +43,16 @@ const NavLink = ({ item, isCollapsed, onMobileClose }: { item: NavItem, isCollap
       <div className="space-y-1">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] font-medium transition-colors ${isActive
+          className={`group flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] font-medium transition-colors ${isActive
             ? "bg-white text-[#2f2f2f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-[#222] dark:text-white dark:shadow-none"
             : "text-[#8a8a8a] hover:bg-white/60 hover:text-[#4a4a4a] dark:text-gray-400 dark:hover:bg-[#222] dark:hover:text-white"
             } ${isCollapsed ? "justify-center px-2" : ""}`}
           title={isCollapsed ? item.label : undefined}
         >
           <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center w-full" : ""}`}>
-            <span className="text-[#6d6d6d] dark:text-current">{item.icon}</span>
+            <motion.div initial="initial" whileHover="hover" className="text-[#6d6d6d] dark:text-current">
+              {item.icon}
+            </motion.div>
             {!isCollapsed && <span>{item.label}</span>}
           </div>
           {!isCollapsed && (
@@ -106,13 +93,15 @@ const NavLink = ({ item, isCollapsed, onMobileClose }: { item: NavItem, isCollap
     <Link
       href={item.href}
       onClick={onMobileClose}
-      className={`flex items-center gap-3 rounded-xl px-2.5 py-2 text-[14px] font-medium transition-colors ${isActive
+      className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[14px] font-medium transition-colors ${isActive
         ? "bg-white text-[#2f2f2f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-[#222] dark:text-white dark:shadow-none"
         : "text-[#8a8a8a] hover:bg-white/60 hover:text-[#4a4a4a] dark:text-gray-400 dark:hover:bg-[#222] dark:hover:text-white"
         } ${isCollapsed ? "justify-center px-2" : ""}`}
       title={isCollapsed ? item.label : undefined}
     >
-      <span className="text-[#6d6d6d] dark:text-current">{item.icon}</span>
+      <motion.div initial="initial" whileHover="hover" className="text-[#6d6d6d] dark:text-current">
+        {item.icon}
+      </motion.div>
       {!isCollapsed && <span>{item.label}</span>}
     </Link>
   );
@@ -212,10 +201,12 @@ export default function Sidebar({
           {!isCollapsed && (
             <button
               onClick={handleLogout}
-              className="p-1 text-[#8a8a8a] hover:text-red-500 transition-colors dark:text-gray-500 dark:hover:text-red-400"
+              className="group p-1 text-[#8a8a8a] hover:text-red-500 transition-colors dark:text-gray-500 dark:hover:text-red-400"
               title="Se déconnecter"
             >
-              <LogOut className="h-5 w-5" strokeWidth={1.6} />
+              <motion.div whileHover={{ x: 3, opacity: 0.8 }} transition={{ duration: 0.2 }}>
+                <LogOut className="h-5 w-5" strokeWidth={1.6} />
+              </motion.div>
             </button>
           )}
         </div>
