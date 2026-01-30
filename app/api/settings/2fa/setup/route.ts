@@ -16,11 +16,8 @@ export async function POST() {
         const qrCodeUrl = await qrcode.toDataURL(otpauth);
 
         // Save the secret temporarily using Raw SQL to bypass stale Prisma Client on Windows
-        await (prisma as any).$executeRawUnsafe(
-            `UPDATE User SET twoFactorSecret = ? WHERE id = ?`,
-            secret,
-            user.id
-        );
+        // Using tagged template literal for cross-database compatibility (SQL placeholders)
+        await prisma.$executeRaw`UPDATE "User" SET "twoFactorSecret" = ${secret} WHERE id = ${user.id}`;
 
         return NextResponse.json({ secret, qrCodeUrl });
     } catch (error) {

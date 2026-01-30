@@ -10,10 +10,7 @@ export async function POST() {
         }
 
         // Disable 2FA using Raw SQL
-        await (prisma as any).$executeRawUnsafe(
-            `UPDATE User SET twoFactorEnabled = 0, twoFactorSecret = NULL WHERE id = ?`,
-            user.id
-        );
+        await prisma.$executeRaw`UPDATE "User" SET "twoFactorEnabled" = 0, "twoFactorSecret" = NULL WHERE id = ${user.id}`;
 
         return NextResponse.json({ success: true });
     } catch (error) {

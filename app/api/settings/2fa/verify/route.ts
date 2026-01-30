@@ -13,10 +13,7 @@ export async function POST(request: Request) {
         const { token } = await request.json();
 
         // Use Raw SQL to find the user's 2FA secret
-        const users = await (prisma as any).$queryRawUnsafe(
-            `SELECT twoFactorSecret FROM User WHERE id = ? LIMIT 1`,
-            user.id
-        );
+        const users: any[] = await prisma.$queryRaw`SELECT "twoFactorSecret" FROM "User" WHERE id = ${user.id} LIMIT 1`;
         const dbUser = users[0];
 
         if (!dbUser?.twoFactorSecret) {
@@ -33,10 +30,7 @@ export async function POST(request: Request) {
         }
 
         // Enable 2FA using Raw SQL
-        await (prisma as any).$executeRawUnsafe(
-            `UPDATE User SET twoFactorEnabled = 1 WHERE id = ?`,
-            user.id
-        );
+        await prisma.$executeRaw`UPDATE "User" SET "twoFactorEnabled" = 1 WHERE id = ${user.id}`;
 
         return NextResponse.json({ success: true });
     } catch (error) {

@@ -11,10 +11,7 @@ export async function POST(request: Request) {
         }
 
         // Use Raw SQL to find the user and their 2FA secret
-        const users = await (prisma as any).$queryRawUnsafe(
-            `SELECT * FROM User WHERE id = ? LIMIT 1`,
-            userId
-        );
+        const users: any[] = await prisma.$queryRaw`SELECT * FROM "User" WHERE id = ${userId} LIMIT 1`;
         const user = users[0];
 
         if (!user || !user.twoFactorSecret) {

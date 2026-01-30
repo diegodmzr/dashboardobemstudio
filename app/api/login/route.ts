@@ -30,10 +30,7 @@ export async function POST(request: Request) {
   }
 
   // Check if 2FA is enabled using Raw SQL to bypass stale Prisma Client on Windows
-  const dbUsers = await (prisma as any).$queryRawUnsafe(
-    `SELECT twoFactorEnabled FROM User WHERE id = ? LIMIT 1`,
-    user.id
-  );
+  const dbUsers: any[] = await prisma.$queryRaw`SELECT "twoFactorEnabled" FROM "User" WHERE id = ${user.id} LIMIT 1`;
 
   // Note: on SQLite/MariaDB, boolean might be returned as 1/0 or true/false
   if (dbUsers[0]?.twoFactorEnabled && (dbUsers[0].twoFactorEnabled === true || dbUsers[0].twoFactorEnabled === 1)) {
