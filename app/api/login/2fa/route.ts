@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 const { authenticator } = require("otplib");
 
 export async function POST(request: Request) {
-    const prisma = new PrismaClient();
     try {
         const { userId, token } = await request.json();
 
@@ -56,7 +55,5 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error("Login 2FA Error:", error);
         return NextResponse.json({ error: "Erreur lors de la vérification 2FA" }, { status: 500 });
-    } finally {
-        await prisma.$disconnect();
     }
 }

@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function POST() {
-    const prisma = new PrismaClient();
     try {
         const user = await getCurrentUser();
         if (!user) {
@@ -20,7 +19,5 @@ export async function POST() {
     } catch (error) {
         console.error("2FA Disable Error:", error);
         return NextResponse.json({ error: "Erreur lors de la désactivation de la 2FA" }, { status: 500 });
-    } finally {
-        await prisma.$disconnect();
     }
 }
