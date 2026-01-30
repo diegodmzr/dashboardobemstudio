@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "prisma:generate": "prisma generate",
+    "prisma:generate:prod": "dotenv -e .env.production -- prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:migrate:prod": "dotenv -e .env.production -- prisma migrate deploy",
     "prisma:seed": "prisma db seed"
   },
   "prisma": {
@@ -44,6 +46,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-signature-canvas": "^1.0.7",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.4",
     "prisma": "5.20.0",
