@@ -34,10 +34,10 @@ export default function ProjectRequestSuccess() {
 
                 <div className="space-y-3">
                     <Link
-                        href="/"
+                        href="/dashboard"
                         className="block rounded-xl bg-black px-8 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                     >
-                        Retour à l'accueil
+                        Retour au tableau de bord
                     </Link>
                 </div>
             </div>

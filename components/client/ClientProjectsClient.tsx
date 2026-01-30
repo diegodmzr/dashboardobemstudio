@@ -139,7 +139,7 @@ export default function ClientProjectsClient({ projects, userName, userEmail }: 
                         </p>
                         {!searchTerm && !statusFilter && (
                             <Link
-                                href="/dashboard/projets"
+                                href="/dashboard/projets/nouveau"
                                 className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                             >
                                 Faire une demande

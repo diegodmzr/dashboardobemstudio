@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ProjectRequestStep1 from "@/components/client/ProjectRequestStep1";
 import ProjectRequestStepPages from "@/components/client/ProjectRequestStepPages";
 import ProjectRequestStepFeatures from "@/components/client/ProjectRequestStepFeatures";
@@ -10,15 +10,19 @@ import ProjectRequestStep4 from "@/components/client/ProjectRequestStep4";
 import ProjectRequestStep5 from "@/components/client/ProjectRequestStep5";
 import ProjectRequestSuccess from "@/components/client/ProjectRequestSuccess";
 import ProjectRequestStepContact from "@/components/client/ProjectRequestStepContact";
+import ProjectRequestStepVision from "@/components/client/ProjectRequestStepVision";
+import ProjectRequestStepEcommerce from "@/components/client/ProjectRequestStepEcommerce";
 
 import { Check } from "lucide-react";
 
 export type PublicProjectRequestFormData = {
-    // Contact Info (New)
+    // Contact Info
     contactName: string;
     contactEmail: string;
     contactCompany?: string;
     contactPhone?: string;
+    contactSiret?: string;
+    contactAddress?: string;
 
     // Project Info
     projectName: string;
@@ -26,6 +30,16 @@ export type PublicProjectRequestFormData = {
     websiteType: "vitrine" | "ecommerce" | "landing" | "";
     pages: string[];
     features: string[];
+
+    // E-commerce Info
+    productType?: string;
+    productCount?: string;
+
+    // Vision & Identity
+    highlights: string[];
+    competitors?: string;
+    targetAudience?: string;
+
     colors: string;
     designStyles: string[];
     referenceUrls: string[];
@@ -56,11 +70,18 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
         contactEmail: currentUser?.email || "",
         contactCompany: "",
         contactPhone: "",
+        contactSiret: "",
+        contactAddress: "",
         projectName: "",
         description: "",
         websiteType: "",
         pages: [],
         features: [],
+        productType: "",
+        productCount: "",
+        highlights: [],
+        competitors: "",
+        targetAudience: "",
         colors: "",
         designStyles: [],
         referenceUrls: [""],
@@ -68,15 +89,23 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
         typographyOther: "",
     });
 
-    // Step 1: Contact
-    // Step 2: Project Basics (Step1)
-    // Step 3: Pages (StepPages)
-    // Step 4: Features (StepFeatures)
-    // Step 5: Design (Step2)
-    // Step 6: References (Step3)
-    // Step 7: Typography (Step4)
-    // Step 8: Recap (Step5)
-    const totalSteps = 8;
+    const steps = useMemo(() => {
+        const baseSteps = [
+            { id: "contact", title: "Contact", condition: !currentUser },
+            { id: "basics", title: "Projet" },
+            { id: "ecommerce", title: "E-commerce", condition: formData.websiteType === "ecommerce" },
+            { id: "pages", title: "Pages" },
+            { id: "features", title: "Fonctions" },
+            { id: "vision", title: "Vision" },
+            { id: "design", title: "Design" },
+            { id: "references", title: "Références" },
+            { id: "typography", title: "Typo" },
+            { id: "recap", title: "Récap" },
+        ];
+        return baseSteps.filter(step => step.condition !== false);
+    }, [currentUser, formData.websiteType]);
+
+    const totalSteps = steps.length;
 
     const updateFormData = (data: Partial<PublicProjectRequestFormData>) => {
         setFormData((prev) => ({ ...prev, ...data }));
@@ -129,9 +158,36 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
         return <ProjectRequestSuccess />;
     }
 
+    const renderStep = () => {
+        const stepId = steps[currentStep - 1].id;
+        switch (stepId) {
+            case "contact":
+                return <ProjectRequestStepContact formData={formData} updateFormData={updateFormData} nextStep={nextStep} />;
+            case "basics":
+                return <ProjectRequestStep1 formData={formData as any} updateFormData={updateFormData} nextStep={nextStep} />;
+            case "ecommerce":
+                return <ProjectRequestStepEcommerce formData={formData as any} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "pages":
+                return <ProjectRequestStepPages formData={formData as any} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "features":
+                return <ProjectRequestStepFeatures formData={formData as any} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "vision":
+                return <ProjectRequestStepVision formData={formData as any} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "design":
+                return <ProjectRequestStep2 formData={formData as any} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "references":
+                return <ProjectRequestStep3 formData={formData as any} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "typography":
+                return <ProjectRequestStep4 formData={formData as any} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "recap":
+                return <ProjectRequestStep5 formData={formData as any} prevStep={prevStep} goToStep={goToStep} handleSubmit={handleSubmit} isSubmitting={isSubmitting} />;
+            default:
+                return null;
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#f8f6fb] font-sans">
-            {/* Public Header */}
             <header className="sticky top-0 z-30 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
                 <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center gap-3">
@@ -146,10 +202,7 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
                 </div>
             </header>
 
-
-
             <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-                {/* Stepper Visual */}
                 <div className="mb-10">
                     <div className="flex items-center justify-center overflow-x-auto p-6 scrollbar-hide">
                         <div className="flex items-center space-x-1">
@@ -184,71 +237,8 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
                     </div>
                 </div>
 
-                {/* Form Container */}
                 <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-xl shadow-black/5 sm:p-10">
-                    {currentStep === 1 && (
-                        <ProjectRequestStepContact
-                            formData={formData}
-                            updateFormData={updateFormData}
-                            nextStep={nextStep}
-                        />
-                    )}
-                    {currentStep === 2 && (
-                        <ProjectRequestStep1
-                            formData={formData}
-                            updateFormData={updateFormData}
-                            nextStep={nextStep}
-                        />
-                    )}
-                    {currentStep === 3 && (
-                        <ProjectRequestStepPages
-                            formData={formData}
-                            updateFormData={updateFormData}
-                            nextStep={nextStep}
-                            prevStep={prevStep}
-                        />
-                    )}
-                    {currentStep === 4 && (
-                        <ProjectRequestStepFeatures
-                            formData={formData}
-                            updateFormData={updateFormData}
-                            nextStep={nextStep}
-                            prevStep={prevStep}
-                        />
-                    )}
-                    {currentStep === 5 && (
-                        <ProjectRequestStep2
-                            formData={formData}
-                            updateFormData={updateFormData}
-                            nextStep={nextStep}
-                            prevStep={prevStep}
-                        />
-                    )}
-                    {currentStep === 6 && (
-                        <ProjectRequestStep3
-                            formData={formData}
-                            updateFormData={updateFormData}
-                            nextStep={nextStep}
-                            prevStep={prevStep}
-                        />
-                    )}
-                    {currentStep === 7 && (
-                        <ProjectRequestStep4
-                            formData={formData}
-                            updateFormData={updateFormData}
-                            nextStep={nextStep}
-                            prevStep={prevStep}
-                        />
-                    )}
-                    {currentStep === 8 && (
-                        <ProjectRequestStep5
-                            formData={formData}
-                            prevStep={prevStep}
-                            goToStep={goToStep}
-                            handleSubmit={handleSubmit}
-                            isSubmitting={isSubmitting}
-                        />
-                    )}
+                    {renderStep()}
                 </div>
             </main>
         </div>

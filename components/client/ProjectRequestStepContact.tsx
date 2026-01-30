@@ -1,5 +1,7 @@
 "use client";
 
+import { Check } from "lucide-react";
+
 type Props = {
     formData: any;
     updateFormData: (data: any) => void;
@@ -56,7 +58,7 @@ export default function ProjectRequestStepContact({ formData, updateFormData, ne
                 <div className="grid gap-5 md:grid-cols-2">
                     <div>
                         <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1.5">
-                            Entreprise (Optionnel)
+                            Nom de l'entreprise
                         </label>
                         <input
                             type="text"
@@ -68,16 +70,42 @@ export default function ProjectRequestStepContact({ formData, updateFormData, ne
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1.5">
-                            Téléphone (Optionnel)
+                            Numéro SIRET
                         </label>
                         <input
-                            type="tel"
-                            value={formData.contactPhone || ""}
-                            onChange={(e) => updateFormData({ contactPhone: e.target.value })}
+                            type="text"
+                            value={formData.contactSiret || ""}
+                            onChange={(e) => updateFormData({ contactSiret: e.target.value })}
                             className="block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 outline-none focus:border-black focus:ring-1 focus:ring-black dark:bg-[#222] dark:border-[#333] dark:text-white"
-                            placeholder="+33 6 12 34 56 78"
+                            placeholder="123 456 789 00012"
                         />
                     </div>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1.5">
+                        Adresse de l'entreprise
+                    </label>
+                    <input
+                        type="text"
+                        value={formData.contactAddress || ""}
+                        onChange={(e) => updateFormData({ contactAddress: e.target.value })}
+                        className="block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 outline-none focus:border-black focus:ring-1 focus:ring-black dark:bg-[#222] dark:border-[#333] dark:text-white"
+                        placeholder="123 Rue de la Paix, 75000 Paris"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1.5">
+                        Téléphone
+                    </label>
+                    <input
+                        type="tel"
+                        value={formData.contactPhone || ""}
+                        onChange={(e) => updateFormData({ contactPhone: e.target.value })}
+                        className="block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 outline-none focus:border-black focus:ring-1 focus:ring-black dark:bg-[#222] dark:border-[#333] dark:text-white"
+                        placeholder="+33 6 12 34 56 78"
+                    />
                 </div>
 
                 <div className="flex justify-end pt-4">

@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   });
 
   if (!user || !user.password) {
-    return NextResponse.redirect(new URL("/login?error=invalid_credentials", request.url));
+    return NextResponse.json({ error: "Identifiants invalides" }, { status: 401 });
   }
 
   const isValid = await bcrypt.compare(password, user.password);
@@ -42,6 +42,84 @@ export async function POST(request: Request) {
 
   const redirectPath = "/dashboard";
   const res = NextResponse.json({ success: true, redirect: redirectPath });
+
+  // Use raw query for lastLoginAt to avoid prisma client issues on Windows
+  const userData: any[] = await prisma.$queryRaw`SELECT "lastLoginAt" FROM "User" WHERE id = ${user.id} LIMIT 1`;
+  const isFirstLogin = !userData[0]?.lastLoginAt;
+
+  if (isFirstLogin && user.role === "CLIENT") {
+    try {
+      // Send Welcome Email
+      const { sendEmail } = await import("@/lib/email");
+      const welcomeHtml = `
+              <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+                  <div style="text-align: center; margin-bottom: 30px;">
+                      <img src="https://obemstudio.com/logonoir.png" alt="Obem Studio" style="width: 150px;">
+                  </div>
+                  <h1 style="color: #000; font-size: 24px; margin-bottom: 20px;">Bienvenue chez Obem Studio, ${user.name} !</h1>
+                  <p style="font-size: 16px; line-height: 1.6;">Nous sommes ravis de vous compter parmi nos clients. Voici un tour d'horizon rapide de votre nouvel espace :</p>
+                  
+                  <div style="background-color: #f8f6fb; border-radius: 12px; padding: 20px; margin: 25px 0;">
+                      <ul style="list-style: none; padding: 0;">
+                          <li style="margin-bottom: 15px;">
+                              <strong>🚀 Tableau de bord</strong><br>
+                              Une vue d'ensemble de vos projets et de vos dernières activités.
+                          </li>
+                          <li style="margin-bottom: 15px;">
+                              <strong>📂 Mes Projets</strong><br>
+                              Suivez l'avancement de vos projets en temps réel, étape par étape.
+                          </li>
+                          <li style="margin-bottom: 15px;">
+                              <strong>📄 Devis & Factures</strong><br>
+                              Consultez vos documents et effectuez vos règlements en toute sécurité.
+                          </li>
+                          <li style="margin-bottom: 15px;">
+                              <strong>💬 Discussions</strong><br>
+                              L'endroit idéal pour échanger avec notre équipe sur vos projets.
+                          </li>
+                      </ul>
+                  </div>
+
+                  <p style="font-size: 16px; line-height: 1.6;">Si vous avez la moindre question, n'hésitez pas à nous contacter directement via la section Support de votre tableau de bord.</p>
+                  
+                  <div style="text-align: center; margin-top: 40px;">
+                      <a href="${request.url.split('/api/')[0]}/dashboard" style="background-color: #000; color: #fff; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold;">Accéder à mon espace</a>
+                  </div>
+              </div>
+          `;
+      await sendEmail(user.email, "Bienvenue chez Obem Studio 🚀", welcomeHtml);
+
+      // Create Welcome Conversation
+      const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+      const adminId = admin?.id || "admin-system";
+
+      await prisma.conversation.create({
+        data: {
+          subject: "Bienvenue sur votre espace client !",
+          category: "AUTRE",
+          participants: {
+            create: [
+              { userId: user.id, role: "OWNER" },
+              ...(admin ? [{ userId: admin.id, role: "ADMIN" }] : [])
+            ]
+          },
+          messages: {
+            create: {
+              senderId: adminId,
+              content: `Bonjour ${user.name} !\n\nBienvenue sur votre espace client Obem Studio. Nous avons créé cet espace pour faciliter nos échanges et vous permettre de suivre vos projets en toute transparence.\n\nN'hésitez pas à utiliser cette discussion si vous avez des questions sur l'utilisation du dashboard ou sur vos projets en cours.\n\nÀ très vite !\n\nL'équipe Obem Studio`,
+              isInternal: false
+            }
+          }
+        }
+      });
+    } catch (err) {
+      console.error("Welcome flow error:", err);
+    }
+  }
+
+  // Update lastLoginAt
+  await prisma.$executeRaw`UPDATE "User" SET "lastLoginAt" = ${new Date()} WHERE id = ${user.id}`;
+
   res.cookies.set({
     name: "userId",
     value: user.id,

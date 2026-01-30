@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
     projectName: string;
@@ -15,6 +15,9 @@ export default function DeleteConfirmModal({
     onCancel,
     loading = false,
 }: Props) {
+    const [confirmName, setConfirmName] = useState("");
+    const isConfirmed = confirmName.trim() === projectName.trim();
+
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") onCancel();
@@ -32,9 +35,9 @@ export default function DeleteConfirmModal({
                 className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl animate-scaleIn dark:bg-[#111] dark:ring-1 dark:ring-[#333] dark:shadow-none"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-[#222] dark:to-[#333]">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/20">
                     <svg
-                        className="h-8 w-8 text-gray-700 dark:text-gray-300"
+                        className="h-8 w-8 text-rose-600 dark:text-rose-500"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -43,34 +46,43 @@ export default function DeleteConfirmModal({
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                         />
                     </svg>
                 </div>
 
                 <h3 className="mb-2 text-xl font-bold text-[#2f2f2f] dark:text-white">
-                    Supprimer le projet ?
+                    Suppression définitive
                 </h3>
-                <p className="mb-6 text-sm text-[#6a6a6a] dark:text-gray-400">
-                    Êtes-vous sûr de vouloir supprimer le projet{" "}
-                    <span className="font-semibold text-[#2f2f2f] dark:text-white">{projectName}</span> ?
-                    Cette action est irréversible.
+                <p className="mb-6 text-sm text-[#6a6a6a] dark:text-gray-400 leading-relaxed">
+                    Cette action est irréversible. Pour confirmer la suppression de{" "}
+                    <span className="font-bold text-rose-600 dark:text-rose-400">"{projectName}"</span>,
+                    veuillez saisir son nom ci-dessous :
                 </p>
+
+                <input
+                    type="text"
+                    value={confirmName}
+                    onChange={(e) => setConfirmName(e.target.value)}
+                    placeholder="Saisissez le nom exact ici..."
+                    className="mb-8 w-full rounded-2xl border-2 border-gray-100 bg-[#f8f6fb] px-5 py-3.5 text-sm outline-none focus:border-rose-500/50 dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white dark:focus:border-rose-500/30"
+                />
 
                 <div className="flex items-center gap-3">
                     <button
                         onClick={onCancel}
                         disabled={loading}
-                        className="flex-1 rounded-full border-2 border-gray-300 px-6 py-3 text-sm font-semibold text-[#4a4a4a] transition hover:bg-gray-50 disabled:opacity-50 dark:border-[#444] dark:text-gray-300 dark:hover:bg-[#222]"
+                        className="flex-1 rounded-full border-2 border-gray-100 px-6 py-3.5 text-sm font-bold text-[#4a4a4a] transition hover:bg-gray-50 disabled:opacity-50 dark:border-[#333] dark:text-gray-400 dark:hover:bg-[#222]"
                     >
                         Annuler
                     </button>
                     <button
                         onClick={onConfirm}
-                        disabled={loading}
-                        className="flex-1 rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black"
+                        disabled={loading || !isConfirmed}
+                        className={`flex-1 rounded-full px-6 py-3.5 text-sm font-bold text-white shadow-lg transition disabled:opacity-30 disabled:cursor-not-allowed ${isConfirmed ? "bg-rose-600 hover:bg-rose-700 shadow-rose-200 dark:shadow-none" : "bg-gray-400"
+                            }`}
                     >
-                        {loading ? "Suppression..." : "Supprimer"}
+                        {loading ? "Suppression..." : "Confirmer"}
                     </button>
                 </div>
             </div>

@@ -15,7 +15,12 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { projectName, description, websiteType, pages, features, colors, designStyles, referenceUrls, typography, typographyOther } = body;
+        const {
+            projectName, description, websiteType, pages, features,
+            colors, designStyles, referenceUrls, typography, typographyOther,
+            productType, productCount, highlights, competitors, targetAudience,
+            contactSiret, contactAddress
+        } = body;
 
         // Validation
         if (!projectName || projectName.trim().length < 3) {
@@ -30,6 +35,13 @@ export async function POST(req: NextRequest) {
                 websiteType,
                 pages,
                 features,
+                productType,
+                productCount,
+                highlights,
+                competitors,
+                targetAudience,
+                contactSiret,
+                contactAddress,
                 colors,
                 designStyles,
                 referenceUrls: referenceUrls.filter((url: string) => url.trim()),
@@ -83,6 +95,36 @@ export async function POST(req: NextRequest) {
             },
         });
 
+        // Find or create the form definition
+        // @ts-ignore
+        let form = await prisma.form.findUnique({
+            where: { slug: "demande-de-projet" }
+        });
+
+        if (!form) {
+            // @ts-ignore
+            form = await prisma.form.create({
+                data: {
+                    title: "Demande de Projet",
+                    slug: "demande-de-projet",
+                    description: "Formulaire de demande de projet (Client)",
+                    fields: "[]",
+                    isActive: true
+                }
+            });
+        }
+
+        // Create FormSubmission linked to user
+        // @ts-ignore
+        await prisma.formSubmission.create({
+            data: {
+                formId: form.id,
+                userId: user.id,
+                content: JSON.stringify(body),
+                status: "NEW"
+            }
+        });
+
         return NextResponse.json({ success: true, conversationId: conversation.id });
     } catch (error) {
         console.error("Error creating project request:", error);
@@ -91,7 +133,12 @@ export async function POST(req: NextRequest) {
 }
 
 function formatBriefMessage(data: any): string {
-    const { projectName, description, websiteType, pages, features, colors, designStyles, referenceUrls, typography, typographyOther } = data;
+    const {
+        projectName, description, websiteType, pages, features,
+        colors, designStyles, referenceUrls, typography, typographyOther,
+        productType, productCount, highlights, competitors, targetAudience,
+        contactSiret, contactAddress
+    } = data;
 
     let message = `### 📋 Nouvelle demande : ${projectName}\n\n`;
 
@@ -104,8 +151,23 @@ function formatBriefMessage(data: any): string {
     };
     message += `- ${typeLabels[websiteType] || websiteType}\n\n`;
 
+    // Guest Info
+    if (contactSiret || contactAddress) {
+        message += `### 👤 Infos Contact\n`;
+        if (contactSiret) message += `- **SIRET :** ${contactSiret}\n`;
+        if (contactAddress) message += `- **Adresse :** ${contactAddress}\n`;
+        message += `\n`;
+    }
+
     if (description) {
         message += `**Description :**\n${description}\n\n`;
+    }
+
+    // E-commerce specific
+    if (websiteType === "ecommerce") {
+        message += `### 🛒 Détails Boutique\n`;
+        message += `- **Produit :** ${productType}\n`;
+        message += `- **Quantité :** ${productCount}\n\n`;
     }
 
     // Pages
@@ -119,6 +181,20 @@ function formatBriefMessage(data: any): string {
         message += `**Fonctionnalités (${features.length}) :**\n`;
         message += features.map((f: string) => `- ${f}`).join("\n") + "\n\n";
     }
+
+    // Vision & Identity
+    message += `### 👁️ Vision & Identité\n`;
+    const highlightsLabel: Record<string, string> = {
+        savoir_faire: "Savoir-faire",
+        specialite: "Spécialité",
+        histoire: "Histoire",
+        valeur: "Valeur importante"
+    };
+    if (highlights && highlights.length > 0) {
+        message += `**A mettre en avant :**\n${highlights.map((h: string) => `- ${highlightsLabel[h] || h}`).join("\n")}\n\n`;
+    }
+    if (competitors) message += `**Inspirations/Concurrents :**\n${competitors}\n\n`;
+    if (targetAudience) message += `**Public cible :**\n${targetAudience}\n\n`;
 
     // Design Section
     message += `### 🎨 Préférences Design\n\n`;

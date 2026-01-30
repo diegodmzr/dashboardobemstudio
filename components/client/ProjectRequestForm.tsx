@@ -11,13 +11,34 @@ import ProjectRequestStep3 from "@/components/client/ProjectRequestStep3";
 import ProjectRequestStep4 from "@/components/client/ProjectRequestStep4";
 import ProjectRequestStep5 from "@/components/client/ProjectRequestStep5";
 import ProjectRequestSuccess from "@/components/client/ProjectRequestSuccess";
+import ProjectRequestStepVision from "@/components/client/ProjectRequestStepVision";
+import ProjectRequestStepEcommerce from "@/components/client/ProjectRequestStepEcommerce";
 
 export type ProjectRequestFormData = {
+    // Contact Info (for guests)
+    contactName: string;
+    contactEmail: string;
+    contactCompany?: string;
+    contactPhone?: string;
+    contactSiret?: string;
+    contactAddress?: string;
+
+    // Project Info
     projectName: string;
     description: string;
-    websiteType: "vitrine" | "ecommerce" | "landing" | ""; // NEW
-    pages: string[]; // NEW
-    features: string[]; // NEW
+    websiteType: "vitrine" | "ecommerce" | "landing" | "";
+    pages: string[];
+    features: string[];
+
+    // E-commerce Info
+    productType?: string;
+    productCount?: string;
+
+    // Vision & Identity
+    highlights: string[];
+    competitors?: string;
+    targetAudience?: string;
+
     colors: string;
     designStyles: string[];
     referenceUrls: string[];
@@ -38,11 +59,22 @@ export default function ProjectRequestForm({ userName, userEmail, userId }: Prop
     const [isSuccess, setIsSuccess] = useState(false);
 
     const [formData, setFormData] = useState<ProjectRequestFormData>({
+        contactName: userName || "",
+        contactEmail: userEmail || "",
+        contactCompany: "",
+        contactPhone: "",
+        contactSiret: "",
+        contactAddress: "",
         projectName: "",
         description: "",
-        websiteType: "", // NEW
-        pages: [], // NEW
-        features: [], // NEW
+        websiteType: "",
+        pages: [],
+        features: [],
+        productType: "",
+        productCount: "",
+        highlights: [],
+        competitors: "",
+        targetAudience: "",
         colors: "",
         designStyles: [],
         referenceUrls: [""],
@@ -50,7 +82,19 @@ export default function ProjectRequestForm({ userName, userEmail, userId }: Prop
         typographyOther: "",
     });
 
-    const totalSteps = 7; // Changed from 5 to 7 (added 2 new steps)
+    const steps = [
+        { id: "basics", title: "Informations de base" },
+        { id: "ecommerce", title: "E-commerce", condition: formData.websiteType === "ecommerce" },
+        { id: "pages", title: "Pages" },
+        { id: "features", title: "Fonctionnalités" },
+        { id: "vision", title: "Vision & Identité" },
+        { id: "design", title: "Design" },
+        { id: "references", title: "Références" },
+        { id: "typography", title: "Typographie" },
+        { id: "recap", title: "Récapitulatif" },
+    ].filter(step => step.condition !== false);
+
+    const totalSteps = steps.length;
 
     const updateFormData = (data: Partial<ProjectRequestFormData>) => {
         setFormData((prev) => ({ ...prev, ...data }));
@@ -100,6 +144,33 @@ export default function ProjectRequestForm({ userName, userEmail, userId }: Prop
     if (isSuccess) {
         return <ProjectRequestSuccess />;
     }
+
+    // Map current index to component
+    const renderStep = () => {
+        const stepId = steps[currentStep - 1].id;
+        switch (stepId) {
+            case "basics":
+                return <ProjectRequestStep1 formData={formData} updateFormData={updateFormData} nextStep={nextStep} />;
+            case "ecommerce":
+                return <ProjectRequestStepEcommerce formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "pages":
+                return <ProjectRequestStepPages formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "features":
+                return <ProjectRequestStepFeatures formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "vision":
+                return <ProjectRequestStepVision formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "design":
+                return <ProjectRequestStep2 formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "references":
+                return <ProjectRequestStep3 formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "typography":
+                return <ProjectRequestStep4 formData={formData} updateFormData={updateFormData} nextStep={nextStep} prevStep={prevStep} />;
+            case "recap":
+                return <ProjectRequestStep5 formData={formData} prevStep={prevStep} goToStep={goToStep} handleSubmit={handleSubmit} isSubmitting={isSubmitting} />;
+            default:
+                return null;
+        }
+    };
 
     return (
         <>
@@ -159,62 +230,7 @@ export default function ProjectRequestForm({ userName, userEmail, userId }: Prop
 
                     {/* Form Steps */}
                     <div className="rounded-2xl border border-[#ece7ef] bg-white p-8 shadow-sm dark:bg-[#1a1a1a] dark:border-[#333]">
-                        {currentStep === 1 && (
-                            <ProjectRequestStep1
-                                formData={formData}
-                                updateFormData={updateFormData}
-                                nextStep={nextStep}
-                            />
-                        )}
-                        {currentStep === 2 && (
-                            <ProjectRequestStepPages
-                                formData={formData}
-                                updateFormData={updateFormData}
-                                nextStep={nextStep}
-                                prevStep={prevStep}
-                            />
-                        )}
-                        {currentStep === 3 && (
-                            <ProjectRequestStepFeatures
-                                formData={formData}
-                                updateFormData={updateFormData}
-                                nextStep={nextStep}
-                                prevStep={prevStep}
-                            />
-                        )}
-                        {currentStep === 4 && (
-                            <ProjectRequestStep2
-                                formData={formData}
-                                updateFormData={updateFormData}
-                                nextStep={nextStep}
-                                prevStep={prevStep}
-                            />
-                        )}
-                        {currentStep === 5 && (
-                            <ProjectRequestStep3
-                                formData={formData}
-                                updateFormData={updateFormData}
-                                nextStep={nextStep}
-                                prevStep={prevStep}
-                            />
-                        )}
-                        {currentStep === 6 && (
-                            <ProjectRequestStep4
-                                formData={formData}
-                                updateFormData={updateFormData}
-                                nextStep={nextStep}
-                                prevStep={prevStep}
-                            />
-                        )}
-                        {currentStep === 7 && (
-                            <ProjectRequestStep5
-                                formData={formData}
-                                prevStep={prevStep}
-                                goToStep={goToStep}
-                                handleSubmit={handleSubmit}
-                                isSubmitting={isSubmitting}
-                            />
-                        )}
+                        {renderStep()}
                     </div>
                 </div>
             </main>

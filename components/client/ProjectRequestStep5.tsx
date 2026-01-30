@@ -11,61 +11,15 @@ type Props = {
 };
 
 export default function ProjectRequestStep5({ formData, prevStep, goToStep, handleSubmit, isSubmitting }: Props) {
-    const sections = [
-        {
-            step: 1,
-            title: "Informations de base",
-            items: [
-                { label: "Nom du projet", value: formData.projectName },
-                { label: "Description", value: formData.description || "Non renseigné" },
-                {
-                    label: "Type de site",
-                    value: formData.websiteType === "vitrine" ? "Site Vitrine"
-                        : formData.websiteType === "ecommerce" ? "E-commerce"
-                            : formData.websiteType === "landing" ? "Landing Page"
-                                : formData.websiteType
-                },
-            ],
-        },
-        {
-            step: 2,
-            title: "Pages sélectionnées",
-            items: [{ label: "Pages", value: formData.pages && formData.pages.length > 0 ? formData.pages.join(", ") : "Aucune page sélectionnée" }],
-        },
-        {
-            step: 3,
-            title: "Fonctionnalités",
-            items: [{ label: "Features", value: formData.features && formData.features.length > 0 ? formData.features.join(", ") : "Aucune fonctionnalité sélectionnée" }],
-        },
-        {
-            step: 4,
-            title: "Couleurs souhaitées",
-            items: [{ label: "Couleurs", value: formData.colors || "Non renseigné" }],
-        },
-        {
-            step: 5,
-            title: "Design préféré",
-            items: [
-                { label: "Styles", value: formData.designStyles.length > 0 ? formData.designStyles.join(", ") : "Non renseigné" },
-                {
-                    label: "Références",
-                    value: formData.referenceUrls.filter((url) => url.trim()).length > 0
-                        ? formData.referenceUrls.filter((url) => url.trim()).join(", ")
-                        : "Aucune",
-                },
-            ],
-        },
-        {
-            step: 6,
-            title: "Typographie",
-            items: [
-                {
-                    label: "Police",
-                    value: formData.typography === "Autre" ? formData.typographyOther : formData.typography,
-                },
-            ],
-        },
-    ];
+    const highlightsLabel: Record<string, string> = {
+        savoir_faire: "Savoir-faire",
+        specialite: "Spécialité",
+        histoire: "Histoire",
+        valeur: "Valeur importante"
+    };
+
+    // Calculate step indices dynamically based on steps in parent
+    // However, to keep it simple, we just show all filled info.
 
     return (
         <div className="space-y-6">
@@ -79,36 +33,100 @@ export default function ProjectRequestStep5({ formData, prevStep, goToStep, hand
             </div>
 
             <div className="space-y-4">
-                {sections.map((section) => (
-                    <div
-                        key={section.step}
-                        className="rounded-xl border border-[#ece7ef] bg-[#f8f6fb] p-4 dark:bg-[#111] dark:border-[#333]"
-                    >
-                        <div className="mb-3 flex items-center justify-between">
-                            <h3 className="text-sm font-bold text-[#2f2f2f] dark:text-white">
-                                {section.title}
-                            </h3>
-                            <button
-                                onClick={() => goToStep(section.step)}
-                                className="text-xs text-[#6a6a6a] hover:text-black dark:text-gray-400 dark:hover:text-white"
-                            >
-                                Modifier
-                            </button>
-                        </div>
-                        <div className="space-y-2">
-                            {section.items.map((item, index) => (
-                                <div key={index}>
-                                    <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">
-                                        {item.label}
-                                    </div>
-                                    <div className="text-sm text-[#2f2f2f] dark:text-white">
-                                        {item.value}
-                                    </div>
+                {/* Contact Info (if guest) */}
+                {(formData.contactSiret || formData.contactAddress) && (
+                    <div className="rounded-xl border border-[#ece7ef] bg-[#f8f6fb] p-4 dark:bg-[#111] dark:border-[#333]">
+                        <h3 className="mb-3 text-sm font-bold text-[#2f2f2f] dark:text-white">Informations de contact</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Nom</div>
+                                <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.contactName}</div>
+                            </div>
+                            <div>
+                                <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Email</div>
+                                <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.contactEmail}</div>
+                            </div>
+                            {formData.contactSiret && (
+                                <div>
+                                    <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">SIRET</div>
+                                    <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.contactSiret}</div>
                                 </div>
-                            ))}
+                            )}
+                            {formData.contactAddress && (
+                                <div className="col-span-2">
+                                    <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Adresse</div>
+                                    <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.contactAddress}</div>
+                                </div>
+                            )}
                         </div>
                     </div>
-                ))}
+                )}
+
+                <div className="rounded-xl border border-[#ece7ef] bg-[#f8f6fb] p-4 dark:bg-[#111] dark:border-[#333]">
+                    <h3 className="mb-3 text-sm font-bold text-[#2f2f2f] dark:text-white">Le Projet</h3>
+                    <div className="space-y-2">
+                        <div>
+                            <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Nom & Type</div>
+                            <div className="text-sm text-[#2f2f2f] dark:text-white">
+                                {formData.projectName} - {
+                                    formData.websiteType === "vitrine" ? "Site Vitrine"
+                                        : formData.websiteType === "ecommerce" ? "E-commerce"
+                                            : "Landing Page"
+                                }
+                            </div>
+                        </div>
+                        {formData.websiteType === "ecommerce" && (
+                            <div className="grid grid-cols-2 gap-2 border-t border-gray-100 pt-2 dark:border-gray-800">
+                                <div>
+                                    <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Produit</div>
+                                    <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.productType}</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Quantité</div>
+                                    <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.productCount}</div>
+                                </div>
+                            </div>
+                        )}
+                        <div>
+                            <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Pages</div>
+                            <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.pages.join(", ")}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="rounded-xl border border-[#ece7ef] bg-[#f8f6fb] p-4 dark:bg-[#111] dark:border-[#333]">
+                    <h3 className="mb-3 text-sm font-bold text-[#2f2f2f] dark:text-white">Vision & Identité</h3>
+                    <div className="space-y-2">
+                        <div>
+                            <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Valeurs mises en avant</div>
+                            <div className="text-sm text-[#2f2f2f] dark:text-white">
+                                {formData.highlights.map(h => highlightsLabel[h]).join(", ") || "Aucune"}
+                            </div>
+                        </div>
+                        <div>
+                            <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Public cible</div>
+                            <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.targetAudience || "Non renseigné"}</div>
+                        </div>
+                        <div>
+                            <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Inspirations</div>
+                            <div className="text-sm text-[#2f2f2f] dark:text-white line-clamp-1">{formData.competitors || "Aucune"}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="rounded-xl border border-[#ece7ef] bg-[#f8f6fb] p-4 dark:bg-[#111] dark:border-[#333]">
+                    <h3 className="mb-3 text-sm font-bold text-[#2f2f2f] dark:text-white">Design</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Couleurs</div>
+                            <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.colors}</div>
+                        </div>
+                        <div>
+                            <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Style</div>
+                            <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.designStyles.join(", ")}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div className="rounded-xl border-2 border-[#ece7ef] bg-white p-4 dark:bg-[#1a1a1a] dark:border-[#333]">
