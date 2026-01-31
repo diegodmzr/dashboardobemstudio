@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Sidebar, { type NavItem } from "@/components/Sidebar";
 import { Menu } from "lucide-react";
 import MobileNavbar from "./MobileNavbar";
+import { AnimatePresence, motion } from "framer-motion";
 
 type Props = {
     children: React.ReactNode;
@@ -88,12 +89,19 @@ export default function DashboardShell({ children, navItems, user }: Props) {
             {/* Main Content */}
             <div className="flex flex-1 flex-col overflow-hidden w-full relative">
                 {/* Floating Mobile Burger Button */}
-                <button
-                    onClick={() => setMobileMenuOpen(true)}
-                    className="fixed top-4 left-4 z-40 md:hidden flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/70 shadow-lg backdrop-blur-xl transition-all active:scale-95 dark:bg-black/70 dark:border-white/10"
-                >
-                    <Menu className="w-5 h-5 text-black dark:text-white" />
-                </button>
+                <AnimatePresence>
+                    {!mobileMenuOpen && (
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            onClick={() => setMobileMenuOpen(true)}
+                            className="fixed top-4 left-4 z-40 md:hidden flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/70 shadow-lg backdrop-blur-xl transition-all active:scale-95 dark:bg-black/70 dark:border-white/10"
+                        >
+                            <Menu className="w-5 h-5 text-black dark:text-white" />
+                        </motion.button>
+                    )}
+                </AnimatePresence>
 
                 <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
                     <div className="mt-16 md:mt-0 min-h-full flex flex-col rounded-3xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-[#efedf0] overflow-hidden dark:bg-black dark:ring-[#333] dark:shadow-none">
@@ -101,7 +109,11 @@ export default function DashboardShell({ children, navItems, user }: Props) {
                     </div>
                 </main>
 
-                <MobileNavbar role={user?.role} onMobileClose={() => setMobileMenuOpen(false)} />
+                <MobileNavbar
+                    role={user?.role}
+                    onMobileClose={() => setMobileMenuOpen(false)}
+                    isVisible={!mobileMenuOpen}
+                />
             </div>
         </div>
     );
