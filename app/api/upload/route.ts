@@ -16,6 +16,8 @@ export async function POST(req: Request) {
 
         // Ensure directory exists
         const uploadDir = join(process.cwd(), "public", "uploads");
+        console.log("DEBUG: Upload directory =", uploadDir);
+
         try {
             await mkdir(uploadDir, { recursive: true });
         } catch (e) {
@@ -24,10 +26,13 @@ export async function POST(req: Request) {
 
         // Generate unique filename
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const filename = uniqueSuffix + '-' + file.name.replace(/[^a-zA-Z0-9.-]/g, "");
-        const path = join(uploadDir, filename);
+        const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+        const filename = `${uniqueSuffix}-${cleanFileName}`;
+        const filePath = join(uploadDir, filename);
+        console.log("DEBUG: Writing file to =", filePath);
 
-        await writeFile(path, buffer);
+        await writeFile(filePath, buffer);
+        console.log("DEBUG: File written successfully");
 
         const url = `/uploads/${filename}`;
 

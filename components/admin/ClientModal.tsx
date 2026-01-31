@@ -267,6 +267,10 @@ export default function ClientModal({ client, onClose, onSave }: Props) {
                                             const file = e.target.files?.[0];
                                             if (!file) return;
 
+                                            // Immediate preview using blob URL
+                                            const localPreview = URL.createObjectURL(file);
+                                            setFormData(prev => ({ ...prev, companyLogo: localPreview }));
+
                                             const uploadData = new FormData();
                                             uploadData.append("file", file);
 
@@ -276,12 +280,23 @@ export default function ClientModal({ client, onClose, onSave }: Props) {
                                                     method: "POST",
                                                     body: uploadData,
                                                 });
-                                                if (!res.ok) throw new Error("Erreur upload");
+
+                                                if (!res.ok) {
+                                                    throw new Error("Erreur lors de l'envoi du fichier");
+                                                }
+
                                                 const result = await res.json();
-                                                setFormData({ ...formData, companyLogo: result.url });
-                                            } catch (err) {
+
+                                                // Replace local preview with server URL
+                                                setFormData(prev => ({ ...prev, companyLogo: result.url }));
+
+                                                // Clean up the blob URL to avoid memory leaks
+                                                URL.revokeObjectURL(localPreview);
+                                            } catch (err: any) {
                                                 console.error(err);
-                                                alert("Erreur lors de l'upload de l'image");
+                                                setError("Erreur lors de l'upload de l'image. Veuillez réessayer.");
+                                                // Revert to empty if it was a new upload
+                                                setFormData(prev => ({ ...prev, companyLogo: client?.companyLogo || "" }));
                                             } finally {
                                                 setLoading(false);
                                             }
