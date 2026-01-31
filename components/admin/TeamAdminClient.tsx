@@ -15,6 +15,7 @@ type TeamMember = {
     email: string;
     role: string;
     status: string;
+    twoFactorEnabled: boolean;
     avatar?: string | null;
     createdAt: string;
     lastLoginAt?: string | null;
@@ -35,6 +36,24 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
     const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
     const [deleteMember, setDeleteMember] = useState<TeamMember | null>(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
+
+    const handleDisable2FA = async (memberId: string) => {
+        if (!confirm("Voulez-vous vraiment désactiver la 2FA pour ce membre ?")) return;
+
+        try {
+            const res = await fetch(`/api/clients/${memberId}/disable-2fa`, {
+                method: "POST"
+            });
+            if (res.ok) {
+                success("2FA désactivée avec succès !");
+                router.refresh();
+            } else {
+                error("Erreur lors de la désactivation");
+            }
+        } catch (err) {
+            error("Une erreur est survenue");
+        }
+    };
 
     const filtered = useMemo(() => {
         return team.filter((m) => {
@@ -219,6 +238,11 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                                                     <span className="ml-2 text-[10px] font-semibold uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">Vous</span>
                                                 )}
                                             </h3>
+                                            {member.twoFactorEnabled && (
+                                                <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase tracking-tighter">
+                                                    <Shield size={10} /> 2FA
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="flex flex-col gap-1.5">
                                             <div className="flex items-center gap-2 text-sm text-[#8a8a8a] dark:text-zinc-500">
@@ -240,6 +264,15 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
 
                                     {/* Actions */}
                                     <div className="flex items-center gap-2 pt-4 sm:pt-0 sm:absolute sm:top-6 sm:right-6 sm:opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                        {member.twoFactorEnabled && member.id !== currentUserId && (
+                                            <button
+                                                onClick={() => handleDisable2FA(member.id)}
+                                                className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all shadow-sm active:scale-95 border border-emerald-100 dark:border-emerald-500/20"
+                                                title="Désactiver 2FA"
+                                            >
+                                                <Shield className="w-4 h-4" />
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => setEditingMember(member)}
                                             className="flex h-10 w-10 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all shadow-sm active:scale-95"
