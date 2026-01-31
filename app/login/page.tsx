@@ -14,10 +14,12 @@ export default async function LoginPage({
       <div className="w-full max-w-md space-y-8 rounded-3xl bg-white p-8 shadow-xl ring-1 ring-black/5">
         <div className="text-center">
           <div className="mx-auto h-12 relative mb-6 flex justify-center">
-            <img
+            <Image
               src="/logonoir.png"
               alt="Logo OBEM"
-              className="h-full w-auto object-contain"
+              fill
+              priority
+              className="object-contain"
             />
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">Connexion</h2>
