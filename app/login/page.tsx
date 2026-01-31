@@ -32,36 +32,6 @@ export default async function LoginPage({
 
         <LoginForm />
 
-        {/* Test Accounts Helpers */}
-        <div className="mt-10 border-t border-gray-100 pt-8">
-          <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 text-center">Comptes de Démonstration</h3>
-          <div className="grid gap-3">
-            <div className="group flex items-center justify-between rounded-xl bg-gray-50 p-3 border border-gray-100 hover:border-gray-300 transition-colors cursor-pointer select-all">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">A</div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">Admin</p>
-                  <p className="text-xs text-gray-500">admin@obemstudio.com</p>
-                </div>
-              </div>
-              <div className="text-xs font-mono bg-white px-2 py-1 rounded border border-gray-200 text-gray-600 group-hover:border-gray-300">
-                password123
-              </div>
-            </div>
-            <div className="group flex items-center justify-between rounded-xl bg-gray-50 p-3 border border-gray-100 hover:border-gray-300 transition-colors cursor-pointer select-all">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">C</div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">Client</p>
-                  <p className="text-xs text-gray-500">client@demo.com</p>
-                </div>
-              </div>
-              <div className="text-xs font-mono bg-white px-2 py-1 rounded border border-gray-200 text-gray-600 group-hover:border-gray-300">
-                password123
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

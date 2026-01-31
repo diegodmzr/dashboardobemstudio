@@ -6,38 +6,53 @@ const prisma = new PrismaClient();
 async function main() {
   const passwordHash = await bcrypt.hash('password123', 10);
 
-  // Admin
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@obemstudio.com' },
+  // Super Admin 1: Diego Demazure
+  const diego = await prisma.user.upsert({
+    where: { email: 'diegodemazure1@gmail.com' },
     update: {
       password: passwordHash,
-      role: 'ADMIN',
-      // ensure basic info just in case
+      role: 'SUPER_ADMIN',
+      name: 'Diego Demazure'
     },
     create: {
-      email: 'admin@obemstudio.com',
+      email: 'diegodemazure1@gmail.com',
       name: 'Diego Demazure',
-      firstName: 'Diego',
-      lastName: 'Demazure',
       password: passwordHash,
-      role: 'ADMIN',
+      role: 'SUPER_ADMIN',
       theme: 'light',
       status: 'Active'
     },
   });
 
-  // Client
+  // Super Admin 2: Ismaël Abbach
+  const ismael = await prisma.user.upsert({
+    where: { email: 'isma2bach@gmail.com' },
+    update: {
+      password: passwordHash,
+      role: 'SUPER_ADMIN',
+      name: 'Ismaël Abbach'
+    },
+    create: {
+      email: 'isma2bach@gmail.com',
+      name: 'Ismaël Abbach',
+      password: passwordHash,
+      role: 'SUPER_ADMIN',
+      theme: 'light',
+      status: 'Active'
+    },
+  });
+
+  // Client Demo
   const client = await prisma.user.upsert({
-    where: { email: 'client@demo.com' },
+    where: { email: 'diegodemazure3@gmail.com' },
     update: {
       password: passwordHash,
       role: 'CLIENT',
+      name: 'Client Demo'
     },
     create: {
-      email: 'client@demo.com',
+      email: 'diegodemazure3@gmail.com',
       name: 'Client Demo',
-      firstName: 'Client',
-      lastName: 'Demo',
       password: passwordHash,
       role: 'CLIENT',
       theme: 'light',
@@ -45,8 +60,9 @@ async function main() {
     },
   });
 
-  console.log('Database seeded with test users:');
-  console.log('Admin:', admin.email);
+  console.log('Database seeded with production users:');
+  console.log('Admin 1:', diego.email);
+  console.log('Admin 2:', ismael.email);
   console.log('Client:', client.email);
 }
 
