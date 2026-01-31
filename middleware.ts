@@ -36,7 +36,7 @@ export function middleware(req: NextRequest) {
   if (
     PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon") ||
+    pathname.includes(".") || // Skip files with extensions (images, manifest, etc.)
     pathname.startsWith("/api/health")
   ) {
     return NextResponse.next();
