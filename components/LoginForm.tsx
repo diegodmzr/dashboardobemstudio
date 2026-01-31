@@ -167,6 +167,18 @@ export default function LoginForm() {
             >
                 {isLoading ? "Connexion..." : "Se connecter"}
             </button>
+
+            <div className="pt-2 flex justify-center">
+                <a
+                    href="https://obemstudio.com"
+                    className="group flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-white transition-colors duration-300"
+                >
+                    <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span>Retourner vers le site</span>
+                </a>
+            </div>
         </form>
     );
 }
