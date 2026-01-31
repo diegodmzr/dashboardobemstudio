@@ -99,9 +99,9 @@ export default function DashboardShell({ children, navItems, user }: Props) {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={() => setMobileMenuOpen(true)}
-                            className="fixed top-4 left-4 z-40 md:hidden flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/70 shadow-lg backdrop-blur-xl transition-all active:scale-95 dark:bg-black/70 dark:border-white/10"
+                            className="fixed top-4 left-4 z-40 md:hidden flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-white/70 shadow-2xl backdrop-blur-xl transition-all active:scale-95 dark:bg-black/70 dark:border-white/10"
                         >
-                            <Menu className="w-5 h-5 text-black dark:text-white" />
+                            <Menu className="w-7 h-7 text-black dark:text-white" />
                         </motion.button>
                     )}
                 </AnimatePresence>

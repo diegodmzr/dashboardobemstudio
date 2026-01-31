@@ -57,7 +57,6 @@ export default function RootLayout({
       >
         <ThemeProviderWrapper>
           {children}
-          <PWAInstallPrompt />
         </ThemeProviderWrapper>
         <script
           dangerouslySetInnerHTML={{
