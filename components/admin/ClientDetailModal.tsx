@@ -2,6 +2,9 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Disable2FAModal from "./Disable2FAModal";
+import { useToast } from "@/hooks/useToast";
+import { AnimatePresence } from "framer-motion";
 
 type Props = {
     client: any;
@@ -14,6 +17,29 @@ export default function ClientDetailModal({ client, onClose, onEdit }: Props) {
         new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount);
 
     const [isClosing, setIsClosing] = useState(false);
+    const [showDisable2FAModal, setShowDisable2FAModal] = useState(false);
+    const [disable2FALoading, setDisable2FALoading] = useState(false);
+    const { success, error } = useToast();
+
+    const handleDisable2FA = async () => {
+        setDisable2FALoading(true);
+        try {
+            const res = await fetch(`/api/clients/${client.id}/disable-2fa`, {
+                method: "POST"
+            });
+            if (res.ok) {
+                success("La 2FA a été désactivée.");
+                onClose();
+                window.location.reload(); // Quick way to refresh parent data
+            } else {
+                error("Erreur lors de la désactivation.");
+            }
+        } catch (err) {
+            error("Une erreur est survenue.");
+        } finally {
+            setDisable2FALoading(false);
+        }
+    };
 
     const handleClose = () => {
         setIsClosing(true);
@@ -178,24 +204,7 @@ export default function ClientDetailModal({ client, onClose, onEdit }: Props) {
 
                             {client.twoFactorEnabled && (
                                 <button
-                                    onClick={async () => {
-                                        if (confirm("Êtes-vous sûr de vouloir désactiver la 2FA pour ce client ?")) {
-                                            try {
-                                                const res = await fetch(`/api/clients/${client.id}/disable-2fa`, {
-                                                    method: "POST"
-                                                });
-                                                if (res.ok) {
-                                                    alert("La 2FA a été désactivée.");
-                                                    onClose();
-                                                    window.location.reload(); // Quick way to refresh parent data
-                                                } else {
-                                                    alert("Erreur lors de la désactivation.");
-                                                }
-                                            } catch (err) {
-                                                alert("Une erreur est survenue.");
-                                            }
-                                        }
-                                    }}
+                                    onClick={() => setShowDisable2FAModal(true)}
                                     className="px-4 py-2 text-xs font-bold text-rose-500 border border-rose-200 rounded-xl hover:bg-rose-50 transition dark:border-rose-900/30 dark:hover:bg-rose-950/20"
                                 >
                                     Désactiver la 2FA
@@ -215,6 +224,17 @@ export default function ClientDetailModal({ client, onClose, onEdit }: Props) {
                     </button>
                 </div>
             </div>
+
+            <AnimatePresence>
+                {showDisable2FAModal && (
+                    <Disable2FAModal
+                        userName={client.name}
+                        onConfirm={handleDisable2FA}
+                        onCancel={() => setShowDisable2FAModal(false)}
+                        loading={disable2FALoading}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }

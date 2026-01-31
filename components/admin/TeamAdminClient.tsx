@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
 import TeamMemberModal, { TeamMemberFormData } from "./TeamMemberModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
+import Disable2FAModal from "./Disable2FAModal";
 import { Search, Plus, Mail, Shield, User, Edit2, Trash2, ShieldCheck, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,22 +37,27 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
     const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
     const [deleteMember, setDeleteMember] = useState<TeamMember | null>(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
+    const [disabling2FAMember, setDisabling2FAMember] = useState<TeamMember | null>(null);
+    const [disable2FALoading, setDisable2FALoading] = useState(false);
 
-    const handleDisable2FA = async (memberId: string) => {
-        if (!confirm("Voulez-vous vraiment désactiver la 2FA pour ce membre ?")) return;
-
+    const handleDisable2FA = async () => {
+        if (!disabling2FAMember) return;
+        setDisable2FALoading(true);
         try {
-            const res = await fetch(`/api/clients/${memberId}/disable-2fa`, {
+            const res = await fetch(`/api/clients/${disabling2FAMember.id}/disable-2fa`, {
                 method: "POST"
             });
             if (res.ok) {
                 success("2FA désactivée avec succès !");
+                setDisabling2FAMember(null);
                 router.refresh();
             } else {
                 error("Erreur lors de la désactivation");
             }
         } catch (err) {
             error("Une erreur est survenue");
+        } finally {
+            setDisable2FALoading(false);
         }
     };
 
@@ -266,7 +272,7 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                                     <div className="flex items-center gap-2 pt-4 sm:pt-0 sm:absolute sm:top-6 sm:right-6 sm:opacity-0 group-hover:opacity-100 transition-all duration-300">
                                         {member.twoFactorEnabled && member.id !== currentUserId && (
                                             <button
-                                                onClick={() => handleDisable2FA(member.id)}
+                                                onClick={() => setDisabling2FAMember(member)}
                                                 className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all shadow-sm active:scale-95 border border-emerald-100 dark:border-emerald-500/20"
                                                 title="Désactiver 2FA"
                                             >
@@ -317,6 +323,14 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                         onConfirm={handleDelete}
                         loading={deleteLoading}
                         onCancel={() => setDeleteMember(null)}
+                    />
+                )}
+                {disabling2FAMember && (
+                    <Disable2FAModal
+                        userName={disabling2FAMember.name}
+                        onConfirm={handleDisable2FA}
+                        onCancel={() => setDisabling2FAMember(null)}
+                        loading={disable2FALoading}
                     />
                 )}
             </AnimatePresence>
