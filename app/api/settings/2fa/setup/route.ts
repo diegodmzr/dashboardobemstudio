@@ -15,9 +15,11 @@ export async function POST() {
         const otpauth = authenticator.keyuri(user.email, "OBEM Studio", secret);
         const qrCodeUrl = await qrcode.toDataURL(otpauth);
 
-        // Save the secret temporarily using Raw SQL to bypass stale Prisma Client on Windows
-        // Using tagged template literal for cross-database compatibility (SQL placeholders)
-        await prisma.$executeRaw`UPDATE "User" SET "twoFactorSecret" = ${secret} WHERE id = ${user.id}`;
+        // Save the secret temporarily using standard Prisma
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { twoFactorSecret: secret }
+        });
 
         return NextResponse.json({ secret, qrCodeUrl });
     } catch (error) {

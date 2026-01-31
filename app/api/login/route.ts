@@ -29,11 +29,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Identifiants invalides" }, { status: 401 });
   }
 
-  // Check if 2FA is enabled using Raw SQL to bypass stale Prisma Client on Windows
-  const dbUsers: any[] = await prisma.$queryRaw`SELECT "twoFactorEnabled" FROM "User" WHERE id = ${user.id} LIMIT 1`;
-
-  // Note: on SQLite/MariaDB, boolean might be returned as 1/0 or true/false
-  if (dbUsers[0]?.twoFactorEnabled && (dbUsers[0].twoFactorEnabled === true || dbUsers[0].twoFactorEnabled === 1)) {
+  // Check if 2FA is enabled
+  if (user.twoFactorEnabled) {
     return NextResponse.json({
       requires2FA: true,
       userId: user.id
@@ -43,9 +40,7 @@ export async function POST(request: Request) {
   const redirectPath = "/dashboard";
   const res = NextResponse.json({ success: true, redirect: redirectPath });
 
-  // Use raw query for lastLoginAt to avoid prisma client issues on Windows
-  const userData: any[] = await prisma.$queryRaw`SELECT "lastLoginAt" FROM "User" WHERE id = ${user.id} LIMIT 1`;
-  const isFirstLogin = !userData[0]?.lastLoginAt;
+  const isFirstLogin = !user.lastLoginAt;
 
   if (isFirstLogin && user.role === "CLIENT") {
     try {
@@ -117,8 +112,11 @@ export async function POST(request: Request) {
     }
   }
 
-  // Update lastLoginAt
-  await prisma.$executeRaw`UPDATE "User" SET "lastLoginAt" = ${new Date()} WHERE id = ${user.id}`;
+  // Update lastLoginAt using standard Prisma
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLoginAt: new Date() }
+  });
 
   // Force-delete existing cookies to ensure role update is picked up
   res.cookies.delete("userId");

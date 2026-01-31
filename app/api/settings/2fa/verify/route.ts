@@ -11,10 +11,14 @@ export async function POST(request: Request) {
         }
 
         const { token } = await request.json();
+        if (!token) {
+            return NextResponse.json({ error: "Code requis" }, { status: 400 });
+        }
 
-        // Use Raw SQL to find the user's 2FA secret
-        const users: any[] = await prisma.$queryRaw`SELECT "twoFactorSecret" FROM "User" WHERE id = ${user.id} LIMIT 1`;
-        const dbUser = users[0];
+        const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { twoFactorSecret: true }
+        });
 
         if (!dbUser?.twoFactorSecret) {
             return NextResponse.json({ error: "Aucune configuration 2FA en cours" }, { status: 400 });
@@ -29,8 +33,11 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Code invalide" }, { status: 400 });
         }
 
-        // Enable 2FA using Raw SQL
-        await prisma.$executeRaw`UPDATE "User" SET "twoFactorEnabled" = 1 WHERE id = ${user.id}`;
+        // Enable 2FA using standard Prisma (handles booleans correctly for PG)
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { twoFactorEnabled: true }
+        });
 
         return NextResponse.json({ success: true });
     } catch (error) {
