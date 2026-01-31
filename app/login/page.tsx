@@ -17,7 +17,7 @@ export default async function LoginPage({
         <div className="text-center">
           <div className="mb-8 flex justify-center">
             <img
-              src="/logoblanc.png?v=1"
+              src="/logoblanc.png?v=2"
               alt="Logo OBEM"
               className="h-12 w-auto object-contain"
             />

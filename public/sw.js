@@ -21,10 +21,13 @@ self.addEventListener('notificationclick', function (event) {
 });
 
 // Simple caching
-const CACHE_NAME = 'obem-studio-v1';
+const CACHE_NAME = 'obem-studio-v2';
 const ASSETS = [
     '/',
-    '/iconlogo.png',
+    '/icon-192.png',
+    '/icon-512.png',
+    '/logonoir.png',
+    '/logoblanc.png',
 ];
 
 self.addEventListener('install', (event) => {
