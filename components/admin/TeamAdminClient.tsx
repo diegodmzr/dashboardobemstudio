@@ -239,10 +239,10 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                                     </div>
 
                                     {/* Actions */}
-                                    <div className="flex sm:flex-col items-center gap-2 w-full sm:w-auto pt-4 sm:pt-0 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div className="flex items-center gap-2 pt-4 sm:pt-0 sm:absolute sm:top-6 sm:right-6 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <button
                                             onClick={() => setEditingMember(member)}
-                                            className="flex-1 sm:flex-none p-3 rounded-2xl bg-zinc-50 dark:bg-white/5 text-zinc-400 hover:text-black dark:hover:text-white transition-all hover:scale-110 active:scale-90"
+                                            className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 dark:bg-white/5 text-zinc-400 hover:text-black dark:hover:text-white transition-all hover:scale-110 active:scale-90"
                                             title="Modifier"
                                         >
                                             <Edit2 className="w-4 h-4" />
@@ -250,7 +250,7 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                                         {member.id !== currentUserId && (
                                             <button
                                                 onClick={() => setDeleteMember(member)}
-                                                className="flex-1 sm:flex-none p-3 rounded-2xl bg-zinc-50 dark:bg-white/5 text-zinc-400 hover:text-rose-500 transition-all hover:scale-110 active:scale-90"
+                                                className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 dark:bg-white/5 text-zinc-400 hover:text-rose-500 transition-all hover:scale-110 active:scale-90"
                                                 title="Supprimer"
                                             >
                                                 <Trash2 className="w-4 h-4" />
