@@ -15,13 +15,11 @@ export default async function LoginPage({
 
       <div className="w-full max-w-md space-y-8 rounded-[2.5rem] bg-white/5 border border-white/10 p-8 shadow-2xl backdrop-blur-2xl ring-1 ring-white/5 animate-fadeIn">
         <div className="text-center">
-          <div className="mx-auto h-12 relative mb-6 flex justify-center">
-            <Image
-              src="/logoblanc.png"
+          <div className="mb-8 flex justify-center">
+            <img
+              src="/logoblanc.png?v=1"
               alt="Logo OBEM"
-              fill
-              priority
-              className="object-contain"
+              className="h-12 w-auto object-contain"
             />
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-white">Connexion</h2>
