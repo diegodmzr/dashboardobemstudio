@@ -81,7 +81,7 @@ export default function NotificationsClient() {
                                 key={opt.value}
                                 onClick={() => setFilter(opt.value)}
                                 className={cn(
-                                    "flex-1 sm:flex-none px-6 py-2 text-xs font-bold rounded-[14px] transition-all duration-300",
+                                    "flex-1 sm:flex-none px-4 sm:px-6 py-2 text-xs font-bold rounded-[14px] transition-all duration-300 whitespace-nowrap",
                                     filter === opt.value
                                         ? "bg-black text-white shadow-lg dark:bg-white dark:text-black"
                                         : "text-[#8a8a8a] hover:text-black dark:text-gray-400 dark:hover:text-white"
