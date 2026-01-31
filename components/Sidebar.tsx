@@ -135,80 +135,82 @@ export default function Sidebar({
   };
 
   return (
-    <aside className={`flex h-full flex-col justify-between bg-[#efedef] py-4 text-[#3d3d3d] transition-all duration-300 dark:bg-black dark:text-gray-100 dark:border-r dark:border-[#333] overflow-hidden ${isCollapsed ? "w-20 px-2" : "w-full md:w-64 px-3"}`}>
-      <div>
-        {/* Logo + brand + toggle */}
-        <div className={`flex items-center ${isCollapsed ? "justify-center flex-col gap-4" : "justify-between"} rounded-xl px-2 py-3`}>
-          <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
-            <div className="relative h-10 w-10 overflow-hidden rounded-lg flex-shrink-0">
-              <img
-                src="/iconlogo.png"
-                alt="Logo"
-                className="h-full w-full object-contain"
-              />
+    <aside className={`flex h-full flex-col justify-between bg-[#efedef] py-4 text-[#3d3d3d] transition-all duration-300 dark:bg-black dark:text-gray-100 dark:border-r dark:border-[#333] overflow-hidden ${isCollapsed ? "w-20 px-2" : "w-64 px-4"}`}>
+      <div className="flex flex-col h-full">
+        <div>
+          {/* Logo + brand + toggle */}
+          <div className={`flex items-center ${isCollapsed ? "justify-center flex-col gap-4" : "justify-between"} rounded-xl px-1 py-3`}>
+            <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center" : ""}`}>
+              <div className="relative h-10 w-10 overflow-hidden rounded-lg flex-shrink-0">
+                <img
+                  src="/iconlogo.png"
+                  alt="Logo"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              {!isCollapsed && <div className="text-sm font-semibold text-[#1f1f1f] dark:text-white whitespace-nowrap">{brandLabel}</div>}
             </div>
-            {!isCollapsed && <div className="text-sm font-semibold text-[#1f1f1f] dark:text-white whitespace-nowrap">{brandLabel}</div>}
+
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="hidden md:block text-gray-400 hover:text-black dark:hover:text-white transition p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-[#333]"
+              title={isCollapsed ? "Ouvrir le menu" : "Fermer le menu"}
+            >
+              {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+            </button>
           </div>
 
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden md:block text-gray-400 hover:text-black dark:hover:text-white transition p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-[#333]"
-            title={isCollapsed ? "Ouvrir le menu" : "Fermer le menu"}
-          >
-            {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-          </button>
+          {/* Main navigation */}
+          <nav className="mt-4 space-y-1">
+            {navItems.map((item) => (
+              <NavLink key={item.label} item={item} isCollapsed={isCollapsed} onMobileClose={onMobileClose} />
+            ))}
+          </nav>
         </div>
 
-        {/* Main navigation */}
-        <nav className="mt-4 space-y-1">
-          {navItems.map((item) => (
-            <NavLink key={item.label} item={item} isCollapsed={isCollapsed} onMobileClose={onMobileClose} />
-          ))}
-        </nav>
-      </div>
+        <div className="mt-auto space-y-4">
+          {/* Secondary actions */}
+          <div className="space-y-1">
+            <NotificationBadge isCollapsed={isCollapsed} onMobileClose={onMobileClose} />
+            {utilityItems.map((item, index) => (
+              <div key={item.label} className="relative">
+                <NavLink item={item} isCollapsed={isCollapsed} onMobileClose={onMobileClose} />
+              </div>
+            ))}
+          </div>
 
-      <div className="space-y-2">
-        {/* Secondary actions */}
-        <div className="space-y-1">
-          <NotificationBadge isCollapsed={isCollapsed} onMobileClose={onMobileClose} />
-          {utilityItems.map((item, index) => (
-            <div key={item.label} className="relative">
-              <NavLink item={item} isCollapsed={isCollapsed} onMobileClose={onMobileClose} />
-            </div>
-          ))}
-        </div>
+          {/* Divider */}
+          <div className="h-px bg-[#d8d4da] dark:bg-[#333]" />
 
-        {/* Divider */}
-        <div className="h-px bg-[#d8d4da] dark:bg-[#333]" />
-
-        {/* User summary */}
-        <div className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"} rounded-xl px-2 py-2`}>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fde4ce] text-sm font-semibold text-[#4a331e] flex-shrink-0 overflow-hidden">
-              {userAvatar ? (
-                <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <span>{userName ? userName.charAt(0).toUpperCase() : "U"}</span>
+          {/* User summary */}
+          <div className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"} rounded-xl py-2 px-1`}>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fde4ce] text-sm font-semibold text-[#4a331e] flex-shrink-0 overflow-hidden border border-white/10">
+                {userAvatar ? (
+                  <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <span>{userName ? userName.charAt(0).toUpperCase() : "U"}</span>
+                )}
+              </div>
+              {!isCollapsed && (
+                <div className="leading-tight overflow-hidden min-w-0">
+                  <div className="text-sm font-semibold text-[#2b2b2b] dark:text-white truncate">{userName}</div>
+                  <div className="text-[11px] text-[#8a8a8a] dark:text-gray-400 truncate opacity-80">{userEmail}</div>
+                </div>
               )}
             </div>
             {!isCollapsed && (
-              <div className="leading-tight overflow-hidden">
-                <div className="text-sm font-semibold text-[#2b2b2b] dark:text-white truncate">{userName}</div>
-                <div className="text-xs text-[#8a8a8a] dark:text-gray-400 truncate">{userEmail}</div>
-              </div>
+              <button
+                onClick={handleLogout}
+                className="group p-2 -mr-1 text-[#8a8a8a] hover:text-red-500 transition-colors dark:text-gray-500 dark:hover:text-red-400 cursor-pointer flex-shrink-0"
+                title="Se déconnecter"
+              >
+                <motion.div whileHover={{ x: 1, scale: 1.1 }} transition={{ duration: 0.2 }}>
+                  <LogOut className="h-5 w-5" strokeWidth={1.8} />
+                </motion.div>
+              </button>
             )}
           </div>
-          {!isCollapsed && (
-            <button
-              onClick={handleLogout}
-              className="group p-2 text-[#8a8a8a] hover:text-red-500 transition-colors dark:text-gray-500 dark:hover:text-red-400 cursor-pointer"
-              title="Se déconnecter"
-            >
-              <motion.div whileHover={{ x: 2, scale: 1.1 }} transition={{ duration: 0.2 }}>
-                <LogOut className="h-5 w-5" strokeWidth={1.6} />
-              </motion.div>
-            </button>
-          )}
         </div>
       </div>
     </aside>
