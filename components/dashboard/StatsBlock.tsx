@@ -24,7 +24,7 @@ export default function StatsBlock({ kpis, role }: Props) {
         show: { opacity: 1, scale: 1 }
     };
 
-    if (role === "ADMIN") {
+    if (role === "ADMIN" || role === "SUPER_ADMIN") {
         return (
             <motion.div
                 variants={container}
@@ -35,7 +35,7 @@ export default function StatsBlock({ kpis, role }: Props) {
                 <motion.div variants={item}>
                     <KPICard
                         title="Revenus du Mois"
-                        value={`${kpis.monthlyRevenue?.toLocaleString('fr-FR')} €`}
+                        value={`${(kpis.monthlyRevenue || 0).toLocaleString('fr-FR')} €`}
                         icon="euro"
                         color="green"
                     />
@@ -43,7 +43,7 @@ export default function StatsBlock({ kpis, role }: Props) {
                 <motion.div variants={item}>
                     <KPICard
                         title="Paiements en attente"
-                        value={`${kpis.pendingPayments?.toLocaleString('fr-FR')} €`}
+                        value={`${(kpis.pendingPayments || 0).toLocaleString('fr-FR')} €`}
                         icon="clock"
                         color="blue"
                     />
@@ -77,7 +77,7 @@ export default function StatsBlock({ kpis, role }: Props) {
                 <motion.div variants={item}>
                     <KPICard
                         title="Total Investi"
-                        value={`${kpis.totalSpent?.toLocaleString('fr-FR')} €`}
+                        value={`${(kpis.totalSpent || 0).toLocaleString('fr-FR')} €`}
                         icon="credit-card"
                         color="green"
                     />
@@ -85,9 +85,9 @@ export default function StatsBlock({ kpis, role }: Props) {
                 <motion.div variants={item}>
                     <KPICard
                         title="Reste à payer"
-                        value={`${kpis.pendingAmount?.toLocaleString('fr-FR')} €`}
+                        value={`${(kpis.pendingAmount || 0).toLocaleString('fr-FR')} €`}
                         icon="alert-circle"
-                        color={kpis.pendingAmount > 0 ? "red" : "gray"}
+                        color={(kpis.pendingAmount || 0) > 0 ? "red" : "gray"}
                     />
                 </motion.div>
             </motion.div>
