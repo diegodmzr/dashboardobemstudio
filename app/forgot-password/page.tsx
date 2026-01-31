@@ -1,8 +1,7 @@
-"use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { AnimatedLoginBackground } from "@/components/login/AnimatedLoginBackground";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -37,24 +36,26 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-[#f2eff3] px-4 font-sans">
-            <div className="w-full max-w-md space-y-8 rounded-3xl bg-white p-8 shadow-xl ring-1 ring-black/5">
+        <div className="relative flex min-h-screen items-center justify-center px-4 font-sans overflow-hidden">
+            <AnimatedLoginBackground />
+
+            <div className="w-full max-w-md space-y-8 rounded-[2.5rem] bg-white/5 border border-white/10 p-8 shadow-2xl backdrop-blur-2xl ring-1 ring-white/5 animate-fadeIn">
                 <div className="text-center">
-                    <div className="mx-auto h-12 relative mb-6 flex justify-center">
+                    <div className="mb-8 flex justify-center">
                         <img
-                            src="/logonoir.png"
+                            src="/logoblanc.png?v=2"
                             alt="Logo OBEM"
-                            className="h-full w-auto object-contain"
+                            className="h-12 w-auto object-contain"
                         />
                     </div>
-                    <h2 className="text-2xl font-bold tracking-tight text-gray-900">Mot de passe oublié</h2>
-                    <p className="mt-2 text-sm text-gray-600">Entrez votre email pour recevoir un lien de réinitialisation.</p>
+                    <h2 className="text-2xl font-bold tracking-tight text-white">Mot de passe oublié</h2>
+                    <p className="mt-2 text-sm text-gray-400">Entrez votre email pour recevoir un lien de réinitialisation.</p>
                 </div>
 
                 {message && (
-                    <div className={`rounded-xl p-4 text-sm text-center border ${message.type === "success"
-                            ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                            : "bg-red-50 text-red-600 border-red-100"
+                    <div className={`rounded-xl p-4 text-sm text-center border backdrop-blur-md ${message.type === "success"
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                        : "bg-rose-500/10 text-rose-400 border-rose-500/20"
                         }`}>
                         {message.text}
                     </div>
@@ -62,14 +63,15 @@ export default function ForgotPasswordPage() {
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor="email" className="block text-xs font-semibold text-gray-900 uppercase tracking-wide mb-1.5">Email</label>
+                        <label htmlFor="email" className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Email</label>
                         <input
                             id="email"
                             type="email"
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-black focus:ring-black focus:bg-white text-sm outline-none transition-all"
+                            className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder-gray-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
+                            style={{ WebkitTextFillColor: 'white' }}
                             placeholder="nom@exemple.com"
                         />
                     </div>
@@ -77,7 +79,7 @@ export default function ForgotPasswordPage() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="group relative flex w-full justify-center rounded-xl bg-black px-4 py-3.5 text-sm font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all shadow-lg shadow-black/20 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="group relative flex w-full justify-center rounded-2xl bg-white px-4 py-3.5 text-sm font-bold text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black transition-all shadow-xl shadow-white/5 hover:shadow-white/10 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {isLoading ? "Envoi..." : "Envoyer le lien"}
                     </button>
@@ -86,13 +88,14 @@ export default function ForgotPasswordPage() {
                 <div className="text-center mt-6">
                     <Link
                         href="/login"
-                        className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
+                        className="group inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-white transition-colors duration-300"
                     >
-                        <ArrowLeft className="w-4 h-4" />
-                        Retour à la connexion
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                        <span>Retour à la connexion</span>
                     </Link>
                 </div>
             </div>
         </div>
     );
 }
+
