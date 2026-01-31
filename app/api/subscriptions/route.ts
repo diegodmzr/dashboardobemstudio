@@ -161,25 +161,29 @@ export async function POST(req: NextRequest) {
                 // 3. Send Email
                 // Using dynamic import or direct import if possible. lib/email is standard.
                 const { sendEmail } = await import("@/lib/email");
+                const host = req.headers.get("host") || "dashboard.obemstudio.com";
+                const protocol = host.includes("localhost") ? "http" : "https";
+                const baseUrl = `${protocol}://${host}`;
 
                 const emailHtml = `
-                    <div style="font-family: sans-serif; color: #333;">
-                        <h1 style="color: #000;">Nouvel Abonnement</h1>
-                        <p>Bonjour ${client.name},</p>
-                        <p>Un nouvel abonnement a été mis en place sur votre compte <strong>OBEM Studio</strong>.</p>
-                        
-                        <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; margin: 20px 0;">
-                            <p style="margin: 0 0 10px 0;"><strong>Montant :</strong> ${amount}€ / ${interval === "month" ? "mois" : interval}</p>
-                            <p style="margin: 0 0 10px 0;"><strong>Date de début :</strong> ${start.toLocaleDateString("fr-FR")}</p>
-                            ${durationMonths ? `<p style="margin: 0 0 10px 0;"><strong>Durée :</strong> ${durationMonths} mois</p>` : ""}
-                            ${commitmentMonths ? `<p style="margin: 0;"><strong>Engagement :</strong> ${commitmentMonths} mois</p>` : ""}
-                        </div>
+                    <h2 style="margin-top: 0; color: #000; font-size: 20px;">Nouvel Abonnement</h2>
+                    <p>Bonjour ${client.name},</p>
+                    <p>Un nouvel abonnement a été mis en place pour votre compte <strong>Obem Studio</strong>.</p>
+                    
+                    <div style="background-color: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 12px; padding: 25px; margin: 25px 0;">
+                        <p style="margin-top: 0; font-weight: bold; color: #666; font-size: 13px; text-transform: uppercase;">Récapitulatif :</p>
+                        <p style="margin: 8px 0 0 0;"><strong>Montant :</strong> ${amount}€ / ${interval === "month" ? "mois" : interval}</p>
+                        <p style="margin: 5px 0 0 0;"><strong>Date de début :</strong> ${start.toLocaleDateString("fr-FR")}</p>
+                        ${durationMonths ? `<p style="margin: 5px 0 0 0;"><strong>Durée :</strong> ${durationMonths} mois</p>` : ""}
+                        ${commitmentMonths ? `<p style="margin: 5px 0 0 0;"><strong>Engagement :</strong> ${commitmentMonths} mois</p>` : ""}
+                    </div>
 
-                        <p>Vous pouvez retrouver les détails et gérer cet abonnement directement depuis votre espace client.</p>
-                        
-                        <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/finances/abonnements" 
-                           style="display: inline-block; background: #000; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
-                            Voir mon abonnement
+                    <p>Vous pouvez retrouver tous les détails de votre facturation directement dans votre espace client.</p>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="${baseUrl}/dashboard/finances/abonnements" 
+                           style="display: inline-block; background-color: #000; color: #fff; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            Consulter mon abonnement
                         </a>
                     </div>
                 `;

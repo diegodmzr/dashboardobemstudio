@@ -65,16 +65,27 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         // 2. Send via Email
         const { sendEmail } = await import("@/lib/email");
         if (quote.client.email) {
+            const host = req.headers.get("host") || "dashboard.obemstudio.com";
+            const protocol = host.includes("localhost") ? "http" : "https";
+            const baseUrl = `${protocol}://${host}`;
+            const quoteLink = `${baseUrl}/dashboard/client/devis/${quote.id}`;
+
             await sendEmail(
                 quote.client.email,
-                `Nouveau Devis : ${quote.reference}`,
+                `Nouveau Devis : ${quote.reference} - Obem Studio`,
                 `
-                <div style="font-family: sans-serif; color: #333;">
-                    <h2>Bonjour ${quote.client.name},</h2>
-                    <p>Un nouveau devis <strong>${quote.reference}</strong> a été édité pour vous.</p>
-                    <p>Montant total : <strong>${quote.total} €</strong></p>
-                    <p>Vous pouvez le consulter et le signer en cliquant sur le bouton ci-dessous :</p>
-                    <a href="${quoteLink}" style="display: inline-block; background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Voir le devis</a>
+                <h2 style="margin-top: 0; color: #000; font-size: 20px;">Bonjour ${quote.client.name},</h2>
+                <p>Un nouveau devis <strong>${quote.reference}</strong> a été édité pour vous par l'équipe <strong>Obem Studio</strong>.</p>
+                
+                <div style="background-color: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
+                    <p style="margin: 0; color: #666; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Montant total</p>
+                    <p style="margin: 5px 0 0 0; color: #000; font-size: 28px; font-weight: 800;">${quote.total} €</p>
+                </div>
+
+                <p>Vous pouvez consulter les détails, télécharger le document et le signer électroniquement en cliquant sur le bouton ci-dessous :</p>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="${quoteLink}" style="display: inline-block; background-color: #000; color: #fff; padding: 14px 28px; text-decoration: none; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">Voir et signer le devis</a>
                 </div>
                 `
             );

@@ -78,16 +78,17 @@ export async function POST(req: Request) {
                 const { sendEmail } = await import("@/lib/email");
                 await sendEmail(
                     recipient.email,
-                    `Formulaire à remplir : ${form.title}`,
+                    `Formulaire à remplir : ${form.title} - Obem Studio`,
                     `
-                    <div style="font-family: sans-serif; color: #333;">
-                        <h2>Bonjour ${recipient.name || "Client"},</h2>
-                        <p>Merci de bien vouloir remplir ce formulaire : <strong>${form.title}</strong></p>
-                        <p>Vous pouvez y accéder en cliquant sur le bouton ci-dessous :</p>
-                        <a href="${formLink}" style="display: inline-block; background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Remplir le formulaire</a>
-                        <p style="margin-top: 20px; font-size: 12px; color: #888;">Ou via ce lien : <a href="${formLink}">${formLink}</a></p>
-                        <p>Cordialement,<br/>L'équipe</p>
+                    <h2 style="margin-top: 0; color: #000; font-size: 20px;">Bonjour ${recipient.name || "Client"},</h2>
+                    <p>L'équipe <strong>Obem Studio</strong> vous invite à remplir le formulaire suivant : <strong>${form.title}</strong></p>
+                    <p>Vos réponses nous permettront de mieux traiter votre demande.</p>
+                    
+                    <div style="text-align: center; margin: 35px 0;">
+                        <a href="${formLink}" style="display: inline-block; background-color: #000; color: #fff; padding: 14px 28px; text-decoration: none; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">Remplir le formulaire</a>
                     </div>
+                    
+                    <p style="font-size: 13px; color: #888;">Si le bouton ne fonctionne pas, vous pouvez copier ce lien : <a href="${formLink}">${formLink}</a></p>
                     `
                 );
             }

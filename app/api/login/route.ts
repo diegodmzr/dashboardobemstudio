@@ -46,41 +46,36 @@ export async function POST(request: Request) {
     try {
       // Send Welcome Email
       const { sendEmail } = await import("@/lib/email");
+      const host = request.headers.get("host") || "dashboard.obemstudio.com";
+      const protocol = host.includes("localhost") ? "http" : "https";
+      const baseUrl = `${protocol}://${host}`;
+
       const welcomeHtml = `
-              <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-                  <div style="text-align: center; margin-bottom: 30px;">
-                      <img src="https://obemstudio.com/logonoir.png" alt="Obem Studio" style="width: 150px;">
-                  </div>
-                  <h1 style="color: #000; font-size: 24px; margin-bottom: 20px;">Bienvenue chez Obem Studio, ${user.name} !</h1>
+                  <h2 style="color: #000; font-size: 22px; margin-top: 0;">Bienvenue chez Obem Studio, ${user.name} !</h2>
                   <p style="font-size: 16px; line-height: 1.6;">Nous sommes ravis de vous compter parmi nos clients. Voici un tour d'horizon rapide de votre nouvel espace :</p>
                   
-                  <div style="background-color: #f8f6fb; border-radius: 12px; padding: 20px; margin: 25px 0;">
-                      <ul style="list-style: none; padding: 0;">
-                          <li style="margin-bottom: 15px;">
-                              <strong>🚀 Tableau de bord</strong><br>
-                              Une vue d'ensemble de vos projets et de vos dernières activités.
+                  <div style="background-color: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 12px; padding: 25px; margin: 25px 0;">
+                      <ul style="list-style: none; padding: 0; margin: 0;">
+                          <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                              <span style="font-size: 20px; margin-right: 12px;">🚀</span>
+                              <span><strong>Tableau de bord</strong><br><span style="color: #666; font-size: 14px;">Une vue d'ensemble de vos projets et de vos dernières activités.</span></span>
                           </li>
-                          <li style="margin-bottom: 15px;">
-                              <strong>📂 Mes Projets</strong><br>
-                              Suivez l'avancement de vos projets en temps réel, étape par étape.
+                          <li style="margin-bottom: 18px; display: flex; align-items: flex-start;">
+                              <span style="font-size: 20px; margin-right: 12px;">📂</span>
+                              <span><strong>Mes Projets</strong><br><span style="color: #666; font-size: 14px;">Suivez l'avancement de vos projets en temps réel, étape par étape.</span></span>
                           </li>
-                          <li style="margin-bottom: 15px;">
-                              <strong>📄 Devis & Factures</strong><br>
-                              Consultez vos documents et effectuez vos règlements en toute sécurité.
-                          </li>
-                          <li style="margin-bottom: 15px;">
-                              <strong>💬 Discussions</strong><br>
-                              L'endroit idéal pour échanger avec notre équipe sur vos projets.
+                          <li style="margin-bottom: 0; display: flex; align-items: flex-start;">
+                              <span style="font-size: 20px; margin-right: 12px;">💬</span>
+                              <span><strong>Discussions</strong><br><span style="color: #666; font-size: 14px;">Échangez directement avec notre équipe sur vos projets en cours.</span></span>
                           </li>
                       </ul>
                   </div>
 
-                  <p style="font-size: 16px; line-height: 1.6;">Si vous avez la moindre question, n'hésitez pas à nous contacter directement via la section Support de votre tableau de bord.</p>
+                  <p style="font-size: 15px; line-height: 1.6; color: #555;">Si vous avez la moindre question, n'hésitez pas à nous contacter directement via la section Support de votre tableau de bord.</p>
                   
                   <div style="text-align: center; margin-top: 40px;">
-                      <a href="${request.url.split('/api/')[0]}/dashboard" style="background-color: #000; color: #fff; padding: 14px 28px; text-decoration: none; border-radius: 50px; font-weight: bold;">Accéder à mon espace</a>
+                      <a href="${baseUrl}/dashboard" style="background-color: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 12px; font-weight: bold; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">Accéder à mon espace</a>
                   </div>
-              </div>
           `;
       await sendEmail(user.email, "Bienvenue chez Obem Studio 🚀", welcomeHtml);
 

@@ -98,36 +98,34 @@ export async function POST(req: NextRequest) {
         if (body.sendLoginEmail && rawPassword) {
             try {
                 const { sendEmail } = await import("@/lib/email");
+                const host = req.headers.get("host") || "dashboard.obemstudio.com";
+                const protocol = host.includes("localhost") ? "http" : "https";
+                const baseUrl = `${protocol}://${host}`;
+
                 await sendEmail(
                     body.email,
-                    "Vos identifiants de connexion - Dashboard Obem Studio",
+                    "Vos identifiants de connexion - Obem Studio",
                     `
-                    <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-                        <div style="text-align: center; margin-bottom: 24px;">
-                             <h1 style="font-size: 24px; font-weight: bold;">Bienvenue sur votre Espace Client</h1>
-                        </div>
-                        
-                        <div style="background-color: #f9f9f9; padding: 24px; border-radius: 12px; border: 1px solid #eee;">
-                            <p style="margin-bottom: 16px;">Bonjour <strong>${body.name}</strong>,</p>
-                            <p style="margin-bottom: 16px;">Votre compte client a été créé avec succès. Vous pouvez désormais accéder à votre tableau de bord pour suivre vos projets, devis et factures.</p>
-                            
-                            <p style="margin-bottom: 8px;">Voici vos identifiants de connexion :</p>
-                            <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
-                                <li style="margin-bottom: 8px;">Email : <strong>${body.email}</strong></li>
-                                <li>Mot de passe : <strong>${rawPassword}</strong></li>
-                            </ul>
-
-                            <div style="text-align: center;">
-                                <a href="${req.headers.get("origin") || "https://dashboard.obem.studio"}/login" 
-                                   style="display: inline-block; background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                                   Se connecter
-                                </a>
-                            </div>
-                        </div>
-                        <p style="text-align: center; margin-top: 24px; font-size: 12px; color: #888;">
-                            Nous vous recommandons de modifier votre mot de passe lors de votre première connexion.
-                        </p>
+                    <h2 style="margin-top: 0; color: #000; font-size: 20px;">Bienvenue sur votre Espace Client</h2>
+                    <p>Bonjour <strong>${body.name}</strong>,</p>
+                    <p>Votre compte client a été créé avec succès sur le dashboard <strong>Obem Studio</strong>. Vous pouvez désormais suivre vos projets, devis et factures en temps réel.</p>
+                    
+                    <div style="background-color: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 12px; padding: 25px; margin: 25px 0;">
+                        <p style="margin-top: 0; font-weight: bold; color: #666; font-size: 13px; text-transform: uppercase;">Vos identifiants :</p>
+                        <p style="margin-bottom: 8px;">Email : <strong>${body.email}</strong></p>
+                        <p style="margin-top: 0;">Mot de passe : <strong>${rawPassword}</strong></p>
                     </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="${baseUrl}/login" 
+                           style="display: inline-block; background-color: #000; color: #fff; padding: 14px 28px; text-decoration: none; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                           Se connecter à mon espace
+                        </a>
+                    </div>
+                    
+                    <p style="text-align: center; margin-top: 30px; font-size: 13px; color: #888;">
+                        Nous vous recommandons de modifier votre mot de passe dans les paramètres de votre profil lors de votre première connexion.
+                    </p>
                     `
                 );
             } catch (emailError) {

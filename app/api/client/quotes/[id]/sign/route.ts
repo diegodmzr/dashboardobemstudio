@@ -81,14 +81,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 if (admin.email) {
                     await sendEmail(
                         admin.email,
-                        `Devis Signé : ${quote.reference} - ${user.name}`,
+                        `Devis Signé : ${quote.reference} - ${user.name} - Obem Studio`,
                         `
-                        <div style="font-family: sans-serif; color: #333;">
-                            <h2>Devis validé !</h2>
-                            <p>Le client <strong>${user.name}</strong> vient de signer le devis <strong>${quote.reference}</strong>.</p>
-                            <p>Montant : <strong>${updatedQuote.total} €</strong></p>
-                            <p>Vous trouverez le devis signé en pièce jointe.</p>
+                        <h2 style="margin-top: 0; color: #000; font-size: 20px;">Dossier Validé !</h2>
+                        <p>Le client <strong>${user.name}</strong> vient de signer électroniquement le devis <strong>${quote.reference}</strong>.</p>
+                        
+                        <div style="background-color: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                            <p style="margin: 0; color: #666; font-size: 13px; text-transform: uppercase;">Détails :</p>
+                            <p style="margin: 5px 0 0 0;">Référence : <strong>${quote.reference}</strong></p>
+                            <p style="margin: 5px 0 0 0;">Montant : <strong>${updatedQuote.total} €</strong></p>
                         </div>
+
+                        <p>Le document signé est disponible en pièce jointe de cet email et a été archivé dans votre tableau de bord administrateur.</p>
                         `,
                         [
                             {
