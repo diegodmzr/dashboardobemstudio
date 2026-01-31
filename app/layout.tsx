@@ -38,8 +38,8 @@ export const metadata: Metadata = {
     ],
     shortcut: "/iconlogo.png",
     apple: [
-      { url: "/iconlogo.png" },
-      { url: "/iconlogo.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-icon.png" },
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
 };

@@ -135,7 +135,7 @@ export default function Sidebar({
   };
 
   return (
-    <aside className={`flex h-full flex-col justify-between bg-[#efedef] py-4 text-[#3d3d3d] transition-all duration-300 dark:bg-black dark:text-gray-100 dark:border-r dark:border-[#333] ${isCollapsed ? "w-20 px-2" : "w-full md:w-64 px-3"}`}>
+    <aside className={`flex h-full flex-col justify-between bg-[#efedef] py-4 text-[#3d3d3d] transition-all duration-300 dark:bg-black dark:text-gray-100 dark:border-r dark:border-[#333] overflow-hidden ${isCollapsed ? "w-20 px-2" : "w-full md:w-64 px-3"}`}>
       <div>
         {/* Logo + brand + toggle */}
         <div className={`flex items-center ${isCollapsed ? "justify-center flex-col gap-4" : "justify-between"} rounded-xl px-2 py-3`}>

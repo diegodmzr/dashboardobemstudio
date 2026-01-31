@@ -5,6 +5,7 @@ import Sidebar, { type NavItem } from "@/components/Sidebar";
 import { Menu } from "lucide-react";
 import MobileNavbar from "./MobileNavbar";
 import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 type Props = {
     children: React.ReactNode;
@@ -73,10 +74,12 @@ export default function DashboardShell({ children, navItems, user }: Props) {
             )}
 
             {/* Sidebar (Desktop & Mobile) */}
-            <div className={`
-                fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:w-auto
-                ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
-            `}>
+            <div className={cn(
+                "fixed inset-y-0 left-0 z-50 w-64 transform transition-all duration-300 ease-in-out md:static md:translate-x-0 md:w-auto",
+                mobileMenuOpen
+                    ? "translate-x-0 opacity-100 visible"
+                    : "-translate-x-full opacity-0 invisible pointer-events-none md:opacity-100 md:visible md:pointer-events-auto"
+            )}>
                 <Sidebar
                     navItems={navItems}
                     userName={user?.name || undefined}

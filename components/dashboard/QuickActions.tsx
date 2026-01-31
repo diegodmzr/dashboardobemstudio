@@ -22,15 +22,16 @@ export default function QuickActions({ role }: Props) {
     return (
         <div className="bg-white rounded-2xl border border-gray-100 p-6 dark:bg-[#111] dark:border-[#333]">
             <h3 className="font-bold text-gray-900 mb-4 dark:text-white">Actions Rapides</h3>
-            <div className="flex flex-wrap gap-3">
+            {/* Scrollable container on mobile, flex-wrap on desktop */}
+            <div className="flex flex-nowrap md:flex-wrap items-center gap-3 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide -mx-2 px-2 md:mx-0 md:px-0">
                 {actions.map((act) => (
                     <Link
                         key={act.label}
                         href={act.href}
-                        className={`group px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 transition-transform hover:scale-105 cursor-pointer ${act.color}`}
+                        className={`shrink-0 group px-5 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer border border-transparent ${act.color}`}
                     >
                         <act.icon className="w-4 h-4" />
-                        {act.label}
+                        <span className="whitespace-nowrap">{act.label}</span>
                     </Link>
                 ))}
             </div>
