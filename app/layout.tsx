@@ -36,6 +36,7 @@ export const metadata: Metadata = {
       { url: "/iconlogo.png" },
       { url: "/iconlogo.png", sizes: "192x192", type: "image/png" },
     ],
+    shortcut: "/iconlogo.png",
     apple: [
       { url: "/iconlogo.png" },
       { url: "/iconlogo.png", sizes: "180x180", type: "image/png" },
