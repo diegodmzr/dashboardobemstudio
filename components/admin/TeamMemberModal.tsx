@@ -51,7 +51,7 @@ export default function TeamMemberModal({ member, onClose, onSave }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
             <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl dark:bg-[#1a1a1a]">
                 <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-[#2f2f2f] dark:text-white">
+                    <h2 className="text-2xl font-semibold text-[#2f2f2f] dark:text-white">
                         {member ? "Modifier le membre" : "Nouveau membre"}
                     </h2>
                     <button
@@ -123,14 +123,14 @@ export default function TeamMemberModal({ member, onClose, onSave }: Props) {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 rounded-xl border border-[#ece7ef] py-3 text-sm font-bold text-[#4a4a4a] transition hover:bg-gray-50 dark:border-[#333] dark:text-gray-300 dark:hover:bg-[#222]"
+                            className="flex-1 rounded-xl border border-[#ece7ef] py-3 text-sm font-semibold text-[#4a4a4a] transition hover:bg-gray-50 dark:border-[#333] dark:text-gray-300 dark:hover:bg-[#222]"
                         >
                             Annuler
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 rounded-xl bg-black py-3 text-sm font-bold text-white shadow-lg transition hover:bg-gray-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                            className="flex-1 rounded-xl bg-black py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                         >
                             {loading ? "Enregistrement..." : member ? "Modifier" : "Créer"}
                         </button>
