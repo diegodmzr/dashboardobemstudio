@@ -75,8 +75,8 @@ export default function LoginForm() {
         return (
             <form className="mt-8 space-y-6" onSubmit={handle2FAVerify}>
                 <div className="text-center">
-                    <h2 className="text-xl font-bold text-gray-900 border-b border-gray-100 pb-4 mb-6">Double authentification</h2>
-                    <p className="text-sm text-gray-500 mb-8">
+                    <h2 className="text-xl font-bold text-white border-b border-white/10 pb-4 mb-6">Double authentification</h2>
+                    <p className="text-sm text-gray-400 mb-8">
                         Veuillez saisir le code à 6 chiffres généré par votre application d'authentification.
                     </p>
                 </div>
@@ -93,7 +93,7 @@ export default function LoginForm() {
                     placeholder="000000"
                     value={twoFactorCode}
                     onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ""))}
-                    className="block w-full text-center text-3xl tracking-widest font-bold rounded-2xl border border-gray-200 bg-gray-50 px-4 py-5 text-gray-900 focus:border-black focus:ring-black outline-none transition-all"
+                    className="block w-full text-center text-3xl tracking-widest font-bold rounded-2xl border border-white/20 bg-white/5 px-4 py-5 text-white focus:border-white focus:ring-white outline-none transition-all"
                     required
                     autoFocus
                 />
@@ -102,14 +102,14 @@ export default function LoginForm() {
                     <button
                         type="button"
                         onClick={() => setRequires2FA(false)}
-                        className="flex-1 rounded-xl border border-gray-200 px-4 py-3.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                        className="flex-1 rounded-xl border border-white/10 px-4 py-3.5 text-sm font-semibold text-gray-300 hover:bg-white/5"
                     >
                         Retour
                     </button>
                     <button
                         type="submit"
                         disabled={isLoading || twoFactorCode.length < 6}
-                        className="flex-[2] rounded-xl bg-black px-4 py-3.5 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-70 shadow-lg shadow-black/20"
+                        className="flex-[2] rounded-xl bg-white px-4 py-3.5 text-sm font-semibold text-black hover:bg-gray-200 disabled:opacity-70 shadow-lg shadow-white/10"
                     >
                         {isLoading ? "Vérification..." : "Vérifier"}
                     </button>
@@ -121,38 +121,38 @@ export default function LoginForm() {
     return (
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {error && (
-                <div className="p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs text-center animate-shake">
+                <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl text-xs text-center animate-shake backdrop-blur-sm">
                     {error}
                 </div>
             )}
             <div className="space-y-4">
                 <div>
-                    <label htmlFor="email" className="block text-xs font-semibold text-gray-900 uppercase tracking-wide mb-1.5">Email</label>
+                    <label htmlFor="email" className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Email</label>
                     <input
                         id="email"
                         name="email"
                         type="email"
                         autoComplete="email"
                         required
-                        className="block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-black focus:ring-black focus:bg-white text-sm outline-none transition-all"
+                        className="block w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder-gray-500 focus:border-white focus:ring-white focus:bg-white/10 text-sm outline-none transition-all"
                         placeholder="nom@exemple.com"
                     />
                 </div>
                 <div>
-                    <label htmlFor="password" className="block text-xs font-semibold text-gray-900 uppercase tracking-wide mb-1.5">Mot de passe</label>
+                    <label htmlFor="password" className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Mot de passe</label>
                     <input
                         id="password"
                         name="password"
                         type="password"
                         autoComplete="current-password"
                         required
-                        className="block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-black focus:ring-black focus:bg-white text-sm outline-none transition-all"
+                        className="block w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-white placeholder-gray-500 focus:border-white focus:ring-white focus:bg-white/10 text-sm outline-none transition-all"
                         placeholder="••••••••"
                     />
                     <div className="flex justify-end mt-2">
                         <Link
                             href="/forgot-password"
-                            className="text-xs font-medium text-gray-500 hover:text-black transition-colors"
+                            className="text-xs font-medium text-gray-500 hover:text-white transition-colors"
                         >
                             Mot de passe oublié ?
                         </Link>
@@ -163,7 +163,7 @@ export default function LoginForm() {
             <button
                 type="submit"
                 disabled={isLoading}
-                className="group relative flex w-full justify-center rounded-xl bg-black px-4 py-3.5 text-sm font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all shadow-lg shadow-black/20 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="group relative flex w-full justify-center rounded-2xl bg-white px-4 py-3.5 text-sm font-bold text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black transition-all shadow-xl shadow-white/5 hover:shadow-white/10 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
             >
                 {isLoading ? "Connexion..." : "Se connecter"}
             </button>
