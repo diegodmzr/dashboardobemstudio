@@ -117,7 +117,7 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
             <div className="flex flex-col gap-6 p-4 md:p-8 md:pb-0">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl md:text-4xl font-black tracking-tight text-[#1f1f1f] dark:text-white">
+                        <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-[#1f1f1f] dark:text-white">
                             Gestion d&apos;Équipe
                         </h1>
                         <p className="text-sm text-[#8a8a8a] dark:text-gray-400 mt-1">
@@ -127,7 +127,7 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
 
                     <button
                         onClick={() => setShowCreateModal(true)}
-                        className="bg-black text-white px-6 py-3 rounded-2xl text-sm font-bold hover:bg-zinc-800 transition-all shadow-xl active:scale-95 dark:bg-white dark:text-black flex items-center justify-center gap-2"
+                        className="bg-black text-white px-6 py-3 rounded-2xl text-sm font-semibold hover:bg-zinc-800 transition-all shadow-xl active:scale-95 dark:bg-white dark:text-black flex items-center justify-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
                         Nouveau membre
@@ -155,7 +155,7 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                                 key={opt.label}
                                 onClick={() => setRoleFilter(opt.val)}
                                 className={cn(
-                                    "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-black transition-all duration-300",
+                                    "whitespace-nowrap px-5 py-2 rounded-xl text-xs font-semibold transition-all duration-300",
                                     roleFilter === opt.val
                                         ? "bg-black text-white dark:bg-white dark:text-black shadow-md"
                                         : "text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-white"
@@ -178,7 +178,7 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                             className="h-64 flex flex-col items-center justify-center text-zinc-400"
                         >
                             <User className="w-12 h-12 mb-4 opacity-10" />
-                            <p className="font-bold">Aucun membre trouvé</p>
+                            <p className="font-semibold">Aucun membre trouvé</p>
                         </motion.div>
                     ) : (
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -201,7 +201,7 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                                             {member.avatar ? (
                                                 <img src={member.avatar} alt={member.name} className="h-full w-full object-cover" />
                                             ) : (
-                                                <span className="text-xl font-black text-zinc-400">{member.name.charAt(0).toUpperCase()}</span>
+                                                <span className="text-xl font-semibold text-zinc-400">{member.name.charAt(0).toUpperCase()}</span>
                                             )}
                                         </div>
                                         {member.role === "SUPER_ADMIN" && (
@@ -213,10 +213,10 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
 
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <h3 className="text-lg font-black tracking-tight text-zinc-900 dark:text-white truncate">
+                                            <h3 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white truncate">
                                                 {member.name}
                                                 {member.id === currentUserId && (
-                                                    <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">Vous</span>
+                                                    <span className="ml-2 text-[10px] font-semibold uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">Vous</span>
                                                 )}
                                             </h3>
                                         </div>
@@ -227,7 +227,7 @@ export default function TeamAdminClient({ team, currentUserId }: Props) {
                                             </div>
                                             <div className="flex items-center gap-3 mt-1">
                                                 <span className={cn(
-                                                    "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+                                                    "px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest",
                                                     member.role === "SUPER_ADMIN"
                                                         ? "bg-purple-100 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400"
                                                         : "bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400"

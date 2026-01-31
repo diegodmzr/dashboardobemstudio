@@ -64,7 +64,7 @@ export default function NotificationsClient() {
             <div className="flex flex-col gap-6 mb-8 mt-2">
                 <div className="flex items-end justify-between px-2">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-black tracking-tight text-[#1f1f1f] dark:text-white">
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1f1f1f] dark:text-white">
                             Centre d&apos;alertes
                         </h1>
                         <p className="text-sm text-[#8a8a8a] dark:text-gray-400 mt-1">
@@ -81,7 +81,7 @@ export default function NotificationsClient() {
                                 key={opt.value}
                                 onClick={() => setFilter(opt.value)}
                                 className={cn(
-                                    "flex-1 sm:flex-none px-4 sm:px-6 py-2 text-xs font-bold rounded-[14px] transition-all duration-300 whitespace-nowrap",
+                                    "flex-1 sm:flex-none px-4 sm:px-6 py-2 text-xs font-semibold rounded-[14px] transition-all duration-300 whitespace-nowrap",
                                     filter === opt.value
                                         ? "bg-black text-white shadow-lg dark:bg-white dark:text-black"
                                         : "text-[#8a8a8a] hover:text-black dark:text-gray-400 dark:hover:text-white"
@@ -95,7 +95,7 @@ export default function NotificationsClient() {
                     <div className="flex items-center gap-2 ml-auto w-full sm:w-auto px-2 sm:px-0">
                         <button
                             onClick={handleMarkAllRead}
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2 text-xs font-bold text-[#8a8a8a] hover:text-black transition-colors rounded-2xl hover:bg-white dark:hover:bg-[#111] dark:hover:text-white"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2 text-xs font-semibold text-[#8a8a8a] hover:text-black transition-colors rounded-2xl hover:bg-white dark:hover:bg-[#111] dark:hover:text-white"
                         >
                             <Check className="w-4 h-4" />
                             Tout marquer comme lu

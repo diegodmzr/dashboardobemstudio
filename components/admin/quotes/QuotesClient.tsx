@@ -125,7 +125,7 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
                 rightContent={
                     <button
                         onClick={handleCreate}
-                        className="bg-black text-white px-6 py-2.5 rounded-2xl text-sm font-bold hover:bg-zinc-800 transition-all shadow-lg active:scale-95 dark:bg-white dark:text-black flex items-center gap-2"
+                        className="bg-black text-white px-6 py-2.5 rounded-2xl text-sm font-semibold hover:bg-zinc-800 transition-all shadow-lg active:scale-95 dark:bg-white dark:text-black flex items-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
                         <span className="hidden sm:inline">Nouveau devis</span>
@@ -158,7 +158,7 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
                                     key={status}
                                     onClick={() => setStatusFilter(status)}
                                     className={cn(
-                                        "whitespace-nowrap px-5 py-2.5 rounded-xl text-xs font-black transition-all duration-300 active:scale-95",
+                                        "whitespace-nowrap px-5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 active:scale-95",
                                         isActive
                                             ? "bg-black text-white dark:bg-white dark:text-black shadow-md"
                                             : "bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700"
@@ -188,22 +188,22 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
                                 >
                                     <div className="flex justify-between items-start mb-4">
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#b2b2b2]">{quote.reference}</span>
-                                            <h3 className="font-bold text-zinc-900 dark:text-white">{quote.client.name}</h3>
+                                            <span className="text-[10px] font-semibold uppercase tracking-widest text-[#b2b2b2]">{quote.reference}</span>
+                                            <h3 className="font-semibold text-zinc-900 dark:text-white">{quote.client.name}</h3>
                                         </div>
-                                        <div className={cn("px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tight", info.bg, info.color)}>
+                                        <div className={cn("px-3 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-tight", info.bg, info.color)}>
                                             {info.label}
                                         </div>
                                     </div>
 
                                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#b2b2b2]">Montant</span>
-                                            <span className="font-black text-zinc-900 dark:text-white">{formatCurrency(quote.total || 0)}</span>
+                                            <span className="text-[10px] font-semibold uppercase tracking-widest text-[#b2b2b2]">Montant</span>
+                                            <span className="font-semibold text-zinc-900 dark:text-white">{formatCurrency(quote.total || 0)}</span>
                                         </div>
                                         <div className="flex flex-col items-end">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#b2b2b2]">Émis le</span>
-                                            <span className="text-sm font-bold text-zinc-600 dark:text-zinc-400">{formatDate(quote.issuedAt)}</span>
+                                            <span className="text-[10px] font-semibold uppercase tracking-widest text-[#b2b2b2]">Émis le</span>
+                                            <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">{formatDate(quote.issuedAt)}</span>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -217,12 +217,12 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
                     <table className="w-full text-left">
                         <thead>
                             <tr className="border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-white/5">
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Référence</th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Client</th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Date</th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 text-right">Montant</th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 text-center">Statut</th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 text-right">Actions</th>
+                                <th className="px-8 py-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Référence</th>
+                                <th className="px-8 py-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Client</th>
+                                <th className="px-8 py-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Date</th>
+                                <th className="px-8 py-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400 text-right">Montant</th>
+                                <th className="px-8 py-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400 text-center">Statut</th>
+                                <th className="px-8 py-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -234,17 +234,17 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
                                         className="hover:bg-zinc-50/50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer group"
                                         onClick={() => handleEdit(quote)}
                                     >
-                                        <td className="px-8 py-5 text-sm font-black text-zinc-900 dark:text-zinc-100">{quote.reference}</td>
+                                        <td className="px-8 py-5 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{quote.reference}</td>
                                         <td className="px-8 py-5">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{quote.client.name}</span>
+                                                <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{quote.client.name}</span>
                                                 {quote.client.companyName && <span className="text-xs text-zinc-400">{quote.client.companyName}</span>}
                                             </div>
                                         </td>
                                         <td className="px-8 py-5 text-sm font-medium text-zinc-500">{formatDate(quote.issuedAt)}</td>
-                                        <td className="px-8 py-5 text-sm font-black text-zinc-900 text-right dark:text-zinc-100">{formatCurrency(quote.total || 0)}</td>
+                                        <td className="px-8 py-5 text-sm font-semibold text-zinc-900 text-right dark:text-zinc-100">{formatCurrency(quote.total || 0)}</td>
                                         <td className="px-8 py-5 text-center">
-                                            <span className={cn("px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tight", info.bg, info.color)}>
+                                            <span className={cn("px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-tight", info.bg, info.color)}>
                                                 {info.label}
                                             </span>
                                         </td>
@@ -263,7 +263,7 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
                         <div className="w-20 h-20 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6">
                             <FileText className="w-8 h-8 text-zinc-300" />
                         </div>
-                        <h3 className="text-lg font-bold text-zinc-900 dark:text-white">Aucun devis trouvé</h3>
+                        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Aucun devis trouvé</h3>
                         <p className="text-sm text-zinc-500 max-w-xs mt-2">Affinez votre recherche ou créez un nouveau document.</p>
                     </div>
                 )}

@@ -35,7 +35,7 @@ export default function NotificationList({ notifications, onRead }: Props) {
                 <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-6">
                     <Bell className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Tout est à jour !</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tout est à jour !</h3>
                 <p className="text-sm text-gray-500 max-w-[240px] mt-2 leading-relaxed">
                     Vous n&apos;avez aucune nouvelle notification. Revenez plus tard !
                 </p>
@@ -106,7 +106,7 @@ export default function NotificationList({ notifications, onRead }: Props) {
 
                             {/* Mobile only badge & dot */}
                             <div className="flex items-center gap-2 sm:hidden">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-[#8a8a8a]">
+                                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#8a8a8a]">
                                     {notif.type}
                                 </span>
                                 {!notif.isRead && <div className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />}
@@ -117,12 +117,12 @@ export default function NotificationList({ notifications, onRead }: Props) {
                         <div className="flex-1 min-w-0">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
                                 <h4 className={cn(
-                                    "text-[15px] font-bold tracking-tight leading-tight transition-colors",
+                                    "text-[15px] font-semibold tracking-tight leading-tight transition-colors",
                                     notif.isRead ? "text-gray-500" : "text-[#1f1f1f] dark:text-white"
                                 )}>
                                     {notif.title}
                                 </h4>
-                                <time className="text-[10px] font-bold uppercase tracking-wider text-[#b2b2b2] dark:text-gray-500 whitespace-nowrap">
+                                <time className="text-[10px] font-semibold uppercase tracking-wider text-[#b2b2b2] dark:text-gray-500 whitespace-nowrap">
                                     {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: fr })}
                                 </time>
                             </div>
