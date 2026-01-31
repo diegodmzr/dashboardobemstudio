@@ -29,17 +29,17 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Obem Dashboard",
-    startupImage: "/iconlogo.png",
+    startupImage: "/icon-512.png",
   },
   icons: {
     icon: [
-      { url: "/iconlogo.png" },
-      { url: "/iconlogo.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-192.png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
     ],
-    shortcut: "/iconlogo.png",
+    shortcut: "/icon-192.png",
     apple: [
-      { url: "/apple-icon.png" },
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/icon-512.png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
   },
 };
