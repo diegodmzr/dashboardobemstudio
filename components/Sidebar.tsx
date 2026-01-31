@@ -201,7 +201,7 @@ export default function Sidebar({
           {!isCollapsed && (
             <button
               onClick={handleLogout}
-              className="group p-2 text-[#8a8a8a] hover:text-red-500 transition-colors dark:text-gray-500 dark:hover:text-red-400 cursor-pointer -mr-1"
+              className="group p-2 text-[#8a8a8a] hover:text-red-500 transition-colors dark:text-gray-500 dark:hover:text-red-400 cursor-pointer"
               title="Se déconnecter"
             >
               <motion.div whileHover={{ x: 2, scale: 1.1 }} transition={{ duration: 0.2 }}>
