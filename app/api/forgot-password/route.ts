@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
-    const prisma = new PrismaClient();
     try {
         const { email } = await request.json();
 
@@ -25,15 +24,14 @@ export async function POST(request: Request) {
         const token = crypto.randomBytes(32).toString("hex");
         const expiresAt = new Date(Date.now() + 3600000); // 1 hour
 
-        // Save token using Raw SQL to bypass stale Prisma Client on Windows
-        await (prisma as any).$executeRawUnsafe(
-            `INSERT INTO PasswordResetToken (id, token, email, expiresAt, createdAt) VALUES (?, ?, ?, ?, ?)`,
-            crypto.randomBytes(16).toString("hex"), // id
-            token,
-            email,
-            expiresAt.toISOString(),
-            new Date().toISOString()
-        );
+        // Save token using standard Prisma
+        await prisma.passwordResetToken.create({
+            data: {
+                token,
+                email,
+                expiresAt,
+            }
+        });
 
         const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/reset-password?token=${token}`;
 
@@ -69,7 +67,5 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error("Forgot password error:", error);
         return NextResponse.json({ error: "Une erreur est survenue lors du traitement de votre demande." }, { status: 500 });
-    } finally {
-        await prisma.$disconnect();
     }
 }
