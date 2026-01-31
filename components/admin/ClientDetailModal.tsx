@@ -159,6 +159,50 @@ export default function ClientDetailModal({ client, onClose, onEdit }: Props) {
                             </div>
                         </div>
                     </div>
+
+                    {/* Sécurité Section */}
+                    <div className="mt-10 pt-10 border-t border-gray-100 dark:border-[#333]">
+                        <h3 className="mb-6 text-xs font-medium uppercase tracking-widest text-gray-400 dark:text-gray-500">Sécurité</h3>
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50/50 border border-gray-100 dark:bg-[#1a1a1a] dark:border-[#333]">
+                            <div className="flex items-center gap-3">
+                                <div className={`h-2.5 w-2.5 rounded-full ${client.twoFactorEnabled ? "bg-emerald-500 animate-pulse" : "bg-gray-300 dark:bg-gray-600"}`} />
+                                <div>
+                                    <p className="text-sm font-semibold text-black dark:text-white">Double Authentification (2FA)</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {client.twoFactorEnabled
+                                            ? "Activée pour ce compte."
+                                            : "Désactivée pour ce compte."}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {client.twoFactorEnabled && (
+                                <button
+                                    onClick={async () => {
+                                        if (confirm("Êtes-vous sûr de vouloir désactiver la 2FA pour ce client ?")) {
+                                            try {
+                                                const res = await fetch(`/api/clients/${client.id}/disable-2fa`, {
+                                                    method: "POST"
+                                                });
+                                                if (res.ok) {
+                                                    alert("La 2FA a été désactivée.");
+                                                    onClose();
+                                                    window.location.reload(); // Quick way to refresh parent data
+                                                } else {
+                                                    alert("Erreur lors de la désactivation.");
+                                                }
+                                            } catch (err) {
+                                                alert("Une erreur est survenue.");
+                                            }
+                                        }
+                                    }}
+                                    className="px-4 py-2 text-xs font-bold text-rose-500 border border-rose-200 rounded-xl hover:bg-rose-50 transition dark:border-rose-900/30 dark:hover:bg-rose-950/20"
+                                >
+                                    Désactiver la 2FA
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Footer Actions */}
@@ -169,7 +213,6 @@ export default function ClientDetailModal({ client, onClose, onEdit }: Props) {
                     >
                         Modifier
                     </button>
-                    {/* Placeholder for future features like Reset Password or View Projects */}
                 </div>
             </div>
         </div>

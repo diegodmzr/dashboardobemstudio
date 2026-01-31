@@ -20,6 +20,7 @@ type Client = {
     sector?: string;
     siret?: string;
     status: string;
+    twoFactorEnabled: boolean;
     createdAt: string;
     projectCount: number;
     totalRevenue: number;
