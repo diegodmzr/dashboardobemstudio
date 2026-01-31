@@ -23,9 +23,9 @@ export async function GET(req: Request) {
             ]
         };
 
-        // Rule: Clients only see Admins. Admins see everyone.
+        // Rule: Clients only see Admins and Super Admins. Admins/Super Admins see everyone.
         if (user.role === "CLIENT") {
-            whereClause.role = "ADMIN";
+            whereClause.role = { in: ["ADMIN", "SUPER_ADMIN"] };
         }
 
         const users = await prisma.user.findMany({

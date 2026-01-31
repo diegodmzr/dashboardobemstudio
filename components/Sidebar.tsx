@@ -170,7 +170,7 @@ export default function Sidebar({
       <div className="space-y-2">
         {/* Secondary actions */}
         <div className="space-y-1">
-          <NotificationBadge isCollapsed={isCollapsed} />
+          <NotificationBadge isCollapsed={isCollapsed} onMobileClose={onMobileClose} />
           {utilityItems.map((item, index) => (
             <div key={item.label} className="relative">
               <NavLink item={item} isCollapsed={isCollapsed} onMobileClose={onMobileClose} />

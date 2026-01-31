@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 type Props = {
     userName: string;
-    role: "ADMIN" | "CLIENT";
+    role: "ADMIN" | "CLIENT" | "SUPER_ADMIN";
 };
 
 export default function HeaderGreeting({ userName, role }: Props) {

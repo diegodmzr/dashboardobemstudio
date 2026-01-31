@@ -27,12 +27,19 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Obem Dashboard",
+    startupImage: "/iconlogo.png",
   },
   icons: {
-    icon: "/iconlogo.png",
-    apple: "/iconlogo.png",
+    icon: [
+      { url: "/iconlogo.png" },
+      { url: "/iconlogo.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/iconlogo.png" },
+      { url: "/iconlogo.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 

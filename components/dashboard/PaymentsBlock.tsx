@@ -7,7 +7,7 @@ import { fr } from "date-fns/locale";
 
 type Props = {
     payments: any[];
-    role: "ADMIN" | "CLIENT";
+    role: "ADMIN" | "CLIENT" | "SUPER_ADMIN";
 };
 
 export default function PaymentsBlock({ payments, role }: Props) {

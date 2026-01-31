@@ -9,7 +9,7 @@ import PaymentsBlock from "./PaymentsBlock";
 import QuickActions from "./QuickActions";
 
 export type DashboardData = {
-    role: "ADMIN" | "CLIENT";
+    role: "ADMIN" | "CLIENT" | "SUPER_ADMIN";
     userName: string;
     kpis: any;
     activity: any[];

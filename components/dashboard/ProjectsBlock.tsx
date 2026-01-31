@@ -6,17 +6,17 @@ import StepProgressBar from "@/components/admin/StepProgressBar";
 
 type Props = {
     projects: any[];
-    role: "ADMIN" | "CLIENT";
+    role: "ADMIN" | "CLIENT" | "SUPER_ADMIN";
 };
 
 export default function ProjectsBlock({ projects, role }: Props) {
-    const listUrl = role === "ADMIN" ? "/dashboard/projets" : "/dashboard/client/projets";
+    const listUrl = role === "CLIENT" ? "/dashboard/client/projets" : "/dashboard/projets";
 
     return (
         <div className="bg-white rounded-2xl border border-gray-100 p-6 dark:bg-[#111] dark:border-[#333]">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-gray-900 dark:text-white">
-                    {role === "ADMIN" ? "Projets Récents" : "Vos Projets"}
+                    {role === "CLIENT" ? "Vos Projets" : "Projets Récents"}
                 </h3>
                 <Link
                     href={listUrl}
@@ -36,9 +36,9 @@ export default function ProjectsBlock({ projects, role }: Props) {
                         // Determine detail URL
                         // For Admin, likely /dashboard/projets?search=NAME to see it in list, or a dedicated ID page if it existed.
                         // Given current structure, list page with filter is best fallback.
-                        const projectUrl = role === "ADMIN"
-                            ? `/dashboard/projets?search=${encodeURIComponent(project.name)}`
-                            : `/dashboard/client/projets`; // Client detail page? For now list.
+                        const projectUrl = role === "CLIENT"
+                            ? `/dashboard/client/projets`
+                            : `/dashboard/projets?search=${encodeURIComponent(project.name)}`;
 
                         return (
                             <Link
@@ -51,7 +51,7 @@ export default function ProjectsBlock({ projects, role }: Props) {
                                         <h4 className="font-semibold text-gray-900 group-hover:text-black dark:text-white">
                                             {project.name}
                                         </h4>
-                                        {role === "ADMIN" && project.client && (
+                                        {role !== "CLIENT" && project.client && (
                                             <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                                                 {project.client.avatar && (
                                                     <img src={project.client.avatar} className="w-3 h-3 rounded-full" />

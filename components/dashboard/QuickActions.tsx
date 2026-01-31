@@ -4,11 +4,11 @@ import { PlusCircle, FileText, CreditCard, MessageSquare, BarChart2 } from "luci
 import Link from "next/link";
 
 type Props = {
-    role: "ADMIN" | "CLIENT";
+    role: "ADMIN" | "CLIENT" | "SUPER_ADMIN";
 };
 
 export default function QuickActions({ role }: Props) {
-    const actions = role === "ADMIN" ? [
+    const actions = role !== "CLIENT" ? [
         { label: "Nouveau Projet", icon: PlusCircle, href: "/dashboard/projets?action=create", color: "bg-black text-white dark:bg-white dark:text-black" },
         { label: "Nouveau Client", icon: FileText, href: "/dashboard/clients?action=create", color: "bg-gray-100 text-gray-900 dark:bg-[#222] dark:text-white" },
         { label: "Créer Devis", icon: CreditCard, href: "/dashboard/finances/devis?action=create", color: "bg-gray-100 text-gray-900 dark:bg-[#222] dark:text-white" },

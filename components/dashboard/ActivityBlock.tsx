@@ -12,7 +12,7 @@ type Props = {
         date: string;
         icon: string;
     }[];
-    role: "ADMIN" | "CLIENT";
+    role: "ADMIN" | "CLIENT" | "SUPER_ADMIN";
 };
 
 export default function ActivityBlock({ activities, role }: Props) {

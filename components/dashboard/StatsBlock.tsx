@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 type Props = {
     kpis: any;
-    role: "ADMIN" | "CLIENT";
+    role: "ADMIN" | "CLIENT" | "SUPER_ADMIN";
 };
 
 export default function StatsBlock({ kpis, role }: Props) {

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-export default function NotificationBadge({ isCollapsed }: { isCollapsed?: boolean }) {
+export default function NotificationBadge({ isCollapsed, onMobileClose }: { isCollapsed?: boolean, onMobileClose?: () => void }) {
     const [count, setCount] = useState(0);
     const pathname = usePathname();
 
@@ -31,6 +31,7 @@ export default function NotificationBadge({ isCollapsed }: { isCollapsed?: boole
         <div className="relative">
             <Link
                 href="/dashboard/notifications"
+                onClick={onMobileClose}
                 className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[14px] font-medium transition-colors ${pathname === "/dashboard/notifications"
                     ? "bg-white text-[#2f2f2f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-[#222] dark:text-white dark:shadow-none"
                     : "text-[#8a8a8a] hover:bg-white/60 hover:text-[#4a4a4a] dark:text-gray-400 dark:hover:bg-[#222] dark:hover:text-white"

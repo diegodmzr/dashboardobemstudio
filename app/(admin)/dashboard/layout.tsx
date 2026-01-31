@@ -10,7 +10,8 @@ import {
   AnimatedForms,
   AnimatedFinance,
   AnimatedGoals,
-  AnimatedStats
+  AnimatedStats,
+  AnimatedUsers
 } from "@/components/ui/AnimatedIcons";
 
 const defaultNavItems: NavItem[] = [
@@ -122,7 +123,17 @@ export default async function DashboardLayout({
   const user = await getCurrentUser();
 
   // Determine nav items based on role
-  const navItems = user?.role === "CLIENT" ? clientNavItems : defaultNavItems;
+  let navItems = user?.role === "CLIENT" ? clientNavItems : [...defaultNavItems];
+
+  // Add Super Admin specific items
+  if (user?.role === "SUPER_ADMIN") {
+    // Insert "Équipe" after "Clients" (index 2 + 1 = 3)
+    navItems.splice(3, 0, {
+      label: "Équipe",
+      href: "/dashboard/equipe",
+      icon: <AnimatedUsers />,
+    });
+  }
 
   return (
     <DashboardShell navItems={navItems} user={user || undefined}>

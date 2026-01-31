@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Sidebar, { type NavItem } from "@/components/Sidebar";
 import { Menu } from "lucide-react";
+import MobileNavbar from "./MobileNavbar";
 
 type Props = {
     children: React.ReactNode;
@@ -11,6 +12,7 @@ type Props = {
         name?: string | null;
         email?: string | null;
         avatar?: string | null;
+        role?: string;
     };
 };
 
@@ -98,11 +100,13 @@ export default function DashboardShell({ children, navItems, user }: Props) {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto p-4 md:p-6">
+                <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
                     <div className="min-h-full flex flex-col rounded-3xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-[#efedf0] overflow-hidden dark:bg-black dark:ring-[#333] dark:shadow-none">
                         {children}
                     </div>
                 </main>
+
+                <MobileNavbar role={user?.role} onMobileClose={() => setMobileMenuOpen(false)} />
             </div>
         </div>
     );

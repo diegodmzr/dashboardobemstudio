@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     try {
         const user = await getCurrentUser();
         // Only Admin should probably trigger manual notifications via API, but for dev we allow it or check role
-        if (!user || user.role !== "ADMIN") return new NextResponse("Unauthorized", { status: 401 });
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) return new NextResponse("Unauthorized", { status: 401 });
 
         const body = await req.json();
         const { targetUserId, type, title, message, entityType, entityId } = body;

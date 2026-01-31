@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 export async function GET(req: Request) {
     try {
         const user = await getCurrentUser();
-        if (!user || user.role !== "ADMIN") return new NextResponse("Unauthorized", { status: 401 });
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) return new NextResponse("Unauthorized", { status: 401 });
 
         const users = await prisma.user.findMany({
             where: {

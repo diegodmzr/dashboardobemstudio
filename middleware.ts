@@ -3,13 +3,23 @@ import type { NextRequest } from "next/server";
 
 const PUBLIC_PATHS = ["/login", "/api/login", "/api/logout", "/forbidden", "/", "/f", "/api/forms", "/forgot-password", "/reset-password", "/api/forgot-password", "/api/reset-password", "/api/login/2fa"];
 
-// Routes accessible uniquement aux ADMIN
-const ADMIN_ONLY_ROUTES = [
+// Routes accessible aux ADMIN et SUPER_ADMIN
+const ADMIN_ROUTES = [
   "/dashboard/clients",
   "/dashboard/stats",
+  "/dashboard/demandes",
+  "/dashboard/forms",
+  "/dashboard/objectifs",
+  "/dashboard/paiements",
+  "/dashboard/statistiques",
 ];
 
-// Routes partagées (accessible aux deux rôles, permissions gérées dans la page)
+// Routes accessible uniquement aux SUPER_ADMIN
+const SUPER_ADMIN_ONLY_ROUTES = [
+  "/dashboard/equipe",
+];
+
+// Routes partagées (accessible aux trois rôles, permissions gérées dans la page)
 const SHARED_ROUTES = [
   "/dashboard/parametres",
   "/dashboard/notifications",
@@ -39,7 +49,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Check if route is shared (allow both roles)
+  // Check if route is shared (allow all roles)
   const isSharedRoute = SHARED_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
@@ -48,17 +58,26 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check if route is admin-only
-  const isAdminOnlyRoute = ADMIN_ONLY_ROUTES.some(
+  // Check if route is super-admin only
+  const isSuperAdminOnlyRoute = SUPER_ADMIN_ONLY_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  if (isAdminOnlyRoute && role !== "ADMIN") {
+  if (isSuperAdminOnlyRoute && role !== "SUPER_ADMIN") {
+    return NextResponse.redirect(new URL("/forbidden", req.url));
+  }
+
+  // Check if route is admin-accessible
+  const isAdminRoute = ADMIN_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+
+  if (isAdminRoute && role !== "ADMIN" && role !== "SUPER_ADMIN") {
     return NextResponse.redirect(new URL("/forbidden", req.url));
   }
 
   // Check if accessing /dashboard/finances root (admin only)
-  if (pathname === "/dashboard/finances" && role !== "ADMIN") {
+  if (pathname === "/dashboard/finances" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
     return NextResponse.redirect(new URL("/forbidden", req.url));
   }
 

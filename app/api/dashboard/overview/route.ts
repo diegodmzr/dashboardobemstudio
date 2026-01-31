@@ -9,7 +9,7 @@ export async function GET() {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const isAdmin = user.role === "ADMIN";
+        const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
         const today = new Date();
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 

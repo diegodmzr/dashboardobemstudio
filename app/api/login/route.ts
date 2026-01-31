@@ -120,6 +120,10 @@ export async function POST(request: Request) {
   // Update lastLoginAt
   await prisma.$executeRaw`UPDATE "User" SET "lastLoginAt" = ${new Date()} WHERE id = ${user.id}`;
 
+  // Force-delete existing cookies to ensure role update is picked up
+  res.cookies.delete("userId");
+  res.cookies.delete("role");
+
   res.cookies.set({
     name: "userId",
     value: user.id,
