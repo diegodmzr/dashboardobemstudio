@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 type Props = {
     role?: string;
@@ -20,6 +21,25 @@ type Props = {
 
 export default function MobileNavbar({ role, onMobileClose, isVisible = true }: Props) {
     const pathname = usePathname();
+    const [notificationCount, setNotificationCount] = useState(0);
+
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                const res = await fetch("/api/notifications/count");
+                if (res.ok) {
+                    const data = await res.json();
+                    setNotificationCount(data.count);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchCount();
+        const interval = setInterval(fetchCount, 60000); // Poll every minute
+        return () => clearInterval(interval);
+    }, []);
 
     const items = [
         {
@@ -67,6 +87,8 @@ export default function MobileNavbar({ role, onMobileClose, isVisible = true }: 
                     <nav className="flex items-center justify-around rounded-2xl border border-white/20 bg-white/80 px-1 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:bg-black/80 dark:border-white/10">
                         {items.map((item) => {
                             const Icon = item.icon;
+                            const isNotification = item.href.includes("notifications");
+
                             return (
                                 <Link
                                     key={item.href}
@@ -75,12 +97,19 @@ export default function MobileNavbar({ role, onMobileClose, isVisible = true }: 
                                     className="relative flex flex-col items-center py-0.5"
                                 >
                                     <div className={cn(
-                                        "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300",
+                                        "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 relative",
                                         item.active
                                             ? "bg-black text-white shadow-md dark:bg-white dark:text-black"
                                             : "text-[#8a8a8a] dark:text-gray-400"
                                     )}>
                                         <Icon className="h-5 w-5" strokeWidth={item.active ? 2.2 : 1.8} />
+
+                                        {/* Notification Dot */}
+                                        {isNotification && notificationCount > 0 && (
+                                            <span className="absolute top-2 right-2 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-[#f43f5e] ring-2 ring-white dark:ring-black">
+                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#f43f5e] opacity-75"></span>
+                                            </span>
+                                        )}
 
                                         {item.active && (
                                             <motion.div
