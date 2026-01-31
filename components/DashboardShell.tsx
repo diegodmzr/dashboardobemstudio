@@ -86,22 +86,17 @@ export default function DashboardShell({ children, navItems, user }: Props) {
             </div>
 
             {/* Main Content */}
-            <div className="flex flex-1 flex-col overflow-hidden w-full">
-                {/* Mobile Header */}
-                <header className="flex items-center justify-between bg-white px-4 py-3 shadow-sm md:hidden dark:bg-[#111] dark:border-b dark:border-[#333]">
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setMobileMenuOpen(true)}
-                            className="p-2 -ml-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#222]"
-                        >
-                            <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-                        </button>
-                        <span className="font-semibold text-gray-900 dark:text-white">OBEM STUDIO</span>
-                    </div>
-                </header>
+            <div className="flex flex-1 flex-col overflow-hidden w-full relative">
+                {/* Floating Mobile Burger Button */}
+                <button
+                    onClick={() => setMobileMenuOpen(true)}
+                    className="fixed top-6 left-6 z-40 md:hidden flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/70 shadow-lg backdrop-blur-xl transition-all active:scale-95 dark:bg-black/70 dark:border-white/10"
+                >
+                    <Menu className="w-6 h-6 text-black dark:text-white" />
+                </button>
 
                 <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
-                    <div className="min-h-full flex flex-col rounded-3xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-[#efedf0] overflow-hidden dark:bg-black dark:ring-[#333] dark:shadow-none">
+                    <div className="mt-14 md:mt-0 min-h-full flex flex-col rounded-3xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-[#efedf0] overflow-hidden dark:bg-black dark:ring-[#333] dark:shadow-none">
                         {children}
                     </div>
                 </main>
