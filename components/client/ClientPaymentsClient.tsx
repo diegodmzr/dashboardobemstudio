@@ -66,6 +66,7 @@ export default function ClientPaymentsClient({ initialPayments, initialQuotes = 
     useEffect(() => {
         const sessionId = searchParams.get("session_id");
         const successParam = searchParams.get("success");
+        const openId = searchParams.get("open");
 
         if (successParam === "true" && sessionId) {
             const verifyPayment = async () => {
@@ -81,10 +82,7 @@ export default function ClientPaymentsClient({ initialPayments, initialQuotes = 
                         success("Paiement validé avec succès !");
                         router.refresh();
                         // Clear params to avoid re-verify
-                        router.replace("/dashboard/client/paiements");
-                    } else {
-                        // Don't show error if it's just not settled yet, but maybe valuable debugging
-                        // error("Validation du paiement en attente...");
+                        router.replace("/dashboard/finances/paiements");
                     }
                 } catch (e) {
                     console.error(e);
@@ -94,8 +92,15 @@ export default function ClientPaymentsClient({ initialPayments, initialQuotes = 
             verifyPayment();
         } else if (searchParams.get("canceled")) {
             error("Le paiement a été annulé.");
+        } else if (openId) {
+            // Auto open payment drawer if 'open' param is present
+            const payment = initialPayments.find(p => p.id === openId);
+            if (payment) {
+                setSelectedPayment(payment);
+                setIsPaymentDrawerOpen(true);
+            }
         }
-    }, [searchParams]);
+    }, [searchParams, initialPayments]);
 
     // --- Helpers ---
 
@@ -221,7 +226,9 @@ export default function ClientPaymentsClient({ initialPayments, initialQuotes = 
                                 <tbody className="divide-y divide-[#e0e0e0] dark:divide-[#333]">
                                     {filteredPayments.map(p => (
                                         <tr key={p.id} onClick={() => openPaymentDrawer(p)} className="cursor-pointer hover:bg-gray-50 transition dark:hover:bg-[#222]">
-                                            <td className="px-6 py-4 text-sm text-[#2f2f2f] dark:text-white">{formatDate(p.dueDate || p.createdAt)}</td>
+                                            <td className="px-6 py-4 text-sm text-[#2f2f2f] dark:text-white">
+                                                {p.status === 'PAID' ? formatDate(p.paidAt || p.createdAt) : formatDate(p.dueDate || p.createdAt)}
+                                            </td>
                                             <td className="px-6 py-4 text-sm font-medium text-[#2f2f2f] dark:text-white flex items-center gap-2">
                                                 {p.projectName}
                                                 {p.type === "SUBSCRIPTION" && (

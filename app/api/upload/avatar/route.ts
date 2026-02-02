@@ -19,16 +19,29 @@ export async function POST(req: NextRequest) {
         }
 
         const buffer = Buffer.from(await file.arrayBuffer());
-        // Create a unique filename: user-id-timestamp.ext
-        const filename = `avatar-${user.id}-${Date.now()}${path.extname(file.name)}`;
+
+        // Sanitize filename: remove special chars and spaces
+        const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+        const filename = `avatar-${user.id}-${Date.now()}-${cleanFileName}`;
+
         const uploadDir = path.join(process.cwd(), "public", "uploads", "avatars");
 
-        console.log("DEBUG: Avatar upload dir =", uploadDir);
-        await mkdir(uploadDir, { recursive: true });
+        console.log("DEBUG: Avatar upload started for user:", user.id);
+        console.log("DEBUG: Target filename:", filename);
+
+        try {
+            await mkdir(uploadDir, { recursive: true });
+            console.log("DEBUG: Created/verified upload directory:", uploadDir);
+        } catch (dirError) {
+            console.error("DEBUG: Failed to create upload directory:", dirError);
+            throw dirError;
+        }
 
         const filePath = path.join(uploadDir, filename);
-        console.log("DEBUG: Writing avatar to =", filePath);
+        console.log("DEBUG: Writing avatar to:", filePath);
+
         await writeFile(filePath, buffer);
+        console.log("DEBUG: File written successfully");
 
         const avatarUrl = `/uploads/avatars/${filename}`;
 
@@ -37,6 +50,8 @@ export async function POST(req: NextRequest) {
             where: { id: user.id },
             data: { avatar: avatarUrl },
         });
+
+        console.log("DEBUG: User profile updated with avatar URL:", avatarUrl);
 
         return NextResponse.json({ success: true, avatarUrl });
     } catch (error) {

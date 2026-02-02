@@ -18,9 +18,6 @@ export async function GET() {
         return NextResponse.json(users);
     } catch (error) {
         console.error("Error fetching users:", error);
-        return NextResponse.json(
-            { error: "Erreur lors de la récupération des utilisateurs" },
-            { status: 500 }
-        );
+        return NextResponse.json([]);
     }
 }

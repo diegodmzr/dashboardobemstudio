@@ -7,6 +7,7 @@ import QuotePDF from "./QuotePDF";
 
 export type QuoteLine = {
     id: string; // internal random id for key
+    title: string; // Service/Item title
     description: string;
     quantity: number;
     unitPrice: number;
@@ -69,7 +70,7 @@ type Props = {
 };
 
 export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clients, projects }: Props) {
-    const createDefaultLines = (): QuoteLine[] => [{ id: Math.random().toString(), description: "", quantity: 1, unitPrice: 0, total: 0, stripeAuto: false }];
+    const createDefaultLines = (): QuoteLine[] => [{ id: Math.random().toString(), title: "", description: "", quantity: 1, unitPrice: 0, total: 0, stripeAuto: false }];
 
     // State
     const [clientId, setClientId] = useState("");
@@ -154,7 +155,7 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                 setProjectId("");
                 setIssuedAt(new Date().toISOString().split("T")[0]);
                 setValidUntil("");
-                setLines([{ id: Math.random().toString(), description: "", quantity: 1, unitPrice: 0, total: 0 }]);
+                setLines([{ id: Math.random().toString(), title: "", description: "", quantity: 1, unitPrice: 0, total: 0 }]);
 
                 // Reset Discount
                 setDiscount(0);
@@ -190,7 +191,7 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
     };
 
     const addLine = () => {
-        setLines([...lines, { id: Math.random().toString(), description: "", quantity: 1, unitPrice: 0, total: 0, stripeAuto: false }]);
+        setLines([...lines, { id: Math.random().toString(), title: "", description: "", quantity: 1, unitPrice: 0, total: 0, stripeAuto: false }]);
     };
 
     const removeLine = (id: string) => {
@@ -320,22 +321,35 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                         <div className="space-y-3">
                             {lines.map((line, index) => (
                                 <div key={line.id} className="flex gap-3 items-start p-3 rounded-xl border border-gray-100 bg-gray-50/50 group dark:bg-black dark:border-[#333]">
-                                    <div className="flex-1">
-                                        <input
-                                            placeholder="Description de la prestation"
-                                            value={line.description}
-                                            onChange={e => handleLineChange(line.id, "description", e.target.value)}
-                                            className="w-full bg-transparent border-0 border-b border-gray-200 px-0 py-1 text-sm focus:ring-0 focus:border-black placeholder:text-gray-300 dark:border-[#333] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-white"
-                                        />
+                                    <div className="flex-1 space-y-3">
+                                        <div>
+                                            <input
+                                                placeholder="Titre de la prestation"
+                                                value={line.title}
+                                                onChange={e => handleLineChange(line.id, "title", e.target.value)}
+                                                className="w-full bg-transparent border-0 border-b border-gray-100 px-0 py-1 text-sm font-bold focus:ring-0 focus:border-black placeholder:text-gray-300 dark:border-[#222] dark:text-white dark:placeholder:text-gray-600 dark:focus:border-white transition-colors"
+                                            />
+                                            <span className="text-[9px] uppercase tracking-wider text-gray-400 font-medium dark:text-gray-600">Titre de la ligne</span>
+                                        </div>
+                                        <div>
+                                            <textarea
+                                                placeholder="Détails et description précise de la prestation..."
+                                                value={line.description}
+                                                onChange={e => handleLineChange(line.id, "description", e.target.value)}
+                                                className="w-full bg-transparent border-0 border-b border-gray-100 px-0 py-1 text-xs text-gray-500 focus:ring-0 focus:border-black placeholder:text-gray-300 dark:border-[#222] dark:text-gray-400 dark:placeholder:text-gray-600 dark:focus:border-white resize-none transition-colors"
+                                                rows={2}
+                                            />
+                                            <span className="text-[9px] uppercase tracking-wider text-gray-400 font-medium dark:text-gray-600">Description détaillée (apparaîtra en plus fin)</span>
+                                        </div>
                                         <div className="flex items-center gap-2 mt-1">
                                             <input
                                                 type="checkbox"
                                                 id={`stripe-${line.id}`}
                                                 checked={line.stripeAuto || false}
                                                 onChange={e => handleLineChange(line.id, "stripeAuto", e.target.checked)}
-                                                className="h-3 w-3 rounded border-gray-300 text-purple-600 focus:ring-purple-600 dark:bg-[#222] dark:border-[#444]"
+                                                className="h-3 w-3 rounded border-gray-300 text-black focus:ring-black dark:bg-[#222] dark:border-[#444]"
                                             />
-                                            <label htmlFor={`stripe-${line.id}`} className="text-[10px] text-gray-400 cursor-pointer select-none">Stripe Auto</label>
+                                            <label htmlFor={`stripe-${line.id}`} className="text-[10px] text-gray-400 cursor-pointer select-none hover:text-black dark:hover:text-white transition-colors">Lier à un paiement Stripe automatique</label>
                                         </div>
                                     </div>
                                     <div className="w-20">

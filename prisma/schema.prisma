@@ -9,44 +9,39 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  name        String
-  firstName   String?
-  lastName    String?
-  avatar      String?
-  address     String?
-  theme       String?  @default("light")
-  role        String   @default("CLIENT")
-  password    String?  // Hashed password
-  phone       String?
-  companyName String?
-  companyLogo String?  // URL to logo
-  siret       String?
-  sector      String?
-  twoFactorEnabled Boolean  @default(false)
-  twoFactorSecret  String?
-  status           String   @default("Active") // Active, Inactive
-  lastLoginAt      DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt @default(now())
-
-  projects    Project[]
-  auditLogs   AuditLog[]
-  quotes      Quote[]
-  payments    Payment[]
-  tickets     Ticket[]
-  subscriptions Subscription[]
-  goals         Goal[]
-
-  // Discussion Relations
-  conversationParticipations Participant[] @relation("ConversationParticipations")
-  messagesSent               Message[]     @relation("MessagesSent")
-  
-  assignedProjects Project[] @relation("ProjectAssignees")
-  
-  notifications Notification[]
-  formSubmissions FormSubmission[]
+  id                         String           @id @default(cuid())
+  email                      String           @unique
+  name                       String
+  firstName                  String?
+  lastName                   String?
+  avatar                     String?
+  address                    String?
+  theme                      String?          @default("light")
+  role                       String           @default("CLIENT")
+  password                   String?
+  phone                      String?
+  companyName                String?
+  companyLogo                String?
+  siret                      String?
+  sector                     String?
+  twoFactorEnabled           Boolean          @default(false)
+  twoFactorSecret            String?
+  status                     String           @default("Active")
+  createdAt                  DateTime         @default(now())
+  updatedAt                  DateTime         @default(now()) @updatedAt
+  lastLoginAt                DateTime?
+  auditLogs                  AuditLog[]
+  formSubmissions            FormSubmission[]
+  goals                      Goal[]
+  messagesSent               Message[]        @relation("MessagesSent")
+  notifications              Notification[]
+  conversationParticipations Participant[]    @relation("ConversationParticipations")
+  payments                   Payment[]
+  projects                   Project[]
+  quotes                     Quote[]
+  subscriptions              Subscription[]
+  tickets                    Ticket[]
+  assignedProjects           Project[]        @relation("ProjectAssignees")
 }
 
 model PasswordResetToken {
@@ -58,315 +53,230 @@ model PasswordResetToken {
 }
 
 model Project {
-  id           String   @id @default(cuid())
-  name         String
-  clientId     String
-  client       User     @relation(fields: [clientId], references: [id])
-  status       String   @default("En cours")
-  progress     Int      @default(0) // 0-100
-  amount       Float    @default(0)
-  type         String?
-  technology   String?
-  paymentType  String?
-  deadline     DateTime?
-  cpp          Float?
-  commission   Float?
-  attributes   String? // JSON stringified array for sqlite
-  level        String?
-  progressConfig String? // JSON: custom progress bar configuration (steps, labels, descriptions)
-  statusHistory ProjectStatusHistory[]
-  payments     Payment[] // Relation with payments
-  
+  id               String                 @id @default(cuid())
+  name             String
+  clientId         String
+  status           String                 @default("En cours")
+  progress         Int                    @default(0)
+  amount           Float                  @default(0)
+  type             String?
+  technology       String?
+  paymentType      String?
+  deadline         DateTime?
+  cpp              Float?
+  commission       Float?
+  attributes       String?
+  level            String?
+  progressConfig   String?
   formSubmissionId String?
-  formSubmission   FormSubmission? @relation(fields: [formSubmissionId], references: [id])
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  quotes       Quote[]
-  conversations Conversation[]
-  
-  assignees    User[]   @relation("ProjectAssignees")
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  conversations    Conversation[]
+  payments         Payment[]
+  client           User                   @relation(fields: [clientId], references: [id])
+  formSubmission   FormSubmission?        @relation(fields: [formSubmissionId], references: [id])
+  statusHistory    ProjectStatusHistory[]
+  quotes           Quote[]
+  assignees        User[]                 @relation("ProjectAssignees")
 }
 
 model ProjectStatusHistory {
   id        String   @id @default(cuid())
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   oldStatus String?
   newStatus String
-  changedBy String   // UserId
-  reason    String?  // Optionnel: note de changement
+  changedBy String
+  reason    String?
   createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  action    String   // ex: "CREATE_PROJECT", "PAYMENT_RECEIVED"
-  entity    String   // ex: "Project", "Payment"
+  action    String
+  entity    String
   entityId  String
-  metadata  String?  // JSON details
+  metadata  String?
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Quote {
-  id          String   @id @default(cuid())
-  reference   String   @unique // ex: D-2024-001
-  status      String   @default("DRAFT") // DRAFT, SENT, ACCEPTED, REJECTED
-  
-  // Relations
-  clientId    String
-  client      User     @relation(fields: [clientId], references: [id])
-  projectId   String?  // Linked project (optional)
-  project     Project? @relation(fields: [projectId], references: [id])
-  
-  // Dates
-  issuedAt    DateTime @default(now())
-  validUntil  DateTime?
-
-  // Content (JSON for SQLite)
-  // Structure: [{ description: string, quantity: number, unitPrice: number, total: number }]
-  items       String   @default("[]")
-
-  // Financials
-  subtotal    Float    @default(0)
-  discount    Float    @default(0) // Percentage (0-100)
-  taxRate     Float    @default(0)
-  taxAmount   Float    @default(0)
-  total       Float    @default(0)
-
-  // Texts
-  notes       String?
-  terms       String?
-
-  // Dynamic Terms Configuration (JSON)
-  // Stores [{ title: string, content: string, enabled: boolean }]
-  termsConfig String @default("[]")
-
-  pdfUrl      String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Payment Configuration
-  paymentType   String   @default("ONESHOT") // ONESHOT, RECURRING, SPLIT
-  isRecurring   Boolean  @default(false)
-  stripeAutoSend Boolean @default(false) // If true, auto-send stripe link
-  
-  // Signature
-  signature     String?  // Base64 signature data
-  signedAt      DateTime?
-
-  payments    Payment[]
+  id             String    @id @default(cuid())
+  reference      String    @unique
+  status         String    @default("DRAFT")
+  clientId       String
+  projectId      String?
+  issuedAt       DateTime  @default(now())
+  validUntil     DateTime?
+  items          String    @default("[]")
+  subtotal       Float     @default(0)
+  discount       Float     @default(0)
+  taxRate        Float     @default(0)
+  taxAmount      Float     @default(0)
+  total          Float     @default(0)
+  notes          String?
+  terms          String?
+  termsConfig    String    @default("[]")
+  pdfUrl         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  paymentType    String    @default("ONESHOT")
+  isRecurring    Boolean   @default(false)
+  stripeAutoSend Boolean   @default(false)
+  signature      String?
+  signedAt       DateTime?
+  payments       Payment[]
+  client         User      @relation(fields: [clientId], references: [id])
+  project        Project?  @relation(fields: [projectId], references: [id])
 }
 
 model Payment {
-  id              String   @id @default(cuid())
-  
-  // Payment info
-  amount          Float
-  currency        String   @default("EUR")
-  description     String   @default("")
-  type            String   @default("DEPOSIT") // DEPOSIT, BALANCE, SUBSCRIPTION, MILESTONE
-  
-  // Status
-  status          String   // PENDING, PAID, SCHEDULED, OVERDUE, FAILED, REFUNDED
-  
-  // Dates
-  dueDate         DateTime?
-  paidAt          DateTime?
-  scheduledDate   DateTime?
-  
-  // Stripe Specifics
-  stripePaymentIntentId String?  @unique // payment intent ID
+  id                    String    @id @default(cuid())
+  amount                Float
+  currency              String    @default("EUR")
+  description           String    @default("")
+  type                  String    @default("DEPOSIT")
+  status                String
+  dueDate               DateTime?
+  paidAt                DateTime?
+  scheduledDate         DateTime?
+  stripePaymentIntentId String?   @unique
   stripeInvoiceId       String?
-  stripeReceiptUrl      String?  // receipt URL from Stripe
-  invoiceUrl            String?  // hosted invoice URL
-  
-  // Payment method details
-  method          String?  // card, sepa_debit, bank_transfer
-  last4           String?  // last 4 digits of card
-  
-  // Relations
-  clientId        String
-  client          User     @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  projectId       String?
-  project         Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
-  quoteId         String?
-  quote           Quote?   @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  stripeReceiptUrl      String?
+  invoiceUrl            String?
+  method                String?
+  last4                 String?
+  clientId              String
+  projectId             String?
+  quoteId               String?
+  metadata              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  client                User      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  project               Project?  @relation(fields: [projectId], references: [id])
+  quote                 Quote?    @relation(fields: [quoteId], references: [id])
 
-  metadata        String?  // JSON for additional data
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
   @@index([clientId])
   @@index([projectId])
   @@index([status])
 }
 
-
 model Subscription {
-  id                  String   @id @default(cuid())
-  
-  // Stripe IDs (Optional for manual subscriptions)
-  stripeSubscriptionId String?  @unique
+  id                   String    @id @default(cuid())
+  stripeSubscriptionId String?   @unique
   stripeCustomerId     String?
   stripePriceId        String?
   stripeProductId      String?
-  
-  // Status
-  status              String   @default("active") // active, canceled, past_due, unpaid, incomplete, ended
-  
-  // Billing
-  amount              Float    // Monthly/Yearly amount
-  currency            String   @default("EUR")
-  interval            String   // month, year, quarter
-  intervalCount       Int      @default(1)
-  
-  // Dates
-  startDate           DateTime @default(now())
-  endDate             DateTime? // If fixed duration (e.g. 12 months)
-  commitmentEndDate   DateTime? // If there is a minimum commitment period
-    
-  currentPeriodStart  DateTime?
-  currentPeriodEnd    DateTime?
-  canceledAt          DateTime?
-  endedAt             DateTime?
-  
-  // Relations
-  clientId            String
-  client              User     @relation(fields: [clientId], references: [id])
-  projectId           String?
-  
-  metadata            String?  // JSON for extra info
-  
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  status               String    @default("active")
+  amount               Float
+  currency             String    @default("EUR")
+  interval             String
+  intervalCount        Int       @default(1)
+  startDate            DateTime  @default(now())
+  endDate              DateTime?
+  commitmentEndDate    DateTime?
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  canceledAt           DateTime?
+  endedAt              DateTime?
+  clientId             String
+  projectId            String?
+  metadata             String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  client               User      @relation(fields: [clientId], references: [id])
 }
 
 model Ticket {
-  id          String   @id @default(cuid())
-  title       String
-  status      String   // OPEN, IN_PROGRESS, CLOSED
-  priority    String   // LOW, MEDIUM, HIGH, URGENT
-  category    String?  // SUPPORT, BUG, FEATURE, OTHER
-  
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id])
-  
-  assignedTo  String?  // Optional: who is handling this ticket
-  resolvedAt  DateTime? // When the ticket was closed/resolved
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String    @id @default(cuid())
+  title      String
+  status     String
+  priority   String
+  category   String?
+  authorId   String
+  assignedTo String?
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  author     User      @relation(fields: [authorId], references: [id])
 }
 
 model FixedCost {
-  id          String   @id @default(cuid())
-  name        String   // Ex: "Abonnement Figma", "Loyer Bureau"
-  amount      Float    // Monthly cost
-  currency    String   @default("EUR")
-  category    String   // SAAS, RENT, SALARY, OTHER
-  recurring   Boolean  @default(true) // Is it a monthly recurring cost?
-  startDate   DateTime
-  endDate     DateTime? // Null if still active
-  
-  metadata    String?  // JSON for extra info
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String    @id @default(cuid())
+  name      String
+  amount    Float
+  currency  String    @default("EUR")
+  category  String
+  recurring Boolean   @default(true)
+  startDate DateTime
+  endDate   DateTime?
+  metadata  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Goal {
-  id            String   @id @default(cuid())
-  
-  // Identification
-  title         String
-  description   String?
-  
-  // Configuration
-  type          String   // REVENUE, PROFIT, MRR, etc.
-  targetValue   Float
-  currentValue  Float    @default(0)
-  
-  // Période & Comportement
-  startDate     DateTime
-  endDate       DateTime
-  recurrence    String?  // NONE, MONTHLY, QUARTERLY, YEARLY
-  rollover      Boolean  @default(false) // Si true, le reste à faire est reporté sur la période suivante (si pertinent)
-  
-  // Scope (Global vs Personnel)
-  scope         String   @default("GLOBAL") // GLOBAL, PERSONAL
-  userId        String?  // Si PERSONAL, lié à un user
-  user          User?    @relation(fields: [userId], references: [id])
-  
-  // Notifications (JSON: { email: boolean, app: boolean, widget: boolean })
-  notificationConfig String? @default("{\"email\":false,\"app\":true,\"widget\":true}")
-  
-  // Tracking
-  autoTracking  Boolean  @default(true)
-  
-  // Statut
-  status        String   @default("ACTIVE") // ACTIVE, COMPLETED, ARCHIVED, FAILED
-  completedAt   DateTime?
-  
-  // Historique
-  progress      GoalProgress[]
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                 String         @id @default(cuid())
+  title              String
+  description        String?
+  type               String
+  targetValue        Float
+  currentValue       Float          @default(0)
+  startDate          DateTime
+  endDate            DateTime
+  recurrence         String?
+  rollover           Boolean        @default(false)
+  scope              String         @default("GLOBAL")
+  userId             String?
+  notificationConfig String?        @default("{\"email\":false,\"app\":true,\"widget\":true}")
+  autoTracking       Boolean        @default(true)
+  status             String         @default("ACTIVE")
+  completedAt        DateTime?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  user               User?          @relation(fields: [userId], references: [id])
+  progress           GoalProgress[]
 }
 
 model GoalProgress {
   id        String   @id @default(cuid())
   goalId    String
-  goal      Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  
-  value     Float    // Valeur enregistrée ce jour-là
+  value     Float
   date      DateTime @default(now())
-  
   isManual  Boolean  @default(false)
   note      String?
-  
   createdAt DateTime @default(now())
-  
-  
+  goal      Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
   @@index([goalId, date])
 }
 
 model Conversation {
-  id          String        @id @default(cuid())
-  subject     String?
-  status      String        @default("OPEN") // OPEN, IN_PROGRESS, CLOSED
-  category    String?       // PROJET, SUPPORT, FACTURATION, AUTRE
-  type        String?       // QUESTION, PROBLEME, etc.
-
-  // Relations
-  projectId   String?
-  project     Project?      @relation(fields: [projectId], references: [id])
-
-  metadata    String?       // JSON
-
-  participants Participant[]
-  messages     Message[]
-
-  lastMessageAt DateTime @default(now())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id            String        @id @default(cuid())
+  subject       String?
+  status        String        @default("OPEN")
+  category      String?
+  type          String?
+  projectId     String?
+  metadata      String?
+  lastMessageAt DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  project       Project?      @relation(fields: [projectId], references: [id])
+  messages      Message[]
+  participants  Participant[]
 }
 
 model Participant {
   id             String       @id @default(cuid())
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-
   userId         String
-  user           User         @relation("ConversationParticipations", fields: [userId], references: [id])
-
-  role           String?      // OWNER, ADMIN, OBSERVER
+  role           String?
   lastReadAt     DateTime?
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User         @relation("ConversationParticipations", fields: [userId], references: [id])
 
   @@unique([conversationId, userId])
 }
@@ -374,89 +284,66 @@ model Participant {
 model Message {
   id             String       @id @default(cuid())
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-
   senderId       String
-  sender         User         @relation("MessagesSent", fields: [senderId], references: [id])
-
   content        String
   isInternal     Boolean      @default(false)
-
-  attachments    Attachment[]
-
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+  attachments    Attachment[]
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("MessagesSent", fields: [senderId], references: [id])
 }
 
 model Attachment {
   id        String   @id @default(cuid())
   messageId String
-  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
-
   filename  String
   url       String
   mimeType  String
   size      Int
-
   createdAt DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  type      String   // PROJECT, PAYMENT, DISCUSSION, SYSTEM, GOAL
-  title     String
-  message   String
-  
-  // Link to entities
-  entityType String? // "Project", "Payment", "Conversation"
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  title      String
+  message    String
+  entityType String?
   entityId   String?
-  
-  isRead    Boolean  @default(false)
-  
-  createdAt DateTime @default(now())
-  
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
 }
 
 model Form {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   title       String
   description String?
-  slug        String   @unique // Le lien public identifier
-  isActive    Boolean  @default(true)
-  
-  // Configuration des champs (pour l'instant simple, peut être étendu)
-  // JSON: [{ label: "Nom", type: "text" }, { label: "Email", type: "email" }]
-  fields      String   @default("[]") 
-  
+  slug        String           @unique
+  isActive    Boolean          @default(true)
+  fields      String           @default("[]")
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   submissions FormSubmission[]
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
 model FormSubmission {
-  id        String   @id @default(cuid())
-  
+  id        String    @id @default(cuid())
   formId    String
-  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
-  
-  // Les réponses en JSON: { "Nom": "Jean", "Email": "jean@test.com" }
-  content   String   
-  
-  status    String   @default("NEW") // NEW, READ, ARCHIVED
-  
+  content   String
+  status    String    @default("NEW")
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  form      Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id])
   projects  Project[]
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+
   @@index([formId])
   @@index([userId])
 }

@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
                 role: body.role,
                 password: hashedPassword,
                 status: "Active",
+                avatar: body.avatar || null,
             },
         });
 

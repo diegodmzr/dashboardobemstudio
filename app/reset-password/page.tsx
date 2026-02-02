@@ -117,7 +117,7 @@ function ResetPasswordForm() {
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder-gray-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all pr-12 autofill:shadow-[0_0_0_30px_#000000_inset]"
+                            className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all pr-12 autofill:shadow-[0_0_0_30px_#000000_inset]"
                             style={{ WebkitTextFillColor: 'white' }}
                             placeholder="••••••••"
                         />
@@ -138,7 +138,7 @@ function ResetPasswordForm() {
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder-gray-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset]"
+                        className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset]"
                         style={{ WebkitTextFillColor: 'white' }}
                         placeholder="••••••••"
                     />

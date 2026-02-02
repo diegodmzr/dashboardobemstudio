@@ -373,12 +373,11 @@ export default function ClientsAdminClient({ clients }: Props) {
             </main>
 
             {/* Modals */}
-            {showCreateModal && (
-                <ClientModal
-                    onClose={() => setShowCreateModal(false)}
-                    onSave={handleCreate}
-                />
-            )}
+            <ClientModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onSave={handleCreate}
+            />
 
             {viewingClient && (
                 <ClientDetailModal
@@ -391,13 +390,12 @@ export default function ClientsAdminClient({ clients }: Props) {
                 />
             )}
 
-            {editingClient && (
-                <ClientModal
-                    client={editingClient}
-                    onClose={() => setEditingClient(null)}
-                    onSave={handleUpdate}
-                />
-            )}
+            <ClientModal
+                isOpen={!!editingClient}
+                client={editingClient || undefined}
+                onClose={() => setEditingClient(null)}
+                onSave={handleUpdate}
+            />
 
             {deleteClient && (
                 <DeleteConfirmModal

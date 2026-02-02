@@ -46,7 +46,7 @@ export default function PaymentsClient({ initialPayments, initialStats, clients,
 
     // Check query params for deep linking
     useEffect(() => {
-        const paymentId = searchParams.get("paymentId");
+        const paymentId = searchParams.get("paymentId") || searchParams.get("open");
         if (paymentId) {
             const paymentToOpen = initialPayments.find(p => p.id === paymentId);
             if (paymentToOpen) {
@@ -223,9 +223,17 @@ export default function PaymentsClient({ initialPayments, initialStats, clients,
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                                {p.status === 'PAID' ? formatDate(p.paidAt) : formatDate(p.dueDate)}
-                                                {p.status !== 'PAID' && <span className="text-xs text-gray-400 block dark:text-gray-500">Échéance</span>}
-                                                {p.status === 'PAID' && <span className="text-xs text-green-600/70 block dark:text-green-400/70">Réglé le</span>}
+                                                {p.status === 'PAID' ? (
+                                                    <div className="flex flex-col">
+                                                        <span className="text-gray-900 font-medium dark:text-white">{formatDate(p.paidAt)}</span>
+                                                        <span className="text-xs text-green-600 dark:text-green-400">Réglé</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-col">
+                                                        <span className="text-gray-900 font-medium dark:text-white">{formatDate(p.dueDate)}</span>
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500">Échéance</span>
+                                                    </div>
+                                                )}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                                                 <div className="flex items-center gap-2">

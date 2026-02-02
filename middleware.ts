@@ -27,6 +27,7 @@ const SHARED_ROUTES = [
   "/dashboard/finances/devis",       // Client voit SES devis
   "/dashboard/finances/paiements",   // Client voit SES paiements
   "/dashboard/discussion",
+  "/dashboard/client/devis",         // Vue détaillée du devis (pour signature)
 ];
 
 export function middleware(req: NextRequest) {

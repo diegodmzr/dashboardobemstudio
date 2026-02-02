@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
                 // Update payment status to PAID
                 // Cast to any for temporary schema mismatch handling
-                await prisma.payment.update({
+                const updatedPayment = await prisma.payment.update({
                     where: { id: paymentId },
                     data: {
                         status: "PAID",
@@ -60,7 +60,30 @@ export async function POST(req: NextRequest) {
                         stripeReceiptUrl: session.url || null,
                         method: "CARD",
                     } as any,
+                    include: { client: true }
                 });
+
+                // Notify Admins
+                try {
+                    const admins = await prisma.user.findMany({
+                        where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } }
+                    });
+
+                    for (const admin of admins) {
+                        await prisma.notification.create({
+                            data: {
+                                userId: admin.id,
+                                title: "Paiement reçu !",
+                                message: `Le client ${updatedPayment.client.name} a réglé ${updatedPayment.amount}€.`,
+                                type: "SUCCESS",
+                                entityType: "Payment",
+                                entityId: updatedPayment.id
+                            }
+                        });
+                    }
+                } catch (notiError) {
+                    console.error("Error creating notifications:", notiError);
+                }
 
                 console.log(`✅ Payment ${paymentId} marked as PAID`);
                 break;

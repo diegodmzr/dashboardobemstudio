@@ -58,7 +58,7 @@ export default function ProjectRequestStepContact({ formData, updateFormData, ne
                 <div className="grid gap-5 md:grid-cols-2">
                     <div>
                         <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1.5">
-                            Nom de l'entreprise
+                            Nom de l'entreprise <span className="text-gray-400 font-normal">(optionnel)</span>
                         </label>
                         <input
                             type="text"
@@ -70,7 +70,7 @@ export default function ProjectRequestStepContact({ formData, updateFormData, ne
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1.5">
-                            Numéro SIRET
+                            Numéro SIRET <span className="text-gray-400 font-normal">(optionnel)</span>
                         </label>
                         <input
                             type="text"
@@ -84,7 +84,7 @@ export default function ProjectRequestStepContact({ formData, updateFormData, ne
 
                 <div>
                     <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1.5">
-                        Adresse de l'entreprise
+                        Adresse de l'entreprise <span className="text-gray-400 font-normal">(optionnel)</span>
                     </label>
                     <input
                         type="text"
@@ -97,7 +97,7 @@ export default function ProjectRequestStepContact({ formData, updateFormData, ne
 
                 <div>
                     <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1.5">
-                        Téléphone
+                        Téléphone <span className="text-gray-400 font-normal">(optionnel)</span>
                     </label>
                     <input
                         type="tel"

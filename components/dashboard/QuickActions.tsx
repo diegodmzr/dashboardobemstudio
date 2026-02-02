@@ -14,9 +14,9 @@ export default function QuickActions({ role }: Props) {
         { label: "Créer Devis", icon: CreditCard, href: "/dashboard/finances/devis?action=create", color: "bg-gray-100 text-gray-900 dark:bg-[#222] dark:text-white" },
         { label: "Statistiques", icon: BarChart2, href: "/dashboard/statistiques", color: "bg-gray-100 text-gray-900 dark:bg-[#222] dark:text-white" },
     ] : [
-        { label: "Nouvelle Demande", icon: MessageSquare, href: "/dashboard/client/demandes?action=create", color: "bg-black text-white dark:bg-white dark:text-black" },
-        { label: "Mes Paiements", icon: CreditCard, href: "/dashboard/client/paiements", color: "bg-gray-100 text-gray-900 dark:bg-[#222] dark:text-white" },
-        { label: "Mes Projets", icon: FileText, href: "/dashboard/client/projets", color: "bg-gray-100 text-gray-900 dark:bg-[#222] dark:text-white" },
+        { label: "Nouvelle Demande", icon: MessageSquare, href: "/dashboard/discussion?action=create", color: "bg-black text-white dark:bg-white dark:text-black" },
+        { label: "Mes Paiements", icon: CreditCard, href: "/dashboard/finances/paiements", color: "bg-gray-100 text-gray-900 dark:bg-[#222] dark:text-white" },
+        { label: "Mes Projets", icon: FileText, href: "/dashboard/projets", color: "bg-gray-100 text-gray-900 dark:bg-[#222] dark:text-white" },
     ];
 
     return (

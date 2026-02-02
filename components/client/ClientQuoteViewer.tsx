@@ -122,9 +122,15 @@ export default function ClientQuoteViewer({ quote, user }: Props) {
                             <tbody className="divide-y divide-gray-100 dark:divide-[#333]">
                                 {(() => {
                                     try {
-                                        return JSON.parse(quote.items || "[]").map((item: any, i: number) => (
+                                        const items = typeof quote.items === 'string' ? JSON.parse(quote.items || "[]") : (quote.items || []);
+                                        return items.map((item: any, i: number) => (
                                             <tr key={i}>
-                                                <td className="py-4 text-sm text-gray-900 dark:text-white">{item.description}</td>
+                                                <td className="py-4">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-bold text-gray-900 dark:text-white">{item.title}</span>
+                                                        <span className="text-xs text-gray-500 dark:text-gray-400">{item.description}</span>
+                                                    </div>
+                                                </td>
                                                 <td className="py-4 text-sm text-gray-600 text-right dark:text-gray-400">{item.quantity}</td>
                                                 <td className="py-4 text-sm font-medium text-gray-900 text-right dark:text-white">
                                                     {(item.total).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}

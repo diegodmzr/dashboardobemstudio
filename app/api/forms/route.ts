@@ -31,6 +31,20 @@ export async function GET(request: Request) {
     const user = await getCurrentUser();
     if (user?.role !== "ADMIN") return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 
+    // Ensure default form exists
+    const defaultForm = await prisma.form.findUnique({ where: { slug: "demande-de-projet" } });
+    if (!defaultForm) {
+        await prisma.form.create({
+            data: {
+                title: "Demande de Projet Public",
+                slug: "demande-de-projet",
+                description: "Formulaire complet qualifié (8 étapes) accessible à tous sans connexion.",
+                fields: "[]",
+                isActive: true
+            }
+        });
+    }
+
     // @ts-ignore - Prisma client outdated in current session
     const forms = await prisma.form.findMany({
         orderBy: { createdAt: "desc" },

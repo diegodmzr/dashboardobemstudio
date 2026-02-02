@@ -1,9 +1,9 @@
 "use client";
 
-import { ProjectRequestFormData } from "./ProjectRequestForm";
+import { PublicProjectRequestFormData } from "./PublicProjectRequestForm";
 
 type Props = {
-    formData: ProjectRequestFormData;
+    formData: PublicProjectRequestFormData;
     prevStep: () => void;
     goToStep: (step: number) => void;
     handleSubmit: () => void;
@@ -33,8 +33,8 @@ export default function ProjectRequestStep5({ formData, prevStep, goToStep, hand
             </div>
 
             <div className="space-y-4">
-                {/* Contact Info (if guest) */}
-                {(formData.contactSiret || formData.contactAddress) && (
+                {/* Contact Info */}
+                {(formData.contactSiret || formData.contactAddress || formData.contactPhone || formData.contactCompany) && (
                     <div className="rounded-xl border border-[#ece7ef] bg-[#f8f6fb] p-4 dark:bg-[#111] dark:border-[#333]">
                         <h3 className="mb-3 text-sm font-bold text-[#2f2f2f] dark:text-white">Informations de contact</h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -56,6 +56,18 @@ export default function ProjectRequestStep5({ formData, prevStep, goToStep, hand
                                 <div className="col-span-2">
                                     <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Adresse</div>
                                     <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.contactAddress}</div>
+                                </div>
+                            )}
+                            {formData.contactPhone && (
+                                <div>
+                                    <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Téléphone</div>
+                                    <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.contactPhone}</div>
+                                </div>
+                            )}
+                            {formData.contactCompany && (
+                                <div>
+                                    <div className="text-xs font-semibold text-[#8a8a8a] dark:text-gray-500">Entreprise</div>
+                                    <div className="text-sm text-[#2f2f2f] dark:text-white">{formData.contactCompany}</div>
                                 </div>
                             )}
                         </div>

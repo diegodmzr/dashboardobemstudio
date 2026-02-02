@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Topbar from "@/components/Topbar";
+import ProjectRequestStepContact from "@/components/client/ProjectRequestStepContact";
 import ProjectRequestStep1 from "@/components/client/ProjectRequestStep1";
 import ProjectRequestStepPages from "@/components/client/ProjectRequestStepPages";
 import ProjectRequestStepFeatures from "@/components/client/ProjectRequestStepFeatures";
@@ -83,6 +84,7 @@ export default function ProjectRequestForm({ userName, userEmail, userId }: Prop
     });
 
     const steps = [
+        { id: "contact", title: "Contact" },
         { id: "basics", title: "Informations de base" },
         { id: "ecommerce", title: "E-commerce", condition: formData.websiteType === "ecommerce" },
         { id: "pages", title: "Pages" },
@@ -149,6 +151,8 @@ export default function ProjectRequestForm({ userName, userEmail, userId }: Prop
     const renderStep = () => {
         const stepId = steps[currentStep - 1].id;
         switch (stepId) {
+            case "contact":
+                return <ProjectRequestStepContact formData={formData} updateFormData={updateFormData} nextStep={nextStep} />;
             case "basics":
                 return <ProjectRequestStep1 formData={formData} updateFormData={updateFormData} nextStep={nextStep} />;
             case "ecommerce":

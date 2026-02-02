@@ -91,7 +91,7 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
 
     const steps = useMemo(() => {
         const baseSteps = [
-            { id: "contact", title: "Contact", condition: !currentUser },
+            { id: "contact", title: "Contact" },
             { id: "basics", title: "Projet" },
             { id: "ecommerce", title: "E-commerce", condition: formData.websiteType === "ecommerce" },
             { id: "pages", title: "Pages" },

@@ -81,6 +81,8 @@ export default function NotificationList({ notifications, onRead }: Props) {
                                 router.push(`/dashboard/finances/devis?open=${notif.entityId}`);
                             } else if (notif.entityType === "Project" && notif.entityId) {
                                 router.push(`/dashboard/projets/${notif.entityId}`);
+                            } else if (notif.entityType === "Payment" && notif.entityId) {
+                                router.push(`/dashboard/finances/paiements?open=${notif.entityId}`);
                             }
                         }}
                         className={cn(

@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Topbar from "@/components/Topbar";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { pdf } from '@react-pdf/renderer';
 import QuotePDF from "@/components/admin/quotes/QuotePDF";
 import { Download, Loader2, Eye } from "lucide-react";
+import { useEffect } from "react";
 
 type Quote = {
     id: string;
@@ -28,6 +29,15 @@ type Props = {
 
 export default function ClientQuotesClient({ initialQuotes, userName, userEmail }: Props) {
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const openId = searchParams.get("open");
+        if (openId) {
+            router.push(`/dashboard/client/devis/${openId}`);
+        }
+    }, [searchParams, router]);
+
     const [activeTab, setActiveTab] = useState<"all" | "pending" | "signed" | "rejected">("all");
     const [downloadingId, setDownloadingId] = useState<string | null>(null);
 

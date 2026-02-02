@@ -29,17 +29,20 @@ export async function POST(request: Request) {
 
         // 3. Hash new password
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log("Password reset: Hashing new password for user:", resetToken.email);
 
         // 4. Update user
-        await prisma.user.update({
+        const updatedUser = await prisma.user.update({
             where: { email: resetToken.email },
             data: { password: hashedPassword },
         });
+        console.log("Password reset: Successfully updated password for user:", updatedUser.email);
 
         // 5. Delete token
         await prisma.passwordResetToken.delete({
             where: { token }
         });
+        console.log("Password reset: Token deleted successfully");
 
         return NextResponse.json({ success: true });
     } catch (error) {

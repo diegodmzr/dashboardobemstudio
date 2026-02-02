@@ -23,7 +23,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Identifiants invalides" }, { status: 401 });
   }
 
+  console.log("Login attempt for user:", email);
+  console.log("Password hash in DB:", user.password.substring(0, 20) + "...");
+
   const isValid = await bcrypt.compare(password, user.password);
+  console.log("Password comparison result:", isValid);
 
   if (!isValid) {
     return NextResponse.json({ error: "Identifiants invalides" }, { status: 401 });
@@ -51,7 +55,7 @@ export async function POST(request: Request) {
       const baseUrl = `${protocol}://${host}`;
 
       const welcomeHtml = `
-                  <h2 style="color: #000; font-size: 22px; margin-top: 0;">Bienvenue chez Obem Studio, ${user.name} !</h2>
+                  <h2 style="color: #000; font-size: 22px; margin-top: 0;">Bienvenue, ${user.name} !</h2>
                   <p style="font-size: 16px; line-height: 1.6;">Nous sommes ravis de vous compter parmi nos clients. Voici un tour d'horizon rapide de votre nouvel espace :</p>
                   
                   <div style="background-color: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 12px; padding: 25px; margin: 25px 0;">
@@ -77,7 +81,7 @@ export async function POST(request: Request) {
                       <a href="${baseUrl}/dashboard" style="background-color: #000; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 12px; font-weight: bold; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">Accéder à mon espace</a>
                   </div>
           `;
-      await sendEmail(user.email, "Bienvenue chez Obem Studio 🚀", welcomeHtml);
+      await sendEmail(user.email, "Bienvenue 🚀", welcomeHtml);
 
       // Create Welcome Conversation
       const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Topbar from "@/components/Topbar";
-import ProjectModal, { ProjectFormData } from "./ProjectModal";
+import ProjectDrawer, { ProjectFormData } from "./ProjectDrawer";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import StepConfirmModal from "./StepConfirmModal";
 import StepProgressBar from "./StepProgressBar";
@@ -167,18 +167,29 @@ export default function ProjectsAdminClient({ projects }: Props) {
   const selected = projects.find((p) => p.id === selectedId) ?? null;
 
   const handleCreate = async (data: ProjectFormData) => {
+    console.log("handleCreate called with data:", data);
     try {
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error((await res.json()).error);
+
+      console.log("API response status:", res.status);
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("API error:", errorData);
+        throw new Error(errorData.error || "Erreur lors de la création du projet");
+      }
+
       success("Projet créé avec succès !");
       setShowCreateModal(false);
       router.refresh();
     } catch (err: any) {
+      console.error("handleCreate error:", err);
       error(err.message);
+      throw err; // Re-throw so the drawer can catch it
     }
   };
 
@@ -461,7 +472,7 @@ export default function ProjectsAdminClient({ projects }: Props) {
       </main>
 
       {selected && (
-        <EnhancedProjectModal
+        <EnhancedProjectDrawer
           project={selected}
           onClose={() => setSelectedId(null)}
           onStepNavigation={handleStepNavigation}
@@ -470,10 +481,10 @@ export default function ProjectsAdminClient({ projects }: Props) {
         />
       )}
       {showCreateModal && (
-        <ProjectModal onClose={() => setShowCreateModal(false)} onSave={handleCreate} />
+        <ProjectDrawer isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} onSave={handleCreate} />
       )}
       {editingProject && (
-        <ProjectModal project={editingProject} onClose={() => setEditingProject(null)} onSave={handleUpdate} />
+        <ProjectDrawer isOpen={!!editingProject} project={editingProject} onClose={() => setEditingProject(null)} onSave={handleUpdate} />
       )}
       {deleteProject && (
         <DeleteConfirmModal projectName={deleteProject.name} onConfirm={handleDelete} onCancel={() => setDeleteProject(null)} loading={deleteLoading} />
@@ -513,95 +524,154 @@ const FilterPill = ({ label, value, options, onSelect }: { label: string; value:
   </div>
 );
 
-const EnhancedProjectModal = ({ project, onClose, onStepNavigation, getNextStep, getPreviousStep }: any) => {
+const EnhancedProjectDrawer = ({ project, onClose, onStepNavigation, getNextStep, getPreviousStep }: any) => {
   const benefit = project.commission ? project.amount * (project.commission / 100) : 0;
   const netAmount = project.amount - benefit;
   const formatCurrency = (amount: number) => new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount);
 
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(onClose, 300);
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
-      <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-6 md:p-8 shadow-2xl animate-scaleIn dark:bg-[#111]" onClick={(e) => e.stopPropagation()}>
-        <div className="mb-6 flex items-start justify-between">
+    <div
+      className={`fixed inset-0 z-50 flex justify-end bg-black/20 backdrop-blur-sm transition-opacity duration-300 dark:bg-black/80 ${isClosing ? 'opacity-0' : 'opacity-100 animate-fadeIn'}`}
+      onClick={handleClose}
+    >
+      <div
+        className={`w-full max-w-2xl h-full bg-white shadow-2xl overflow-y-auto ${isClosing ? "animate-slideOutRight" : "animate-slideInRight"} dark:bg-black dark:shadow-none dark:ring-1 dark:ring-[#333]`}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-100 p-6 flex items-center justify-between dark:bg-black dark:border-[#333]">
           <div>
-            <h2 className="text-2xl font-bold text-[#2f2f2f] mb-1 dark:text-white">{project.name}</h2>
-            <p className="text-sm text-[#6a6a6a] dark:text-gray-400">Client: {project.clientName}</p>
+            <h2 className="text-xl font-bold text-black dark:text-white">{project.name}</h2>
+            <p className="text-sm text-gray-400 dark:text-gray-500">Client: {project.clientName}</p>
           </div>
-          <button onClick={onClose} className="cursor-pointer h-10 w-10 flex items-center justify-center rounded-full bg-[#f5f5f5] text-lg font-semibold text-[#2f2f2f] hover:bg-[#e0e0e0] dark:bg-[#333] dark:text-white dark:hover:bg-[#444]">✕</button>
-        </div>
-        <div className="mb-6 rounded-2xl border border-[#e0e0e0] bg-[#f5f5f5] p-6 dark:bg-[#1a1a1a] dark:border-[#333]">
-          <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-[#4a4a4a] dark:text-gray-400">Progression</h3>
-          <div className="flex justify-center"><StepProgressBar currentStatus={project.status} size="large" showTooltips={true} /></div>
+          <button onClick={handleClose} className="rounded-full p-2 hover:bg-gray-100 transition dark:hover:bg-[#222]">✕</button>
         </div>
 
-        {/* Linked Brief Action */}
-        {project.formSubmissionId && (
-          <div className="mb-6 flex items-center justify-between rounded-xl bg-blue-50 px-4 py-3 dark:bg-blue-900/20">
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                Relié au formulaire : {project.formSubmissionTitle || "Brief"}
-              </span>
+        <div className="p-8 space-y-8">
+          {/* Progression Section */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Progression</h3>
+            <div className="flex justify-center p-6 rounded-2xl bg-gray-50/50 border border-gray-100 dark:bg-[#111] dark:border-[#333]">
+              <StepProgressBar currentStatus={project.status} size="large" showTooltips={true} />
             </div>
-            <a
-              href={`/dashboard/forms?view=submission&id=${project.formSubmissionId}`}
-              target="_blank"
-              className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition"
-            >
-              Voir le brief
-            </a>
+
+            {/* Step Navigation Buttons */}
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => onStepNavigation(project, "previous")}
+                disabled={!getPreviousStep(project.status, project.progressConfig)}
+                className="flex-1 max-w-[150px] rounded-full border border-gray-200 py-2.5 text-sm font-semibold transition hover:bg-gray-50 disabled:opacity-30 dark:border-[#333] dark:text-white dark:hover:bg-[#222]"
+              >
+                ← Précédent
+              </button>
+              <button
+                onClick={() => onStepNavigation(project, "next")}
+                disabled={!getNextStep(project.status, project.progressConfig)}
+                className="flex-1 max-w-[150px] rounded-full bg-black py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:opacity-30 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              >
+                Suivant →
+              </button>
+            </div>
           </div>
-        )}
 
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-[#e0e0e0] bg-white p-6 dark:bg-[#1a1a1a] dark:border-[#333]">
-            <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-[#4a4a4a] dark:text-gray-400">Détails</h3>
-            <div className="space-y-2 dark:text-gray-200">
-              <p className="text-sm"><span className="font-semibold">Type:</span> {project.type || "-"}</p>
-              <p className="text-sm"><span className="font-semibold">Tech:</span> {project.technology || "-"}</p>
-              <p className="text-sm"><span className="font-semibold">Difficulté:</span> {project.level || "-"}</p>
-              <p className="text-sm"><span className="font-semibold">Montant:</span> {formatCurrency(project.amount)}</p>
-
-              {/* Financial Breakdown */}
-              {project.commission ? (
-                <div className="mt-2 rounded-xl bg-gray-50 p-3 text-sm dark:bg-[#222]">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Commission ({project.commission}%):</span>
-                    <span>{formatCurrency(benefit)}</span>
-                  </div>
-                  <div className="mt-1 flex justify-between font-semibold">
-                    <span>Net:</span>
-                    <span>{formatCurrency(netAmount)}</span>
-                  </div>
+          {/* Linked Brief Action */}
+          {project.formSubmissionId && (
+            <div className="flex items-center justify-between rounded-2xl bg-blue-50/50 border border-blue-100 px-6 py-4 dark:bg-blue-900/10 dark:border-blue-900/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg dark:bg-blue-900/30">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
                 </div>
-              ) : null}
-
-              {/* Attributes (Tags) */}
-              {project.attributes && project.attributes.length > 0 && (
-                <div className="mt-3">
-                  <span className="block mb-1 text-xs font-semibold text-gray-500 uppercase">Attributs</span>
-                  <div className="flex flex-wrap gap-1">
-                    {project.attributes.map((attr: string, i: number) => (
-                      <span key={i} className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700 border border-gray-200 dark:bg-[#333] dark:text-gray-200 dark:border-[#444]">
-                        {attr}
-                      </span>
-                    ))}
-                  </div>
+                <div>
+                  <p className="text-xs font-bold text-blue-600 uppercase tracking-wider dark:text-blue-400">Brief relié</p>
+                  <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    {project.formSubmissionTitle || "Formulaire de brief"}
+                  </p>
                 </div>
-              )}
-
-              <div className="mt-4 border-t border-gray-100 pt-3 text-xs text-gray-500 dark:border-[#333]">
-                <p>Créé le {new Date(project.createdAt).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" })}</p>
               </div>
+              <a
+                href={`/dashboard/forms?view=submission&id=${project.formSubmissionId}`}
+                target="_blank"
+                className="rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 transition"
+              >
+                Voir
+              </a>
+            </div>
+          )}
+
+          {/* Details Section */}
+          <div className="space-y-6">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Détails du projet</h3>
+
+            <div className="grid grid-cols-2 gap-4">
+              <DetailItem label="Type" value={project.type} />
+              <DetailItem label="Technologie" value={project.technology} />
+              <DetailItem label="Difficulté" value={project.level} />
+              <DetailItem label="Montant" value={formatCurrency(project.amount)} />
+            </div>
+
+            {/* Financial Breakdown */}
+            {project.commission ? (
+              <div className="rounded-2xl bg-gray-50/50 border border-gray-100 p-6 space-y-3 dark:bg-[#111] dark:border-[#333]">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500 dark:text-gray-400">Commission ({project.commission}%)</span>
+                  <span className="font-medium dark:text-white">{formatCurrency(benefit)}</span>
+                </div>
+                <div className="flex justify-between text-base font-bold pt-3 border-t border-gray-200 dark:border-[#333]">
+                  <span className="text-gray-900 dark:text-white">Net Studio</span>
+                  <span className="text-black dark:text-white">{formatCurrency(netAmount)}</span>
+                </div>
+              </div>
+            ) : null}
+
+            {/* Attributes (Tags) */}
+            {project.attributes && project.attributes.length > 0 && (
+              <div className="space-y-3">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Attributs & Tags</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.attributes.map((attr: string, i: number) => (
+                    <span key={i} className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 border border-gray-200 dark:bg-[#222] dark:text-gray-300 dark:border-[#333]">
+                      {attr}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Dates */}
+            <div className="pt-6 border-t border-gray-100 dark:border-[#333]">
+              <p className="text-[10px] text-gray-400 dark:text-gray-500">
+                Créé le {new Date(project.createdAt).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" })}
+              </p>
             </div>
           </div>
-          <div className="flex justify-center gap-3">
-            <button onClick={() => onStepNavigation(project, "previous")} disabled={!getPreviousStep(project.status, project.progressConfig)} className="cursor-pointer rounded-full border-2 border-[#2f2f2f] px-6 py-2 text-sm font-semibold disabled:opacity-50 dark:border-white dark:text-white">← Préc.</button>
-            <button onClick={() => onStepNavigation(project, "next")} disabled={!getNextStep(project.status, project.progressConfig)} className="cursor-pointer rounded-full bg-black text-white px-6 py-2 text-sm font-semibold disabled:opacity-50 dark:bg-white dark:text-black">Suiv. →</button>
-          </div>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="sticky bottom-0 bg-white border-t border-gray-100 p-6 flex justify-end dark:bg-black dark:border-[#333]">
+          <button
+            onClick={handleClose}
+            className="px-8 py-2.5 rounded-full bg-black text-white text-sm font-bold hover:bg-gray-800 transition dark:bg-white dark:text-black dark:hover:bg-gray-200"
+          >
+            Fermer
+          </button>
         </div>
       </div>
     </div>
   );
 };
+
+const DetailItem = ({ label, value }: { label: string; value: string | null }) => (
+  <div className="p-4 rounded-xl border border-gray-100 bg-white dark:bg-[#111] dark:border-[#333]">
+    <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">{label}</p>
+    <p className="text-sm font-semibold text-gray-900 dark:text-white capitalize">{value || "-"}</p>
+  </div>
+);

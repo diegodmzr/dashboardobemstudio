@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import NotificationBadge from "./admin/notifications/NotificationBadge";
 import { ChevronLeft, ChevronRight, PanelLeftClose, PanelLeftOpen, LogOut } from "lucide-react";
 import { AnimatedSettings } from "./ui/AnimatedIcons";
@@ -41,7 +42,9 @@ const NavLink = ({ item, isCollapsed, onMobileClose }: { item: NavItem, isCollap
   if (hasChildren) {
     return (
       <div className="space-y-1">
-        <button
+        <motion.button
+          initial="initial"
+          whileHover="hover"
           onClick={() => setIsOpen(!isOpen)}
           className={`group flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-[14px] font-medium transition-colors ${isActive
             ? "bg-white text-[#2f2f2f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-[#222] dark:text-white dark:shadow-none"
@@ -50,9 +53,9 @@ const NavLink = ({ item, isCollapsed, onMobileClose }: { item: NavItem, isCollap
           title={isCollapsed ? item.label : undefined}
         >
           <div className={`flex items-center gap-3 ${isCollapsed ? "justify-center w-full" : ""}`}>
-            <motion.div initial="initial" whileHover="hover" className="text-[#6d6d6d] dark:text-current">
+            <div className="text-[#6d6d6d] dark:text-current">
               {item.icon}
-            </motion.div>
+            </div>
             {!isCollapsed && <span>{item.label}</span>}
           </div>
           {!isCollapsed && (
@@ -66,7 +69,7 @@ const NavLink = ({ item, isCollapsed, onMobileClose }: { item: NavItem, isCollap
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           )}
-        </button>
+        </motion.button>
 
         {isOpen && !isCollapsed && (
           <div className="ml-9 space-y-1 border-l border-[#d8d4da] pl-2 dark:border-[#333]">
@@ -93,16 +96,22 @@ const NavLink = ({ item, isCollapsed, onMobileClose }: { item: NavItem, isCollap
     <Link
       href={item.href}
       onClick={onMobileClose}
-      className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[14px] font-medium transition-colors ${isActive
-        ? "bg-white text-[#2f2f2f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-[#222] dark:text-white dark:shadow-none"
-        : "text-[#8a8a8a] hover:bg-white/60 hover:text-[#4a4a4a] dark:text-gray-400 dark:hover:bg-[#222] dark:hover:text-white"
-        } ${isCollapsed ? "justify-center px-2" : ""}`}
-      title={isCollapsed ? item.label : undefined}
+      className="block"
     >
-      <motion.div initial="initial" whileHover="hover" className="text-[#6d6d6d] dark:text-current">
-        {item.icon}
+      <motion.div
+        initial="initial"
+        whileHover="hover"
+        className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[14px] font-medium transition-colors ${isActive
+          ? "bg-white text-[#2f2f2f] shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:bg-[#222] dark:text-white dark:shadow-none"
+          : "text-[#8a8a8a] hover:bg-white/60 hover:text-[#4a4a4a] dark:text-gray-400 dark:hover:bg-[#222] dark:hover:text-white"
+          } ${isCollapsed ? "justify-center px-2" : ""}`}
+        title={isCollapsed ? item.label : undefined}
+      >
+        <div className="text-[#6d6d6d] dark:text-current">
+          {item.icon}
+        </div>
+        {!isCollapsed && <span>{item.label}</span>}
       </motion.div>
-      {!isCollapsed && <span>{item.label}</span>}
     </Link>
   );
 };
@@ -187,10 +196,22 @@ export default function Sidebar({
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fde4ce] text-sm font-semibold text-[#4a331e] flex-shrink-0 overflow-hidden border border-white/10">
                 {userAvatar ? (
-                  <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
+                  <img
+                    src={userAvatar}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).parentElement?.querySelector('.fallback')?.classList.remove('hidden');
+                    }}
+                  />
+                ) : null}
+                <div className={cn(
+                  "fallback flex h-full w-full items-center justify-center",
+                  userAvatar ? "hidden" : ""
+                )}>
                   <span>{userName ? userName.charAt(0).toUpperCase() : "U"}</span>
-                )}
+                </div>
               </div>
               {!isCollapsed && (
                 <div className="leading-tight overflow-hidden min-w-0">
@@ -200,15 +221,17 @@ export default function Sidebar({
               )}
             </div>
             {!isCollapsed && (
-              <button
+              <motion.button
+                initial="initial"
+                whileHover="hover"
                 onClick={handleLogout}
                 className="group p-2 -mr-1 text-[#8a8a8a] hover:text-red-500 transition-colors dark:text-gray-500 dark:hover:text-red-400 cursor-pointer flex-shrink-0"
                 title="Se déconnecter"
               >
-                <motion.div whileHover={{ x: 1, scale: 1.1 }} transition={{ duration: 0.2 }}>
+                <motion.div variants={{ hover: { x: 1, scale: 1.1 } }} transition={{ duration: 0.2 }}>
                   <LogOut className="h-5 w-5" strokeWidth={1.8} />
                 </motion.div>
-              </button>
+              </motion.button>
             )}
           </div>
         </div>

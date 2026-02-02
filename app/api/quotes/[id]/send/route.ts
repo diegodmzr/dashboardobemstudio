@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const user = await getCurrentUser();
-        if (user?.role !== "ADMIN") return new NextResponse("Unauthorized", { status: 403 });
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+            return new NextResponse("Unauthorized", { status: 403 });
+        }
 
         const { id } = await params;
 
@@ -70,7 +72,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             const baseUrl = `${protocol}://${host}`;
             const quoteLink = `${baseUrl}/dashboard/client/devis/${quote.id}`;
 
-            await sendEmail(
+            const emailResult = await sendEmail(
                 quote.client.email,
                 `Nouveau Devis : ${quote.reference} - Obem Studio`,
                 `
@@ -89,12 +91,24 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 </div>
                 `
             );
+
+            if (emailResult.error) {
+                console.error("[QUOTE_SEND_EMAIL_ERROR]", emailResult.error);
+                return NextResponse.json({
+                    error: "Le devis a été créé sur le dashboard mais l'email n'a pas pu être envoyé. Vérifiez votre configuration Resend (domaine vérifié ?).",
+                    details: emailResult.error
+                }, { status: 400 });
+            }
+        } else {
+            return NextResponse.json({
+                error: "Le client n'a pas d'adresse email valide. Le devis est visible sur son dashboard mais aucun email n'a été envoyé."
+            }, { status: 400 });
         }
 
         return NextResponse.json({ success: true });
 
     } catch (error) {
         console.error("[QUOTE_SEND]", error);
-        return new NextResponse("Internal Error", { status: 500 });
+        return NextResponse.json({ error: "Erreur interne lors de l'envoi." }, { status: 500 });
     }
 }

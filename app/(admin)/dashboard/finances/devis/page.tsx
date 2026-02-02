@@ -13,11 +13,14 @@ export default async function QuotesPage() {
         redirect("/login");
     }
 
-    // CLIENT VIEW: Show only their quotes
+    // CLIENT VIEW: Show only their quotes that have been sent
     if (user.role === "CLIENT") {
         const quotes = await prisma.quote.findMany({
             where: {
                 clientId: user.id,
+                status: {
+                    in: ["SENT", "ACCEPTED", "REJECTED"] // Exclude DRAFT
+                }
             },
             include: {
                 // Determine project name if possible. 

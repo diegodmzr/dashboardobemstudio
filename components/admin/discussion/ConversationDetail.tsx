@@ -1,10 +1,12 @@
 "use client";
 
+import { SessionUser } from "@/lib/auth";
 import { User, FileText, Clock, CheckCircle, Plus, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 type Props = {
     conversationId: string;
+    currentUser: SessionUser | null;
 };
 
 type UserData = {
@@ -16,11 +18,13 @@ type UserData = {
     companyName: string | null;
 };
 
-export default function ConversationDetail({ conversationId }: Props) {
+export default function ConversationDetail({ conversationId, currentUser }: Props) {
     const [data, setData] = useState<any>(null);
     const [showAddParticipant, setShowAddParticipant] = useState(false);
     const [users, setUsers] = useState<UserData[]>([]);
     const [loadingUsers, setLoadingUsers] = useState(false);
+
+    const isUserAdmin = currentUser?.role === "ADMIN" || currentUser?.role === "SUPER_ADMIN";
 
     const addParticipantRef = useRef<HTMLDivElement>(null);
 
@@ -113,9 +117,13 @@ export default function ConversationDetail({ conversationId }: Props) {
 
             if (res.ok) {
                 fetchConversation();
+            } else {
+                const errorData = await res.text();
+                alert("Erreur lors de la suppression : " + errorData);
             }
         } catch (error) {
             console.error(error);
+            alert("Une erreur est survenue");
         }
     };
 
@@ -146,8 +154,8 @@ export default function ConversationDetail({ conversationId }: Props) {
                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">Participants</span>
                         <div className="mt-2 space-y-2">
                             {data.participants?.map((p: any) => (
-                                <div key={p.id} className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                <div key={p.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition">
+                                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                                         {p.user.avatar ? (
                                             <img src={p.user.avatar} className="w-full h-full object-cover" />
                                         ) : (
@@ -157,10 +165,24 @@ export default function ConversationDetail({ conversationId }: Props) {
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium dark:text-white truncate">{p.user.name}</p>
-                                        <p className="text-xs text-gray-500">{p.role === "ADMIN" ? "Admin" : "Client"}</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-sm font-medium dark:text-white truncate">{p.user.name}</p>
+                                            {p.role === "OWNER" && (
+                                                <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                                                    Créateur
+                                                </span>
+                                            )}
+                                        </div>
+                                        <span className={`inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mt-0.5 ${p.user.role === "SUPER_ADMIN"
+                                                ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                                                : p.user.role === "ADMIN"
+                                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                                    : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                                            }`}>
+                                            {p.user.role === "SUPER_ADMIN" ? "Super Admin" : p.user.role === "ADMIN" ? "Admin" : "Client"}
+                                        </span>
                                     </div>
-                                    {p.role !== "OWNER" && (
+                                    {isUserAdmin && p.role !== "OWNER" && (
                                         <button
                                             onClick={() => removeParticipant(p.user.id)}
                                             className="text-gray-400 hover:text-red-500 transition px-2"

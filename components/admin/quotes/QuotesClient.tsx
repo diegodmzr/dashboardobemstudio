@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/Toast";
 import QuoteDrawer, { QuoteFormData } from "./QuoteDrawer";
 import QuoteRowActions from "./QuoteRowActions";
+import SendQuoteModal from "./SendQuoteModal";
 import { Search, Plus, Filter, ChevronRight, FileText, Calendar, Building2, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,6 +44,11 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
     const { toasts, success, error, removeToast } = useToast();
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("ALL");
+    const [sendModalOpen, setSendModalOpen] = useState(false);
+    const [quoteToSend, setQuoteToSend] = useState<Quote | null>(null);
+    const [isSending, setIsSending] = useState(false);
+    const [sendSuccess, setSendSuccess] = useState(false);
+    const [sendError, setSendError] = useState<string | null>(null);
 
     const searchParams = useSearchParams();
     const action = searchParams.get("action");
@@ -90,16 +96,29 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
         }
     };
 
-    const handleSend = async (quote: Quote) => {
-        if (!confirm(`Envoyer le devis ${quote.reference} ?`)) return;
+    const handleSend = (quote: Quote) => {
+        setQuoteToSend(quote);
+        setSendModalOpen(true);
+    };
+
+    const confirmSend = async () => {
+        if (!quoteToSend) return;
+        setIsSending(true);
+        setSendError(null);
         try {
-            const res = await fetch(`/api/quotes/${quote.id}/send`, { method: "POST" });
+            const res = await fetch(`/api/quotes/${quoteToSend.id}/send`, { method: "POST" });
+            const data = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+
             if (res.ok) {
-                success("Devis envoyé");
-                window.location.reload();
-            } else throw new Error();
-        } catch (err) {
-            error("Erreur d'envoi");
+                setSendSuccess(true);
+                // We'll reload when closing the modal if success
+            } else {
+                setSendError(data.error || "Erreur d'envoi");
+            }
+        } catch (err: any) {
+            setSendError("Une erreur de communication est survenue.");
+        } finally {
+            setIsSending(false);
         }
     };
 
@@ -276,6 +295,22 @@ export default function QuotesClient({ initialQuotes, clients, projects }: Props
                 initialData={editingQuote}
                 clients={clients}
                 projects={projects}
+            />
+
+            <SendQuoteModal
+                isOpen={sendModalOpen}
+                onClose={() => {
+                    if (sendSuccess) window.location.reload();
+                    setSendModalOpen(false);
+                    setQuoteToSend(null);
+                    setSendSuccess(false);
+                    setSendError(null);
+                }}
+                onConfirm={confirmSend}
+                quoteReference={quoteToSend?.reference || ""}
+                loading={isSending}
+                isSuccess={sendSuccess}
+                error={sendError}
             />
         </div>
     );

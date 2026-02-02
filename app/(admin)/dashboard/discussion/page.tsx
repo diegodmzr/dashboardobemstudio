@@ -11,7 +11,7 @@ export default async function DiscussionPage() {
         <div className="flex h-screen flex-col overflow-hidden bg-[#f8f6fb] dark:bg-black">
             <Topbar title="Discussions" />
             <div className="flex flex-1 flex-col overflow-hidden p-6">
-                <DiscussionClient currentUserId={user?.id || ""} />
+                <DiscussionClient currentUser={user} />
             </div>
         </div>
     );

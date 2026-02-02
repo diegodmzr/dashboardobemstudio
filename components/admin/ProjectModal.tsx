@@ -74,14 +74,34 @@ export default function ProjectModal({ project, onClose, onSave }: Props) {
         // Fetch users
         fetch("/api/users")
             .then((res) => res.json())
-            .then((data) => setUsers(data))
-            .catch((err) => console.error("Error fetching users:", err));
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setUsers(data);
+                } else {
+                    console.error("Users API did not return an array:", data);
+                    setUsers([]);
+                }
+            })
+            .catch((err) => {
+                console.error("Error fetching users:", err);
+                setUsers([]);
+            });
 
         // Fetch submissions
         fetch("/api/forms/submissions")
             .then((res) => res.json())
-            .then((data) => setSubmissions(data))
-            .catch((err) => console.error("Error fetching submissions:", err));
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setSubmissions(data);
+                } else {
+                    console.error("Submissions API did not return an array:", data);
+                    setSubmissions([]);
+                }
+            })
+            .catch((err) => {
+                console.error("Error fetching submissions:", err);
+                setSubmissions([]);
+            });
 
         // Load existing progressConfig if editing
         if (project?.progressConfig) {
@@ -239,8 +259,8 @@ export default function ProjectModal({ project, onClose, onSave }: Props) {
                                             key={user.id}
                                             onClick={() => toggleAssignee(user.id)}
                                             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition border ${isSelected
-                                                    ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
-                                                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-[#222] dark:text-gray-300 dark:border-[#444]"
+                                                ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
+                                                : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-[#222] dark:text-gray-300 dark:border-[#444]"
                                                 }`}
                                         >
                                             {/* Avatar if available else Initials */}

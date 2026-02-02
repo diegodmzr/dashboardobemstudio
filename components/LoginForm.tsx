@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
@@ -9,6 +10,7 @@ export default function LoginForm() {
     const [requires2FA, setRequires2FA] = useState(false);
     const [userId, setUserId] = useState("");
     const [twoFactorCode, setTwoFactorCode] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -93,8 +95,7 @@ export default function LoginForm() {
                     placeholder="000000"
                     value={twoFactorCode}
                     onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ""))}
-                    className="block w-full text-center text-3xl tracking-widest font-bold rounded-2xl border border-white/20 bg-black/50 px-4 py-5 !text-white focus:border-white focus:ring-white outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
-                    style={{ WebkitTextFillColor: 'white' }}
+                    className="block w-full text-center text-3xl tracking-widest font-bold rounded-2xl border border-white/20 bg-black/50 px-4 py-5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
                     required
                     autoFocus
                 />
@@ -135,23 +136,31 @@ export default function LoginForm() {
                         type="email"
                         autoComplete="email"
                         required
-                        className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder-gray-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
-                        style={{ WebkitTextFillColor: 'white' }}
+                        className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
                         placeholder="nom@exemple.com"
                     />
                 </div>
                 <div>
                     <label htmlFor="password" className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Mot de passe</label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder-gray-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
-                        style={{ WebkitTextFillColor: 'white' }}
-                        placeholder="••••••••"
-                    />
+                    <div className="relative">
+                        <input
+                            id="password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="current-password"
+                            required
+                            className="block w-full rounded-2xl border border-white/10 bg-black/50 pl-4 pr-12 py-3.5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
+                            placeholder="••••••••"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors flex items-center justify-center"
+                            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                        >
+                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                    </div>
                     <div className="flex justify-end mt-2">
                         <Link
                             href="/forgot-password"

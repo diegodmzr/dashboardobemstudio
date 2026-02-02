@@ -94,14 +94,24 @@ export default function ProfileTab({ user }: { user: User }) {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8">
                 <div className="relative h-24 w-24 overflow-hidden rounded-full bg-[#f8f6fb] ring-1 ring-[#ece7ef] dark:bg-[#1a1a1a] dark:ring-[#333]">
                     {(user as any).avatar ? (
-                        <img src={(user as any).avatar} alt="Avatar" className="h-full w-full object-cover" />
-                    ) : (
-                        <div className="flex h-full w-full items-center justify-center text-[#8a8a8a] dark:text-gray-400">
-                            <span className="text-2xl font-bold">
-                                {user.name?.charAt(0).toUpperCase() || "U"}
-                            </span>
-                        </div>
-                    )}
+                        <img
+                            src={(user as any).avatar}
+                            alt="Avatar"
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                (e.target as HTMLImageElement).parentElement?.querySelector('.fallback')?.classList.remove('hidden');
+                            }}
+                        />
+                    ) : null}
+                    <div className={cn(
+                        "fallback flex h-full w-full items-center justify-center text-[#8a8a8a] dark:text-gray-400",
+                        (user as any).avatar ? "hidden" : ""
+                    )}>
+                        <span className="text-2xl font-bold">
+                            {user.name?.charAt(0).toUpperCase() || "U"}
+                        </span>
+                    </div>
                 </div>
                 <div>
                     <input

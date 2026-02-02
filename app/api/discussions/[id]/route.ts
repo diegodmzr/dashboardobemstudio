@@ -105,7 +105,8 @@ export async function PATCH(
 
         if (removeParticipantId) {
             // Only admin or owner can remove participants
-            if (user.role !== "ADMIN") {
+            const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
+            if (!isAdmin) {
                 return new NextResponse("Forbidden", { status: 403 });
             }
 

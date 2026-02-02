@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
             if (paymentId) {
                 // Update the payment in DB
-                await prisma.payment.update({
+                const updatedPayment = await prisma.payment.update({
                     where: { id: paymentId },
                     data: {
                         status: "PAID",
@@ -31,8 +31,31 @@ export async function POST(req: NextRequest) {
                         stripePaymentIntentId: session.payment_intent as string,
                         stripeReceiptUrl: session.url,
                         method: "CARD",
-                    }
+                    },
+                    include: { client: true }
                 });
+
+                // Notify Admins
+                try {
+                    const admins = await prisma.user.findMany({
+                        where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } }
+                    });
+
+                    for (const admin of admins) {
+                        await prisma.notification.create({
+                            data: {
+                                userId: admin.id,
+                                title: "Paiement reçu !",
+                                message: `Le client ${updatedPayment.client.name} a réglé ${updatedPayment.amount}€.`,
+                                type: "SUCCESS",
+                                entityType: "Payment",
+                                entityId: updatedPayment.id
+                            }
+                        });
+                    }
+                } catch (notiError) {
+                    console.error("Error creating notifications:", notiError);
+                }
 
                 return NextResponse.json({ success: true, paymentId });
             }

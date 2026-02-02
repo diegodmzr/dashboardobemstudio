@@ -343,10 +343,9 @@ const QuotePDF = ({ quote }: QuotePDFProps) => {
                                 {/* Service Description Block */}
                                 <View style={styles.colService}>
                                     <View style={{ backgroundColor: '#F9FAFB', padding: 10, borderRadius: 4 }}>
-                                        <Text style={styles.itemTitle}>{safeText(item.description)}</Text>
+                                        <Text style={styles.itemTitle}>{safeText(item.title)}</Text>
                                         <Text style={styles.itemDesc}>
-                                            {safeText(item.details)}
-                                            {item.quantity > 1 ? `Quantité: ${item.quantity}` : ''}
+                                            {safeText(item.description)}
                                         </Text>
                                     </View>
                                 </View>

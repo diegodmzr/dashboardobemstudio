@@ -32,6 +32,7 @@ export async function PATCH(
             data.role = body.role;
         }
         if (body.status) data.status = body.status;
+        if (body.avatar !== undefined) data.avatar = body.avatar;
         if (body.password) {
             data.password = await hash(body.password, 12);
         }
