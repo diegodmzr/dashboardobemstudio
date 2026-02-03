@@ -76,7 +76,10 @@ export async function POST(req: NextRequest) {
                 status: "DRAFT",
                 issuedAt: new Date(body.issuedAt || Date.now()),
                 validUntil: body.validUntil ? new Date(body.validUntil) : null,
-                items: JSON.stringify(body.items || []),
+                items: JSON.stringify({
+                    label: body.quantityLabel || "MOIS",
+                    lines: body.items || []
+                }),
                 subtotal: parseFloat(body.subtotal) || 0,
                 taxRate: parseFloat(body.taxRate) || 0,
                 taxAmount: parseFloat(body.taxAmount) || 0,

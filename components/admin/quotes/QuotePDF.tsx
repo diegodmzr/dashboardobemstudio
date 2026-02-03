@@ -231,10 +231,21 @@ type QuotePDFProps = {
 };
 
 const QuotePDF = ({ quote }: QuotePDFProps) => {
-    // Determine items array
-    const items = React.useMemo(() => {
-        if (!quote || !quote.items) return [];
-        return typeof quote.items === 'string' ? JSON.parse(quote.items) : quote.items;
+    // Determine items array and label
+    const { items, quantityLabel } = React.useMemo(() => {
+        if (!quote || !quote.items) return { items: [], quantityLabel: "MOIS" };
+        try {
+            const parsed = typeof quote.items === 'string' ? JSON.parse(quote.items) : quote.items;
+            if (Array.isArray(parsed)) {
+                return { items: parsed, quantityLabel: "MOIS" };
+            }
+            return {
+                items: parsed.lines || [],
+                quantityLabel: parsed.label || "MOIS"
+            };
+        } catch (e) {
+            return { items: [], quantityLabel: "MOIS" };
+        }
     }, [quote]);
 
     // Parse term sections
@@ -332,7 +343,7 @@ const QuotePDF = ({ quote }: QuotePDFProps) => {
                         {/* Header */}
                         <View style={styles.tableHeader}>
                             <Text style={[styles.colService, styles.tableHeaderCell]}>SERVICE</Text>
-                            <Text style={[styles.colMonth, styles.tableHeaderCell]}>MOIS</Text>
+                            <Text style={[styles.colMonth, styles.tableHeaderCell]}>{safeText(quantityLabel).toUpperCase()}</Text>
                             <Text style={[styles.colPrice, styles.tableHeaderCell]}>PRIX</Text>
                             <Text style={[styles.colTotal, styles.tableHeaderCell]}>TOTAL</Text>
                         </View>

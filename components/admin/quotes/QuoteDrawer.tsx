@@ -33,6 +33,8 @@ export type QuoteFormData = {
     // New Fields
     paymentType: string;
     isRecurring: boolean;
+    stripeAutoSend: boolean;
+    quantityLabel?: string;
     // Manual Client Fields
     isManual?: boolean;
     manualClientInfo?: {
@@ -106,6 +108,7 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
     const [paymentType, setPaymentType] = useState("ONESHOT");
     const [isRecurring, setIsRecurring] = useState(false);
     const [stripeAutoSend, setStripeAutoSend] = useState(false);
+    const [quantityLabel, setQuantityLabel] = useState("MOIS");
 
     // Manual Client State
     const [isManualClient, setIsManualClient] = useState(false);
@@ -135,13 +138,31 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                 setValidUntil(initialData.validUntil ? new Date(initialData.validUntil).toISOString().split("T")[0] : "");
 
                 try {
-                    const parsedItems = JSON.parse(initialData.items || "[]");
-                    if (Array.isArray(parsedItems) && parsedItems.length > 0) {
-                        setLines(parsedItems.map((i: any) => ({ ...i, id: Math.random().toString() })));
+                    const parsed = JSON.parse(initialData.items || "[]");
+                    if (Array.isArray(parsed)) {
+                        if (parsed.length > 0) {
+                            setLines(parsed.map((i: any) => ({ ...i, id: Math.random().toString() })));
+                        } else {
+                            setLines(createDefaultLines());
+                        }
+                        setQuantityLabel("MOIS");
+                    } else if (parsed && typeof parsed === "object") {
+                        // New structure: { label: string, lines: any[] }
+                        const parsedLines = parsed.lines || [];
+                        if (parsedLines.length > 0) {
+                            setLines(parsedLines.map((i: any) => ({ ...i, id: Math.random().toString() })));
+                        } else {
+                            setLines(createDefaultLines());
+                        }
+                        setQuantityLabel(parsed.label || "MOIS");
                     } else {
                         setLines(createDefaultLines());
+                        setQuantityLabel("MOIS");
                     }
-                } catch (e) { setLines(createDefaultLines()); }
+                } catch (e) {
+                    setLines(createDefaultLines());
+                    setQuantityLabel("MOIS");
+                }
 
                 setNotes(initialData.notes || "");
                 setTerms(initialData.terms || "");
@@ -193,6 +214,7 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                 setPaymentType("ONESHOT");
                 setIsRecurring(false);
                 setStripeAutoSend(false);
+                setQuantityLabel("MOIS");
                 setIsManualClient(false);
                 setManualClientData({
                     name: "",
@@ -254,6 +276,7 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
             paymentType,
             isRecurring,
             stripeAutoSend,
+            quantityLabel,
             termSections: termSections.filter(s => s.enabled) // Send only enable? No send all so we can toggle later
         });
     };
@@ -460,7 +483,13 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                                             <label htmlFor={`stripe-${line.id}`} className="text-[10px] text-gray-400 cursor-pointer select-none hover:text-black dark:hover:text-white transition-colors">Lier à un paiement Stripe automatique</label>
                                         </div>
                                     </div>
-                                    <div className="w-20">
+                                    <div className="w-24">
+                                        <input
+                                            value={quantityLabel}
+                                            onChange={e => setQuantityLabel(e.target.value.toUpperCase())}
+                                            placeholder="MOIS"
+                                            className="w-full bg-transparent border-0 border-b border-gray-100 px-0 py-1 text-[10px] text-center font-bold tracking-wider text-gray-400 focus:ring-0 focus:border-black dark:border-[#222] dark:text-gray-500 dark:focus:border-white transition-colors"
+                                        />
                                         <input
                                             type="number"
                                             min="0"
@@ -468,7 +497,7 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                                             onChange={e => handleLineChange(line.id, "quantity", parseFloat(e.target.value) || 0)}
                                             className="w-full bg-transparent border-0 border-b border-gray-200 px-0 py-1 text-sm text-center focus:ring-0 focus:border-black dark:border-[#333] dark:text-white dark:focus:border-white"
                                         />
-                                        <span className="text-[10px] text-gray-400 block text-center dark:text-gray-500">Qté</span>
+                                        <span className="text-[10px] text-gray-400 block text-center dark:text-gray-500">{quantityLabel}</span>
                                     </div>
                                     <div className="w-24">
                                         <input

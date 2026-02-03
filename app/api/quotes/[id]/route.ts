@@ -60,7 +60,30 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         if (body.status) updateData.status = body.status;
         if (body.issuedAt) updateData.issuedAt = new Date(body.issuedAt);
         if (body.validUntil) updateData.validUntil = body.validUntil ? new Date(body.validUntil) : null;
-        if (body.items) updateData.items = JSON.stringify(body.items);
+
+        if (body.items || body.quantityLabel) {
+            // Get current items to preserve structure if only one is updated
+            const currentItems = existingQuote.items;
+            let currentLabel = "MOIS";
+            let currentLines = [];
+
+            try {
+                const parsed = JSON.parse(currentItems || "[]");
+                if (Array.isArray(parsed)) {
+                    currentLabel = "MOIS";
+                    currentLines = parsed;
+                } else {
+                    currentLabel = parsed.label || "MOIS";
+                    currentLines = parsed.lines || [];
+                }
+            } catch (e) { }
+
+            updateData.items = JSON.stringify({
+                label: body.quantityLabel !== undefined ? body.quantityLabel : currentLabel,
+                lines: body.items !== undefined ? body.items : currentLines
+            });
+        }
+
         if (body.subtotal !== undefined) updateData.subtotal = parseFloat(body.subtotal);
         if (body.taxRate !== undefined) updateData.taxRate = parseFloat(body.taxRate);
         if (body.taxAmount !== undefined) updateData.taxAmount = parseFloat(body.taxAmount);
