@@ -66,7 +66,15 @@ export default async function QuotesPage() {
     const quotes = await prisma.quote.findMany({
         include: {
             client: {
-                select: { id: true, name: true, companyName: true, email: true }
+                select: {
+                    id: true,
+                    name: true,
+                    companyName: true,
+                    email: true,
+                    address: true,
+                    phone: true,
+                    siret: true
+                }
             }
         },
         orderBy: { createdAt: "desc" },

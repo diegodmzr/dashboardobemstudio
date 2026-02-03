@@ -363,7 +363,9 @@ const QuotePDF = ({ quote }: QuotePDFProps) => {
                             <Text style={[styles.textLabel, { marginBottom: 10 }]}>FACTURÉ À</Text>
                             <Text style={styles.textBold}>{safeText(quote.client?.name)}</Text>
                             {quote.client?.companyName && <Text style={styles.textRegular}>{safeText(quote.client.companyName)}</Text>}
+                            {quote.client?.address && <Text style={styles.textRegular}>{safeText(quote.client.address)}</Text>}
                             <Text style={styles.textRegular}>{safeText(quote.client?.email)}</Text>
+                            {quote.client?.phone && <Text style={styles.textRegular}>{safeText(quote.client.phone)}</Text>}
                             {quote.client?.siret && <Text style={styles.textRegular}>SIRET: {safeText(quote.client.siret)}</Text>}
                         </View>
 

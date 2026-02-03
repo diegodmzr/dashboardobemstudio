@@ -16,7 +16,14 @@ type Quote = {
     id: string;
     reference: string;
     status: string; // DRAFT, SENT, ACCEPTED, REJECTED
-    client: { name: string; companyName: string | null; email: string };
+    client: {
+        name: string;
+        companyName: string | null;
+        email: string;
+        address?: string | null;
+        phone?: string | null;
+        siret?: string | null;
+    };
     issuedAt: string;
     amount?: number; // legacy
     total: number;
