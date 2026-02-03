@@ -16,6 +16,38 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         const { id } = await params;
         const body = await req.json();
 
+        // 1. Handle Manual Client Creation
+        let clientIdToUse = body.clientId;
+
+        if (body.isManual && body.manualClientInfo) {
+            const { name, email, companyName, address, phone, siret } = body.manualClientInfo;
+
+            if (email && name) {
+                // Find existing or create new
+                const client = await prisma.user.upsert({
+                    where: { email: email.toLowerCase() },
+                    update: {
+                        name,
+                        companyName: companyName || null,
+                        address: address || null,
+                        phone: phone || null,
+                        siret: siret || null,
+                    },
+                    create: {
+                        email: email.toLowerCase(),
+                        name,
+                        companyName: companyName || null,
+                        address: address || null,
+                        phone: phone || null,
+                        siret: siret || null,
+                        role: "CLIENT",
+                        status: "Active"
+                    },
+                });
+                clientIdToUse = client.id;
+            }
+        }
+
         const existingQuote = await prisma.quote.findUnique({ where: { id } });
         if (!existingQuote) {
             return NextResponse.json({ error: "Devis introuvable" }, { status: 404 });
@@ -23,7 +55,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
         // Prepare update data
         const updateData: any = {};
-        if (body.clientId) updateData.clientId = body.clientId;
+        if (clientIdToUse) updateData.clientId = clientIdToUse;
         if (body.projectId !== undefined) updateData.projectId = body.projectId;
         if (body.status) updateData.status = body.status;
         if (body.issuedAt) updateData.issuedAt = new Date(body.issuedAt);

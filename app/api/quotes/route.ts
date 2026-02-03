@@ -11,8 +11,43 @@ export async function POST(req: NextRequest) {
 
         const body = await req.json();
 
+        // 1. Handle Manual Client Creation
+        let clientId = body.clientId;
+
+        if (body.isManual && body.manualClientInfo) {
+            const { name, email, companyName, address, phone, siret } = body.manualClientInfo;
+
+            if (!email || !name) {
+                return NextResponse.json({ error: "Email et Nom sont requis pour une saisie manuelle" }, { status: 400 });
+            }
+
+            // Find existing or create new
+            const client = await prisma.user.upsert({
+                where: { email: email.toLowerCase() },
+                update: {
+                    // Update info if it was a ghost user or just to keep it fresh
+                    name,
+                    companyName: companyName || null,
+                    address: address || null,
+                    phone: phone || null,
+                    siret: siret || null,
+                },
+                create: {
+                    email: email.toLowerCase(),
+                    name,
+                    companyName: companyName || null,
+                    address: address || null,
+                    phone: phone || null,
+                    siret: siret || null,
+                    role: "CLIENT",
+                    status: "Active"
+                },
+            });
+            clientId = client.id;
+        }
+
         // Basic validation
-        if (!body.clientId) {
+        if (!clientId) {
             return NextResponse.json(
                 { error: "Le client est requis" },
                 { status: 400 }
@@ -36,7 +71,7 @@ export async function POST(req: NextRequest) {
         const quote = await prisma.quote.create({
             data: {
                 reference,
-                clientId: body.clientId,
+                clientId: clientId,
                 projectId: body.projectId || null,
                 status: "DRAFT",
                 issuedAt: new Date(body.issuedAt || Date.now()),

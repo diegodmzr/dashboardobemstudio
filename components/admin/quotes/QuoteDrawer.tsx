@@ -33,7 +33,16 @@ export type QuoteFormData = {
     // New Fields
     paymentType: string;
     isRecurring: boolean;
-    stripeAutoSend: boolean;
+    // Manual Client Fields
+    isManual?: boolean;
+    manualClientInfo?: {
+        name: string;
+        email: string;
+        companyName?: string;
+        address?: string;
+        phone?: string;
+        siret?: string;
+    };
 };
 
 export type TermSection = {
@@ -97,6 +106,17 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
     const [paymentType, setPaymentType] = useState("ONESHOT");
     const [isRecurring, setIsRecurring] = useState(false);
     const [stripeAutoSend, setStripeAutoSend] = useState(false);
+
+    // Manual Client State
+    const [isManualClient, setIsManualClient] = useState(false);
+    const [manualClientData, setManualClientData] = useState({
+        name: "",
+        email: "",
+        companyName: "",
+        address: "",
+        phone: "",
+        siret: ""
+    });
 
     // Derived Calculations
     const subtotal = lines.reduce((sum, line) => sum + line.total, 0);
@@ -173,6 +193,15 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
                 setPaymentType("ONESHOT");
                 setIsRecurring(false);
                 setStripeAutoSend(false);
+                setIsManualClient(false);
+                setManualClientData({
+                    name: "",
+                    email: "",
+                    companyName: "",
+                    address: "",
+                    phone: "",
+                    siret: ""
+                });
             }
         }
     }, [isOpen, initialData]);
@@ -201,10 +230,13 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
     };
 
     const handleSubmit = () => {
-        if (!clientId) return alert("Veuillez sélectionner un client.");
+        if (!isManualClient && !clientId) return alert("Veuillez sélectionner un client.");
+        if (isManualClient && (!manualClientData.email || !manualClientData.name)) return alert("Veuillez remplir au moins le nom et l'email du client.");
 
         onSave({
-            clientId,
+            clientId: isManualClient ? "" : clientId,
+            isManual: isManualClient,
+            manualClientInfo: isManualClient ? manualClientData : undefined,
             projectId: projectId || undefined,
             issuedAt,
             validUntil: validUntil || undefined,
@@ -267,28 +299,104 @@ export default function QuoteDrawer({ isOpen, onClose, onSave, initialData, clie
 
                     {/* 1. Client & Dates */}
                     <div className="grid grid-cols-2 gap-6">
-                        <div className="col-span-2 sm:col-span-1">
-                            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">Client</label>
-                            <select
-                                value={clientId}
-                                onChange={e => setClientId(e.target.value)}
-                                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
-                            >
-                                <option value="">Sélectionner un client...</option>
-                                {clients.map(c => (
-                                    <option key={c.id} value={c.id}>{c.name} {c.companyName ? `(${c.companyName})` : ""}</option>
-                                ))}
-                            </select>
+                        <div className="col-span-2">
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-400">Client</label>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsManualClient(!isManualClient);
+                                        if (!isManualClient) setClientId("");
+                                    }}
+                                    className="text-xs font-semibold text-black underline dark:text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
+                                >
+                                    {isManualClient ? "Choisir un client existant" : "+ Créer / Saisie manuelle"}
+                                </button>
+                            </div>
+
+                            {!isManualClient ? (
+                                <select
+                                    value={clientId}
+                                    onChange={e => setClientId(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                >
+                                    <option value="">Sélectionner un client...</option>
+                                    {clients.map(c => (
+                                        <option key={c.id} value={c.id}>{c.name} {c.companyName ? `(${c.companyName})` : ""}</option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <div className="space-y-4 p-4 rounded-xl border border-gray-100 bg-gray-50/50 dark:bg-black dark:border-[#333]">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="col-span-2 sm:col-span-1">
+                                            <input
+                                                placeholder="Nom complet / Contact"
+                                                value={manualClientData.name}
+                                                onChange={e => setManualClientData({ ...manualClientData, name: e.target.value })}
+                                                className="w-full bg-transparent border-b border-gray-200 py-1.5 text-sm outline-none focus:border-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                            />
+                                            <span className="text-[10px] text-gray-400">Nom du contact</span>
+                                        </div>
+                                        <div className="col-span-2 sm:col-span-1">
+                                            <input
+                                                placeholder="Email"
+                                                value={manualClientData.email}
+                                                onChange={e => setManualClientData({ ...manualClientData, email: e.target.value })}
+                                                className="w-full bg-transparent border-b border-gray-200 py-1.5 text-sm outline-none focus:border-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                            />
+                                            <span className="text-[10px] text-gray-400">Email (unique)</span>
+                                        </div>
+                                        <div className="col-span-2 sm:col-span-1">
+                                            <input
+                                                placeholder="Nom de l'entreprise"
+                                                value={manualClientData.companyName}
+                                                onChange={e => setManualClientData({ ...manualClientData, companyName: e.target.value })}
+                                                className="w-full bg-transparent border-b border-gray-200 py-1.5 text-sm outline-none focus:border-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                            />
+                                            <span className="text-[10px] text-gray-400">Entreprise (Optionnel)</span>
+                                        </div>
+                                        <div className="col-span-2 sm:col-span-1">
+                                            <input
+                                                placeholder="SIRET"
+                                                value={manualClientData.siret}
+                                                onChange={e => setManualClientData({ ...manualClientData, siret: e.target.value })}
+                                                className="w-full bg-transparent border-b border-gray-200 py-1.5 text-sm outline-none focus:border-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                            />
+                                            <span className="text-[10px] text-gray-400">SIRET (Optionnel)</span>
+                                        </div>
+                                        <div className="col-span-2 sm:col-span-1">
+                                            <input
+                                                placeholder="Adresse"
+                                                value={manualClientData.address}
+                                                onChange={e => setManualClientData({ ...manualClientData, address: e.target.value })}
+                                                className="w-full bg-transparent border-b border-gray-200 py-1.5 text-sm outline-none focus:border-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                            />
+                                            <span className="text-[10px] text-gray-400">Adresse (Optionnel)</span>
+                                        </div>
+                                        <div className="col-span-2 sm:col-span-1">
+                                            <input
+                                                placeholder="Téléphone"
+                                                value={manualClientData.phone}
+                                                onChange={e => setManualClientData({ ...manualClientData, phone: e.target.value })}
+                                                className="w-full bg-transparent border-b border-gray-200 py-1.5 text-sm outline-none focus:border-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                            />
+                                            <span className="text-[10px] text-gray-400">Téléphone (Optionnel)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
+
                         <div className="col-span-2 sm:col-span-1">
                             <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">Projet (Optionnel)</label>
                             <select
                                 value={projectId}
+                                disabled={isManualClient}
                                 onChange={e => setProjectId(e.target.value)}
-                                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white disabled:opacity-50"
                             >
                                 <option value="">Ne pas lier à un projet</option>
-                                {filteredProjects.map(p => (
+                                {!isManualClient && filteredProjects.map(p => (
                                     <option key={p.id} value={p.id}>{p.name}</option>
                                 ))}
                             </select>
