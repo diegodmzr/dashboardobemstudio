@@ -95,7 +95,7 @@ export default function LoginForm() {
                     placeholder="000000"
                     value={twoFactorCode}
                     onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ""))}
-                    className="block w-full text-center text-3xl tracking-widest font-bold rounded-2xl border border-white/20 bg-black/50 px-4 py-5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
+                    className="block w-full text-center text-3xl tracking-widest font-bold rounded-2xl border border-white/20 bg-black/50 px-4 py-5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] autofill:[webkit-text-fill-color:white] [selectionColor:white]"
                     required
                     autoFocus
                 />
@@ -136,7 +136,7 @@ export default function LoginForm() {
                         type="email"
                         autoComplete="email"
                         required
-                        className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
+                        className="block w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3.5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] autofill:[webkit-text-fill-color:white] [selectionColor:white]"
                         placeholder="nom@exemple.com"
                     />
                 </div>
@@ -149,7 +149,7 @@ export default function LoginForm() {
                             type={showPassword ? "text" : "password"}
                             autoComplete="current-password"
                             required
-                            className="block w-full rounded-2xl border border-white/10 bg-black/50 pl-4 pr-12 py-3.5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] [selectionColor:white]"
+                            className="block w-full rounded-2xl border border-white/10 bg-black/50 pl-4 pr-12 py-3.5 !text-white placeholder:text-zinc-500 focus:border-white focus:ring-white focus:bg-black/70 text-sm outline-none transition-all autofill:shadow-[0_0_0_30px_#000000_inset] autofill:[webkit-text-fill-color:white] [selectionColor:white]"
                             placeholder="••••••••"
                         />
                         <button
