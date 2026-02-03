@@ -65,6 +65,8 @@ export async function POST(
             };
         }
 
+        const origin = req.headers.get("origin") || req.nextUrl.origin;
+
         // Create Checkout Session
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -75,8 +77,8 @@ export async function POST(
                 },
             ],
             mode: isSubscription ? "subscription" : "payment",
-            success_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/finances/paiements?success=true&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/finances/paiements?canceled=true`,
+            success_url: `${origin}/dashboard/finances/paiements?success=true&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/dashboard/finances/paiements?canceled=true`,
             customer_email: user.email,
             metadata: {
                 paymentId: payment.id,

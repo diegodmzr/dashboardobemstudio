@@ -35,7 +35,7 @@ export async function POST(
         // NOTE: This will technically create a NEW Stripe subscription. 
         // Ideally we should link it back. But for "Manual" conversion to "Stripe", this is fine.
 
-        const origin = req.headers.get("origin") || "http://localhost:3000";
+        const origin = req.headers.get("origin") || req.nextUrl.origin;
 
         // Determine price data
         const recurring: Stripe.Checkout.SessionCreateParams.LineItem.PriceData.Recurring = {

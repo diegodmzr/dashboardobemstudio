@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
         if (!payment) return NextResponse.json({ error: "Paiement introuvable" }, { status: 404 });
         if (payment.status === "PAID") return NextResponse.json({ error: "Déjà payé" }, { status: 400 });
 
+        const origin = req.headers.get("origin") || req.nextUrl.origin;
+
         // 2. Create Stripe Checkout Session
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -38,8 +40,8 @@ export async function POST(req: NextRequest) {
                 },
             ],
             mode: "payment",
-            success_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/finances/paiements?success=true`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/finances/paiements?canceled=true`,
+            success_url: `${origin}/dashboard/finances/paiements?success=true`,
+            cancel_url: `${origin}/dashboard/finances/paiements?canceled=true`,
             customer_email: payment.client.email,
             metadata: {
                 paymentId: payment.id,

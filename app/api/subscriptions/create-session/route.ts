@@ -23,6 +23,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Client introuvable" }, { status: 404 });
         }
 
+        const origin = req.headers.get("origin") || req.nextUrl.origin;
+
         // Create Stripe Checkout Session in subscription mode
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -33,8 +35,8 @@ export async function POST(req: NextRequest) {
                     quantity: 1,
                 },
             ],
-            success_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/finances/abonnements?success=true`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/finances/abonnements?canceled=true`,
+            success_url: `${origin}/dashboard/finances/abonnements?success=true`,
+            cancel_url: `${origin}/dashboard/finances/abonnements?canceled=true`,
             customer_email: client.email,
             metadata: {
                 clientId: client.id,
