@@ -7,12 +7,13 @@ import MessageThread from "./MessageThread";
 import ConversationDetail from "./ConversationDetail";
 
 type Props = {
-    currentUser: SessionUser | null;
+    currentUser?: SessionUser | null;
+    currentUserId?: string;
 };
 
-export default function DiscussionClient({ currentUser }: Props) {
+export default function DiscussionClient({ currentUser, currentUserId: pCurrentUserId }: Props) {
     const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-    const currentUserId = currentUser?.id || "";
+    const currentUserId = pCurrentUserId || currentUser?.id || "";
 
     return (
         <div className="flex h-[calc(100vh-120px)] md:h-[calc(100vh-100px)] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:bg-[#111] dark:border-[#333]">
@@ -44,7 +45,7 @@ export default function DiscussionClient({ currentUser }: Props) {
                 <div className="hidden md:flex w-72 bg-gray-50/50 flex flex-col dark:bg-[#161616]">
                     <ConversationDetail
                         conversationId={selectedConversationId}
-                        currentUser={currentUser}
+                        currentUser={currentUser || null}
                     />
                 </div>
             )}
