@@ -163,6 +163,92 @@ export default function ClientDetailModal({ client, onClose, onEdit }: Props) {
                         )}
                     </div>
 
+                    {/* Quotes Section */}
+                    <div className="mb-10">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-sm font-semibold text-black uppercase tracking-wide dark:text-white">Devis ({client.quotes?.length || 0})</h3>
+                        </div>
+
+                        {client.quotes && client.quotes.length > 0 ? (
+                            <div className="overflow-hidden rounded-xl border border-gray-100 bg-gray-50/50 dark:bg-[#1a1a1a] dark:border-[#333]">
+                                {client.quotes.map((quote: any, index: number) => (
+                                    <div
+                                        key={quote.id}
+                                        className={`flex items-center justify-between p-4 transition hover:bg-white dark:hover:bg-[#222] ${index !== client.quotes.length - 1 ? "border-b border-gray-100 dark:border-[#333]" : ""}`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-[#222]">
+                                                <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-semibold text-sm text-[#2f2f2f] dark:text-white uppercase">{quote.reference}</h4>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                    Émis le {new Date(quote.createdAt).toLocaleDateString("fr-FR")}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="text-right">
+                                            <span className="block text-sm font-bold text-[#2f2f2f] dark:text-white">
+                                                {formatCurrency(quote.total)}
+                                            </span>
+                                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${quote.status === "PAID"
+                                                    ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                                    : quote.status === "SENT"
+                                                        ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                                                        : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                                }`}>
+                                                {quote.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center text-sm text-gray-400 dark:bg-[#1a1a1a] dark:border-[#333] dark:text-gray-500">
+                                Aucun devis associé à ce client.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Form Submissions Section */}
+                    <div className="mb-10">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-sm font-semibold text-black uppercase tracking-wide dark:text-white">Formulaires ({client.formSubmissions?.length || 0})</h3>
+                        </div>
+
+                        {client.formSubmissions && client.formSubmissions.length > 0 ? (
+                            <div className="overflow-hidden rounded-xl border border-gray-100 bg-gray-50/50 dark:bg-[#1a1a1a] dark:border-[#333]">
+                                {client.formSubmissions.map((sub: any, index: number) => (
+                                    <div
+                                        key={sub.id}
+                                        className={`flex items-center justify-between p-4 transition hover:bg-white dark:hover:bg-[#222] ${index !== client.formSubmissions.length - 1 ? "border-b border-gray-100 dark:border-[#333]" : ""}`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-[#222]">
+                                                <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-semibold text-sm text-[#2f2f2f] dark:text-white uppercase">{sub.form?.title || "Formulaire personnalisé"}</h4>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                    Soumis le {new Date(sub.createdAt).toLocaleDateString("fr-FR")}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center text-sm text-gray-400 dark:bg-[#1a1a1a] dark:border-[#333] dark:text-gray-500">
+                                Aucun formulaire rempli par ce client.
+                            </div>
+                        )}
+                    </div>
+
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
                         {/* Coordonnées */}
                         <div>

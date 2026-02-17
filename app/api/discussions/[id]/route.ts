@@ -53,7 +53,7 @@ export async function PATCH(
         if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
         const body = await req.json();
-        const { status, markAsRead } = body;
+        const { status, markAsRead, isArchived } = body;
 
         // First check access
         const conversation = await prisma.conversation.findUnique({
@@ -69,11 +69,14 @@ export async function PATCH(
         }
 
         // Update Logic
-        if (status) {
-            // Only Admin or maybe Owner can change status? Let's allow participants for now
+        const updateData: any = {};
+        if (status) updateData.status = status;
+        if (isArchived !== undefined) updateData.isArchived = isArchived;
+
+        if (Object.keys(updateData).length > 0) {
             await prisma.conversation.update({
                 where: { id },
-                data: { status }
+                data: updateData
             });
         }
 
@@ -89,6 +92,18 @@ export async function PATCH(
         }
 
         const { addParticipantId, removeParticipantId } = body;
+
+        // Authorization for managing participants
+        const userParticipant = conversation.participants.find(p => p.userId === user.id);
+        const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
+        const isOwner = userParticipant?.role === "OWNER";
+
+        if (addParticipantId || removeParticipantId) {
+            if (!isAdmin && !isOwner) {
+                return new NextResponse("Forbidden: Only owners or admins can manage participants", { status: 403 });
+            }
+        }
+
         if (addParticipantId) {
             // Check if already exists
             const exists = conversation.participants.some(p => p.userId === addParticipantId);
@@ -104,14 +119,16 @@ export async function PATCH(
         }
 
         if (removeParticipantId) {
-            // Only admin or owner can remove participants
-            const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
-            if (!isAdmin) {
-                return new NextResponse("Forbidden", { status: 403 });
-            }
+            // Check if removing self (usually allowed?) or removing someone else (owner/admin only)
+            // But based on request, restriction is for the action in general.
 
             const participantToRemove = conversation.participants.find(p => p.userId === removeParticipantId);
             if (participantToRemove) {
+                // Prevent removing the owner if not an admin? 
+                if (participantToRemove.role === "OWNER" && !isAdmin) {
+                    return new NextResponse("Forbidden: Cannot remove the owner", { status: 403 });
+                }
+
                 await prisma.participant.delete({
                     where: { id: participantToRemove.id }
                 });

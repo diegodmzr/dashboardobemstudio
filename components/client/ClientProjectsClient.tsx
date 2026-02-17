@@ -94,55 +94,54 @@ export default function ClientProjectsClient({ projects, userName, userEmail }: 
 
             <main className="flex-1 px-8 py-6">
                 {/* Filters */}
-                <div className="mb-6 flex flex-wrap items-center gap-2">
-                    <button
-                        onClick={() => setStatusFilter(null)}
-                        className={`rounded-full px-4 py-2 text-sm font-medium transition ${!statusFilter
-                            ? "bg-black text-white dark:bg-white dark:text-black"
-                            : "bg-white border border-[#e0e0e0] text-[#6a6a6a] hover:bg-gray-50 dark:bg-[#1a1a1a] dark:border-[#333] dark:text-gray-400"
-                            }`}
-                    >
-                        Tous
-                    </button>
-                    {uniqueStatuses.map((status) => (
+                <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex flex-wrap items-center gap-2">
                         <button
-                            key={status}
-                            onClick={() => setStatusFilter(status)}
-                            className={`rounded-full px-4 py-2 text-sm font-medium transition ${statusFilter === status
-                                ? "bg-black text-white dark:bg-white dark:text-black"
-                                : "bg-white border border-[#e0e0e0] text-[#6a6a6a] hover:bg-gray-50 dark:bg-[#1a1a1a] dark:border-[#333] dark:text-gray-400"
+                            onClick={() => setStatusFilter(null)}
+                            className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${!statusFilter
+                                ? "bg-black text-white shadow-lg shadow-black/10 dark:bg-white dark:text-black"
+                                : "bg-white border border-gray-100 text-gray-500 hover:bg-gray-50 dark:bg-[#1a1a1a] dark:border-[#333] dark:text-gray-400"
                                 }`}
                         >
-                            {status}
+                            Tous
                         </button>
-                    ))}
+                        {uniqueStatuses.map((status) => (
+                            <button
+                                key={status}
+                                onClick={() => setStatusFilter(status)}
+                                className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${statusFilter === status
+                                    ? "bg-black text-white shadow-lg shadow-black/10 dark:bg-white dark:text-black"
+                                    : "bg-white border border-gray-100 text-gray-500 hover:bg-gray-50 dark:bg-[#1a1a1a] dark:border-[#333] dark:text-gray-400"
+                                    }`}
+                            >
+                                {status}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Projects Grid */}
                 {filteredProjects.length === 0 ? (
-                    <div className="mt-20 flex flex-col items-center justify-center">
-                        <div className="mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-[#f8f6fb] to-[#ece7ef] dark:from-[#333] dark:to-[#222]">
-                            <svg className="h-16 w-16 text-[#8a8a8a] dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <rect x="3.5" y="6" width="17" height="12.5" rx="2" strokeWidth="1.5" />
-                                <path d="M3.5 10.5h17" strokeLinecap="round" strokeWidth="1.5" />
-                                <path d="M9.5 6V4" strokeLinecap="round" strokeWidth="1.5" />
-                                <path d="M14.5 6V4" strokeLinecap="round" strokeWidth="1.5" />
+                    <div className="mt-20 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500">
+                        <div className="mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#333]">
+                            <svg className="h-12 w-12 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                             </svg>
                         </div>
-                        <h3 className="mb-2 text-xl font-bold text-[#2f2f2f] dark:text-white">
+                        <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
                             Aucun projet trouvé
                         </h3>
-                        <p className="mb-6 text-sm text-[#6a6a6a] dark:text-gray-400">
+                        <p className="mb-8 text-sm text-gray-500 max-w-xs">
                             {searchTerm || statusFilter
-                                ? "Essayez de modifier vos filtres"
-                                : "Vous n'avez pas encore de projet"}
+                                ? "Aucun résultat ne correspond à vos critères de recherche actuels."
+                                : "Vous n'avez pas encore de projet en cours avec nous."}
                         </p>
                         {!searchTerm && !statusFilter && (
                             <Link
                                 href="/dashboard/projets/nouveau"
-                                className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                                className="rounded-full bg-black px-8 py-3.5 text-sm font-bold text-white shadow-xl transition hover:scale-105 active:scale-95 dark:bg-white dark:text-black"
                             >
-                                Faire une demande
+                                Lancer mon premier projet
                             </Link>
                         )}
                     </div>
@@ -154,130 +153,112 @@ export default function ClientProjectsClient({ projects, userName, userEmail }: 
                             const currentStep = steps[currentStepIndex];
                             const nextStep = steps[currentStepIndex + 1];
 
+                            // Dynamic status colors
+                            const statusStyles: Record<string, string> = {
+                                "En cours": "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
+                                "Terminé": "bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400",
+                                "À venir": "bg-gray-50 text-gray-600 dark:bg-[#222] dark:text-gray-400",
+                                "En pause": "bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400",
+                                "LATE": "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400",
+                            };
+
+                            const currentStatusStyle = statusStyles[project.status] || "bg-gray-50 text-gray-600 dark:bg-[#222] dark:text-gray-400";
+
                             return (
                                 <Link
                                     key={project.id}
                                     href={`/dashboard/projets/${project.id}`}
-                                    className="group relative flex flex-col rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-[0_2px_6px_rgba(0,0,0,0.04)] transition hover:-translate-y-1 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] dark:bg-[#1a1a1a] dark:border-[#333] dark:hover:bg-[#222]"
+                                    className="group relative flex flex-col rounded-[24px] border border-gray-100 bg-white p-6 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:bg-[#111] dark:border-[#333] hover:-translate-y-1"
                                 >
                                     {/* Header */}
-                                    <div className="mb-4">
-                                        <div className="mb-2 flex items-start justify-between">
-                                            {/* Font-semibold to match Admin */}
-                                            <h3 className="text-lg font-semibold text-[#2f2f2f] dark:text-white">
-                                                {project.name}
-                                            </h3>
-                                            {project.type && (
-                                                /* Badge style matched to Admin */
-                                                <span className="rounded-full bg-[#e0e0e0] px-2 py-0.5 text-xs font-semibold text-[#2f2f2f] dark:bg-[#333] dark:text-white">
-                                                    {project.type}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            {/* Status Badge */}
-                                            <span className="inline-flex items-center gap-1 rounded-full bg-[#f3f4f6] px-2 py-0.5 text-xs font-semibold text-[#6a6a6a] dark:bg-[#333] dark:text-gray-400">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-[#6a6a6a] dark:bg-gray-400" />
-                                                {project.status}
-                                            </span>
-                                            {project.technology && (
-                                                <span className="text-xs text-[#8a8a8a] dark:text-gray-500">
-                                                    • {project.technology}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Progress Bar */}
-                                    <div className="mb-4">
-                                        <div className="mb-2 flex items-center justify-between">
-                                            <span className="text-xs font-semibold text-[#6a6a6a] dark:text-gray-400">
-                                                Progression
-                                            </span>
-                                            <span className="text-xs font-bold text-[#2f2f2f] dark:text-white">
-                                                {project.progress}%
-                                            </span>
-                                        </div>
-                                        <div className="h-2 w-full overflow-hidden rounded-full bg-[#f1eef2] dark:bg-[#333]">
-                                            <div
-                                                className="h-full rounded-full bg-black dark:bg-white transition-all duration-500"
-                                                style={{ width: `${project.progress}%` }}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Steps */}
-                                    <div className="mb-4 flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-hide">
-                                        {steps.map((step: { label: string; description: string }, index: number) => {
-                                            const isDone = index < currentStepIndex;
-                                            const isCurrent = index === currentStepIndex;
-
-                                            return (
-                                                <div key={index} className="flex items-center gap-1.5">
-                                                    <div
-                                                        className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold transition ${isDone
-                                                            ? "bg-black text-white dark:bg-white dark:text-black"
-                                                            : isCurrent
-                                                                ? "bg-[#4a4a4a] text-white dark:bg-gray-300 dark:text-black"
-                                                                : "bg-white border border-[#e0e0e0] text-[#8b8690] dark:bg-[#1a1a1a] dark:border-[#444]"
-                                                            }`}
-                                                        title={step.label}
-                                                    >
-                                                        {isDone ? "✓" : index + 1}
-                                                    </div>
-                                                    {index < steps.length - 1 && (
-                                                        <div
-                                                            className={`h-0.5 w-4 ${isDone
-                                                                ? "bg-black dark:bg-white"
-                                                                : "bg-[#e0e0e0] dark:bg-[#444]"
-                                                                }`}
-                                                        />
+                                    <div className="mb-6">
+                                        <div className="mb-3 flex items-start justify-between">
+                                            <div className="min-w-0">
+                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate group-hover:text-black dark:group-hover:text-white transition-colors">
+                                                    {project.name}
+                                                </h3>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${currentStatusStyle}`}>
+                                                        {project.status}
+                                                    </span>
+                                                    {project.type && (
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                                                            {project.type}
+                                                        </span>
                                                     )}
                                                 </div>
-                                            );
-                                        })}
-                                    </div>
+                                            </div>
+                                            <div className="h-10 w-10 rounded-2xl bg-gray-50 flex items-center justify-center shrink-0 dark:bg-[#1a1a1a] group-hover:bg-black group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-all">
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
 
-                                    {/* Current Step Info */}
-                                    <div className="mt-auto">
-                                        <div className="rounded-xl bg-[#f8f6fb] p-3 dark:bg-[#111]">
-                                            <div className="mb-1 text-xs font-bold uppercase tracking-wide text-[#8a8a8a] dark:text-gray-500">
-                                                Étape actuelle
-                                            </div>
-                                            <div className="text-sm font-semibold text-[#2f2f2f] dark:text-white">
-                                                {currentStep.label}
-                                            </div>
-                                            {currentStep.description && (
-                                                <div className="mt-0.5 text-xs text-[#6a6a6a] dark:text-gray-400">
-                                                    {currentStep.description}
+                                        {/* Meta */}
+                                        <div className="flex flex-wrap gap-y-2 gap-x-4 items-center mb-6">
+                                            {project.technology && (
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                                                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{project.technology}</span>
                                                 </div>
                                             )}
-                                            {nextStep && (
-                                                <div className="mt-2 flex items-center gap-1 text-xs text-[#8a8a8a] dark:text-gray-500">
-                                                    <span>Prochaine étape:</span>
-                                                    <span className="font-semibold text-black dark:text-white">
-                                                        {nextStep.label}
+                                            {project.deadline && (
+                                                <div className="flex items-center gap-1.5">
+                                                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                        {new Date(project.deadline).toLocaleDateString("fr-FR", { day: 'numeric', month: 'short' })}
                                                     </span>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
 
-                                    {/* Hover Arrow */}
-                                    <div className="absolute right-4 top-4 opacity-0 transition group-hover:opacity-100">
-                                        <svg
-                                            className="h-5 w-5 text-black dark:text-white"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M9 5l7 7-7 7"
+                                    {/* Progress Area */}
+                                    <div className="mb-6 p-4 rounded-2xl bg-gray-50 dark:bg-[#1a1a1a] border border-transparent group-hover:border-gray-100 dark:group-hover:border-[#333] transition-all">
+                                        <div className="mb-3 flex items-end justify-between">
+                                            <div>
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 block mb-0.5">
+                                                    Progression
+                                                </span>
+                                                <span className="text-sm font-bold text-gray-900 dark:text-white">
+                                                    {currentStep.label}
+                                                </span>
+                                            </div>
+                                            <span className="text-lg font-black text-black dark:text-white italic">
+                                                {project.progress}%
+                                            </span>
+                                        </div>
+                                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-[#333]">
+                                            <div
+                                                className="h-full rounded-full bg-black dark:bg-white transition-all duration-700 ease-out shadow-[0_0_8px_rgba(0,0,0,0.2)]"
+                                                style={{ width: `${project.progress}%` }}
                                             />
-                                        </svg>
+                                        </div>
+
+                                        {nextStep && (
+                                            <div className="mt-3 pt-3 border-t border-gray-200/50 dark:border-gray-800 flex items-center gap-2">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Suivant:</span>
+                                                <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 truncate">
+                                                    {nextStep.label}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Footer Info */}
+                                    <div className="mt-auto flex items-center justify-between">
+                                        <div className="flex -space-x-2">
+                                            {/* Could show team members here if available */}
+                                            <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-bold dark:border-black dark:bg-[#222]">
+                                                +
+                                            </div>
+                                        </div>
+                                        <span className="text-[10px] font-medium text-gray-400">
+                                            Mis à jour il y a 2j
+                                        </span>
                                     </div>
                                 </Link>
                             );

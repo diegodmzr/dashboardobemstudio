@@ -63,6 +63,21 @@ export async function POST(req: NextRequest) {
                     include: { client: true }
                 });
 
+                // --- CLEANUP NOTIFICATIONS ---
+                // Delete "Paiement requis" notifications for this payment
+                try {
+                    await prisma.notification.deleteMany({
+                        where: {
+                            userId: updatedPayment.clientId,
+                            type: "PAYMENT",
+                            entityId: updatedPayment.id,
+                            title: "Paiement requis"
+                        }
+                    });
+                } catch (cleanupError) {
+                    console.error("Error cleaning up notifications:", cleanupError);
+                }
+
                 // Notify Admins
                 try {
                     const admins = await prisma.user.findMany({

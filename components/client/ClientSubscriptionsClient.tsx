@@ -20,6 +20,7 @@ type Subscription = {
     projectId?: string | null;
     startDate?: string;
     endDate?: string | null;
+    commitmentEndDate?: string | null;
     project?: { name: string } | null;
 };
 
@@ -140,6 +141,13 @@ export default function ClientSubscriptionsClient() {
                                                 / {sub.interval === "month" ? "mois" : sub.interval === "quarter" ? "trim" : "an"}
                                             </span>
                                         </div>
+
+                                        {sub.commitmentEndDate && (
+                                            <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-wider dark:bg-blue-900/20 dark:text-blue-400">
+                                                <Clock className="w-3 h-3" />
+                                                Engagement → {formatDate(sub.commitmentEndDate)}
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between dark:border-[#222]">

@@ -24,11 +24,13 @@ type Props = {
     payment: Payment | null;
     onSave: (data: any) => void;
     onRemind: (id: string) => void;
+    onDelete: (id: string) => void;
+    onArchive: (id: string) => void;
     clients: any[];
     projects: any[];
 };
 
-export default function PaymentDrawer({ isOpen, onClose, payment, onSave, onRemind, clients, projects }: Props) {
+export default function PaymentDrawer({ isOpen, onClose, payment, onSave, onRemind, onDelete, onArchive, clients, projects }: Props) {
     const [isClosing, setIsClosing] = useState(false);
 
     // Form State (for creation)
@@ -107,7 +109,10 @@ export default function PaymentDrawer({ isOpen, onClose, payment, onSave, onRemi
                                 ${payment.status === 'PENDING' ? 'bg-gray-100 text-gray-500 dark:bg-[#222] dark:text-gray-400' : ''}
                                 ${payment.status === 'LATE' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : ''}
                              `}>
-                                {payment.status}
+                                {payment.status === "PENDING" ? "Non payé" :
+                                    payment.status === "PAID" ? "Payé" :
+                                        payment.status === "LATE" ? "En retard" :
+                                            payment.status}
                             </div>
                         </div>
 
@@ -193,12 +198,34 @@ export default function PaymentDrawer({ isOpen, onClose, payment, onSave, onRemi
                                     Envoyer une relance par email
                                 </button>
                             )}
-                            {/* Placeholder for Mark as Paid if Manual */}
                             {payment.method === 'MANUAL' && payment.status === 'PENDING' && (
                                 <button className="w-full bg-green-500 text-white py-3 rounded-xl font-medium hover:bg-green-600 transition shadow-lg shadow-green-500/20">
                                     Marquer comme payé
                                 </button>
                             )}
+
+                            <div className="grid grid-cols-2 gap-3 mt-4">
+                                <button
+                                    onClick={() => {
+                                        if (confirm("Archiver ce paiement ? Il ne sera plus pris en compte dans les statistiques.")) {
+                                            onArchive(payment.id);
+                                        }
+                                    }}
+                                    className="px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition dark:border-[#333] dark:text-gray-400 dark:hover:bg-[#222]"
+                                >
+                                    Archiver
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        if (confirm("Supprimer définitivement ce paiement ? Cette action est irréversible.")) {
+                                            onDelete(payment.id);
+                                        }
+                                    }}
+                                    className="px-4 py-2.5 rounded-xl border border-red-100 text-red-500 font-medium hover:bg-red-50 transition dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-900/10"
+                                >
+                                    Supprimer
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

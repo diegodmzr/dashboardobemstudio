@@ -1,7 +1,7 @@
 "use client";
 
 import { SessionUser } from "@/lib/auth";
-import { User, FileText, Clock, CheckCircle, Plus, X } from "lucide-react";
+import { User, FileText, Clock, CheckCircle, Plus, X, Archive } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 type Props = {
@@ -87,6 +87,24 @@ export default function ConversationDetail({ conversationId, currentUser }: Prop
         }
     };
 
+    const toggleArchive = async () => {
+        const newArchivedState = !data.isArchived;
+        try {
+            const res = await fetch(`/api/discussions/${conversationId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isArchived: newArchivedState })
+            });
+            if (res.ok) {
+                setData((prev: any) => ({ ...prev, isArchived: newArchivedState }));
+                // Optionally reload or notify parent to refresh list
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const addParticipant = async (userId: string) => {
         try {
             const res = await fetch(`/api/discussions/${conversationId}`, {
@@ -105,6 +123,9 @@ export default function ConversationDetail({ conversationId, currentUser }: Prop
     };
 
     if (!data) return null;
+
+    const isOwner = data.participants?.find((p: any) => p.userId === currentUser?.id)?.role === "OWNER";
+    const canManageParticipants = isUserAdmin || isOwner;
 
     const removeParticipant = async (userId: string) => {
         if (!confirm("Retirer ce participant ?")) return;
@@ -137,16 +158,28 @@ export default function ConversationDetail({ conversationId, currentUser }: Prop
                 <div className="space-y-4">
                     <div>
                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">Statut</span>
-                        <div className="mt-2">
+                        <div className="mt-2 flex items-center gap-2">
                             <select
                                 value={data.status}
                                 onChange={(e) => updateStatus(e.target.value)}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium outline-none focus:border-black dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white"
+                                disabled={!canManageParticipants}
+                                className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium outline-none focus:border-black dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white disabled:opacity-50"
                             >
                                 <option value="OPEN">Ouvert</option>
                                 <option value="IN_PROGRESS">En cours</option>
                                 <option value="CLOSED">Clôturé</option>
                             </select>
+                            <button
+                                onClick={toggleArchive}
+                                disabled={!canManageParticipants}
+                                className={`p-2 rounded-lg border transition disabled:opacity-50 ${data.isArchived
+                                    ? "bg-amber-50 border-amber-200 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:border-amber-900/30"
+                                    : "bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100 dark:bg-[#1a1a1a] dark:border-[#333]"
+                                    }`}
+                                title={data.isArchived ? "Désarchiver" : "Archiver"}
+                            >
+                                <Archive className="w-4 h-4" />
+                            </button>
                         </div>
                     </div>
 
@@ -174,15 +207,15 @@ export default function ConversationDetail({ conversationId, currentUser }: Prop
                                             )}
                                         </div>
                                         <span className={`inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mt-0.5 ${p.user.role === "SUPER_ADMIN"
-                                                ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
-                                                : p.user.role === "ADMIN"
-                                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                                                    : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                                            ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                                            : p.user.role === "ADMIN"
+                                                ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                                : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
                                             }`}>
                                             {p.user.role === "SUPER_ADMIN" ? "Super Admin" : p.user.role === "ADMIN" ? "Admin" : "Client"}
                                         </span>
                                     </div>
-                                    {isUserAdmin && p.role !== "OWNER" && (
+                                    {canManageParticipants && p.role !== "OWNER" && p.userId !== currentUser?.id && (
                                         <button
                                             onClick={() => removeParticipant(p.user.id)}
                                             className="text-gray-400 hover:text-red-500 transition px-2"
@@ -195,48 +228,50 @@ export default function ConversationDetail({ conversationId, currentUser }: Prop
                             ))}
                         </div>
 
-                        <div className="relative mt-2" ref={addParticipantRef}>
-                            <button
-                                onClick={() => {
-                                    setShowAddParticipant(!showAddParticipant);
-                                    if (!showAddParticipant) fetchUsers();
-                                }}
-                                className="text-xs font-semibold text-black hover:underline flex items-center gap-1 dark:text-gray-300"
-                            >
-                                <Plus className="w-3 h-3" /> Ajouter
-                            </button>
+                        {canManageParticipants && (
+                            <div className="relative mt-2" ref={addParticipantRef}>
+                                <button
+                                    onClick={() => {
+                                        setShowAddParticipant(!showAddParticipant);
+                                        if (!showAddParticipant) fetchUsers();
+                                    }}
+                                    className="text-xs font-semibold text-black hover:underline flex items-center gap-1 dark:text-gray-300"
+                                >
+                                    <Plus className="w-3 h-3" /> Ajouter
+                                </button>
 
-                            {showAddParticipant && (
-                                <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden dark:bg-[#1a1a1a] dark:border-[#333]">
-                                    <div className="p-2 max-h-48 overflow-y-auto">
-                                        {loadingUsers ? (
-                                            <div className="text-xs text-center p-2 text-gray-400">Chargement...</div>
-                                        ) : availableUsers.length === 0 ? (
-                                            <div className="text-xs text-center p-2 text-gray-400">Aucun utilisateur disponible</div>
-                                        ) : (
-                                            availableUsers.map(u => (
-                                                <button
-                                                    key={u.id}
-                                                    onClick={() => addParticipant(u.id)}
-                                                    className="w-full flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg text-left transition dark:hover:bg-[#222]"
-                                                >
-                                                    <div className="w-6 h-6 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-                                                        {u.avatar ? (
-                                                            <img src={u.avatar} className="w-full h-full object-cover" />
-                                                        ) : (
-                                                            <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-600">
-                                                                {u.name.charAt(0)}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <span className="text-sm dark:text-white truncate">{u.name}</span>
-                                                </button>
-                                            ))
-                                        )}
+                                {showAddParticipant && (
+                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden dark:bg-[#1a1a1a] dark:border-[#333]">
+                                        <div className="p-2 max-h-48 overflow-y-auto">
+                                            {loadingUsers ? (
+                                                <div className="text-xs text-center p-2 text-gray-400">Chargement...</div>
+                                            ) : availableUsers.length === 0 ? (
+                                                <div className="text-xs text-center p-2 text-gray-400">Aucun utilisateur disponible</div>
+                                            ) : (
+                                                availableUsers.map(u => (
+                                                    <button
+                                                        key={u.id}
+                                                        onClick={() => addParticipant(u.id)}
+                                                        className="w-full flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg text-left transition dark:hover:bg-[#222]"
+                                                    >
+                                                        <div className="w-6 h-6 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                                                            {u.avatar ? (
+                                                                <img src={u.avatar} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-600">
+                                                                    {u.name.charAt(0)}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-sm dark:text-white truncate">{u.name}</span>
+                                                    </button>
+                                                ))
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

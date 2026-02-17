@@ -40,7 +40,13 @@ export async function GET(req: NextRequest) {
             select: { id: true, name: true }
         });
 
-        // Enhance with metadata and joined project info
+        // Fetch all client payments to filter by metadata (since no direct relation in schema)
+        const payments = await prisma.payment.findMany({
+            where: { clientId: user.id },
+            orderBy: { createdAt: "desc" }
+        });
+
+        // Enhance with metadata, joined project info and payment history
         const enhancedSubscriptions = subscriptions.map((sub: any) => {
             let startDate = sub.startDate || sub.currentPeriodStart;
             let endDate = sub.endDate || null;
@@ -57,11 +63,30 @@ export async function GET(req: NextRequest) {
 
             const project = projects.find(p => p.id === sub.projectId);
 
+            // Filter payments for this subscription
+            const subscriptionPayments = payments.filter(p => {
+                if (!p.metadata) return false;
+                try {
+                    const meta = JSON.parse(p.metadata);
+                    return meta.subscriptionId === sub.id;
+                } catch {
+                    return false;
+                }
+            }).map(p => ({
+                id: p.id,
+                amount: p.amount,
+                status: p.status,
+                paidAt: p.paidAt ? p.paidAt.toISOString() : null,
+                invoiceUrl: p.invoiceUrl,
+                stripeReceiptUrl: p.stripeReceiptUrl
+            }));
+
             return {
                 ...sub,
                 startDate,
                 endDate,
-                project: project ? { name: project.name } : null
+                project: project ? { name: project.name } : null,
+                payments: subscriptionPayments
             };
         });
 

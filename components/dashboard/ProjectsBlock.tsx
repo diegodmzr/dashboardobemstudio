@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function ProjectsBlock({ projects, role }: Props) {
-    const listUrl = role === "CLIENT" ? "/dashboard/client/projets" : "/dashboard/projets";
+    const listUrl = "/dashboard/projets";
 
     return (
         <div className="bg-white rounded-2xl border border-gray-100 p-6 dark:bg-[#111] dark:border-[#333]">
@@ -34,11 +34,7 @@ export default function ProjectsBlock({ projects, role }: Props) {
                 ) : (
                     projects.map((project) => {
                         // Determine detail URL
-                        // For Admin, likely /dashboard/projets?search=NAME to see it in list, or a dedicated ID page if it existed.
-                        // Given current structure, list page with filter is best fallback.
-                        const projectUrl = role === "CLIENT"
-                            ? `/dashboard/client/projets`
-                            : `/dashboard/projets?search=${encodeURIComponent(project.name)}`;
+                        const projectUrl = `/dashboard/projets/${project.id}`;
 
                         return (
                             <Link
@@ -48,7 +44,7 @@ export default function ProjectsBlock({ projects, role }: Props) {
                             >
                                 <div className="flex justify-between items-start mb-2">
                                     <div>
-                                        <h4 className="font-semibold text-gray-900 group-hover:text-black dark:text-white">
+                                        <h4 className="font-semibold text-gray-900 group-hover:text-black dark:text-white dark:group-hover:text-white">
                                             {project.name}
                                         </h4>
                                         {role !== "CLIENT" && project.client && (

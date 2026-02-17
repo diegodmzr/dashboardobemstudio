@@ -10,8 +10,19 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const status = searchParams.get("status");
         const search = searchParams.get("search");
+        const archived = searchParams.get("archived");
 
         const where: any = {};
+
+        // Handle archiving filter
+        if (archived === "true") {
+            where.isArchived = true;
+        } else if (archived === "false") {
+            where.isArchived = false;
+        } else {
+            // Default to non-archived if not specified
+            where.isArchived = false;
+        }
 
         // Role filtering: Clients only see their own conversations
         if (user.role !== "ADMIN") {

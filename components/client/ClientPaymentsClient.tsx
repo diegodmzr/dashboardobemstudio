@@ -136,7 +136,7 @@ export default function ClientPaymentsClient({ initialPayments, initialQuotes = 
 
         let label = status;
         if (status === "PAID") label = "Payé";
-        if (status === "PENDING") label = "En attente";
+        if (status === "PENDING") label = "Non payé";
         if (status === "SCHEDULED") label = "À venir";
         if (status === "OVERDUE") label = "En retard";
         if (status === "DRAFT") label = "Brouillon";

@@ -10,6 +10,8 @@ export type SessionUser = {
   firstName?: string | null;
   lastName?: string | null;
   siret?: string | null;
+  phone?: string | null;
+  companyName?: string | null;
 };
 
 const USER_ID_COOKIE = "userId";
@@ -45,7 +47,9 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       avatar: true,
       firstName: true,
       lastName: true,
-      siret: true
+      siret: true,
+      phone: true,
+      companyName: true
     },
   });
 
@@ -60,7 +64,9 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     avatar: user.avatar,
     firstName: user.firstName,
     lastName: user.lastName,
-    siret: user.siret
+    siret: user.siret,
+    phone: user.phone,
+    companyName: user.companyName
   };
 }
 

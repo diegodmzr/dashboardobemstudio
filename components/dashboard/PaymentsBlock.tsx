@@ -20,7 +20,7 @@ export default function PaymentsBlock({ payments, role }: Props) {
                     {role === "ADMIN" ? "Derniers Paiements" : "Vos Paiements"}
                 </h3>
                 <button
-                    onClick={() => router.push(role === 'ADMIN' ? '/dashboard/finances/paiements' : '/dashboard/finances/paiements')}
+                    onClick={() => router.push('/dashboard/finances/paiements')}
                     className="text-xs font-semibold text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white flex items-center"
                 >
                     Voir tout <ChevronRight className="w-3 h-3 ml-0.5" />
@@ -35,7 +35,7 @@ export default function PaymentsBlock({ payments, role }: Props) {
                         <div
                             key={payment.id}
                             className="flex items-center justify-between group cursor-pointer"
-                            onClick={() => router.push(`/dashboard/finances/paiements?paymentId=${payment.id}`)}
+                            onClick={() => router.push(`/dashboard/finances/paiements?${role === 'CLIENT' ? 'open' : 'paymentId'}=${payment.id}`)}
                         >
                             <div className="flex items-center gap-3">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${payment.status === "PAID"
@@ -46,7 +46,7 @@ export default function PaymentsBlock({ payments, role }: Props) {
                                 </div>
                                 <div>
                                     <div className="text-sm font-medium text-gray-900 group-hover:underline dark:text-white">
-                                        {payment.status === "PAID" ? "Paiement reçu" : "En attente"}
+                                        {payment.status === "PAID" ? "Paiement reçu" : "Non payé"}
                                     </div>
                                     <div className="text-xs text-gray-500">
                                         {format(new Date(payment.createdAt), "d MMM yyyy", { locale: fr })}
@@ -62,7 +62,7 @@ export default function PaymentsBlock({ payments, role }: Props) {
                                     payment.status === "PENDING" ? "text-orange-500" :
                                         "text-red-500"
                                     }`}>
-                                    {payment.status === "PAID" ? "Payé" : payment.status === "PENDING" ? "En attente" : "Échoué"}
+                                    {payment.status === "PAID" ? "Payé" : payment.status === "PENDING" ? "Non payé" : "Échoué"}
                                 </div>
                             </div>
                         </div>

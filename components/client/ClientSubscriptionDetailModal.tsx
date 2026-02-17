@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, CreditCard, Calendar, Clock, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
+import { X, CreditCard, Calendar, Clock, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2 } from "lucide-react";
 
 type Subscription = {
     id: string;
@@ -17,6 +17,13 @@ type Subscription = {
     endDate?: string | null;
     commitmentEndDate?: string | null;
     project?: { name: string } | null;
+    payments?: {
+        id: string;
+        amount: number;
+        status: string;
+        paidAt: string | null;
+        invoiceUrl?: string;
+    }[];
 };
 
 type Props = {
@@ -132,49 +139,87 @@ export default function ClientSubscriptionDetailModal({
 
                     {/* Details Grid */}
                     <div className="space-y-6 pt-4 border-t border-gray-100 dark:border-[#222]">
-                        <h3 className="text-lg font-bold text-black dark:text-white">Détails du contrat</h3>
+                        <h3 className="text-lg font-bold text-black dark:text-white flex items-center gap-2">
+                            <ShieldCheck className="w-5 h-5 text-gray-400" />
+                            Détails du contrat
+                        </h3>
 
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-2 gap-6 bg-gray-50/50 p-4 rounded-2xl dark:bg-[#111]">
                             <div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Date de début</div>
+                                <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Date de début</div>
                                 <div className="font-medium text-gray-900 dark:text-gray-200">{formatDate(subscription.startDate)}</div>
                             </div>
                             <div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Prochaine échéance</div>
+                                <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Prochaine échéance</div>
                                 <div className="font-medium text-gray-900 dark:text-gray-200">{formatDate(subscription.currentPeriodEnd)}</div>
                             </div>
                             <div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Projet lié</div>
-                                <div className="font-medium text-gray-900 dark:text-gray-200">{subscription.project?.name || "Service / Maintenance"}</div>
-                            </div>
-                            <div>
-                                <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Durée</div>
+                                <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Durée</div>
                                 <div className="font-medium text-gray-900 dark:text-gray-200">
                                     {subscription.endDate ? `Jusqu'au ${formatDate(subscription.endDate)}` : "Indéterminée"}
                                 </div>
                             </div>
-                            {subscription.commitmentEndDate && (
-                                <div className="col-span-2 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-center dark:bg-[#1a1a1a] dark:border-[#333]">
-                                    <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Engagement minimum</div>
-                                    <div className="font-bold text-gray-900 dark:text-white">
-                                        Jusqu'au {formatDate(subscription.commitmentEndDate)}
+                            <div>
+                                <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Projet lié</div>
+                                <div className="font-medium text-gray-900 dark:text-gray-200 truncate">{subscription.project?.name || "Service / Maintenance"}</div>
+                            </div>
+                        </div>
+
+                        {subscription.commitmentEndDate && (
+                            <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50 flex items-start gap-3 dark:bg-blue-900/10 dark:border-blue-900/30">
+                                <Clock className="w-5 h-5 text-blue-500 mt-0.5" />
+                                <div>
+                                    <div className="text-xs font-bold text-blue-700 uppercase tracking-wide dark:text-blue-400">Engagement minimum</div>
+                                    <div className="font-bold text-blue-900 dark:text-blue-200 mt-0.5">
+                                        Paiements requis jusqu'au {formatDate(subscription.commitmentEndDate)}
                                     </div>
-                                    <p className="text-[10px] text-gray-400 mt-1">
-                                        L'abonnement ne peut être résilié avant cette date.
+                                    <p className="text-[13px] text-blue-600/70 mt-1 leading-snug dark:text-blue-400/70">
+                                        L'abonnement est souscrit pour une durée minimale ferme. Aucun arrêt n'est possible avant cette date.
                                     </p>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Payment History */}
+                    <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-[#222]">
+                        <h3 className="text-lg font-bold text-black dark:text-white flex items-center gap-2">
+                            <Calendar className="w-5 h-5 text-gray-400" />
+                            Historique des paiements
+                        </h3>
+
+                        {subscription.payments && subscription.payments.length > 0 ? (
+                            <div className="space-y-3">
+                                {subscription.payments.map((p) => (
+                                    <div key={p.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-white dark:bg-[#111] dark:border-[#222]">
+                                        <div className="flex items-center gap-3">
+                                            <CheckCircle2 className={`w-5 h-5 ${p.status === 'PAID' ? 'text-green-500' : 'text-gray-300'}`} />
+                                            <div>
+                                                <div className="text-sm font-bold text-gray-900 dark:text-white">
+                                                    Paiement de {formatCurrency(p.amount)}
+                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                    {p.paidAt ? formatDate(p.paidAt) : "En attente"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {p.invoiceUrl && (
+                                            <a href={p.invoiceUrl} target="_blank" className="text-xs font-bold text-blue-600 hover:underline dark:text-blue-400">
+                                                Facture →
+                                            </a>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-8 text-center bg-gray-50 rounded-2xl dark:bg-[#111]">
+                                <p className="text-sm text-gray-400 italic">Aucun historique de paiement disponible.</p>
+                            </div>
+                        )}
                     </div>
 
                     {/* Actions */}
                     <div className="pt-6 mt-6 border-t border-gray-100 dark:border-[#222] space-y-3">
-                        {/* Logic: 
-                              1. If Manual (starts with manual_), show "Configurer Prélèvement" to convert to Stripe.
-                              2. If Stripe (starts with sub_) AND Active, show nothing or "Gérer" (Portal).
-                              3. If Past Due, show Pay.
-                         */}
-
                         {(!subscription.stripeSubscriptionId || subscription.stripeSubscriptionId.startsWith("manual_")) && (
                             <>
                                 <button
@@ -192,11 +237,10 @@ export default function ClientSubscriptionDetailModal({
                         )}
 
                         {subscription.stripeSubscriptionId && subscription.stripeSubscriptionId.startsWith("sub_") && (
-                            <div className="text-center">
-                                <p className="text-sm text-gray-500 mb-2">
-                                    Cet abonnement est <strong>payé automatiquement</strong> chaque mois.
+                            <div className="p-4 bg-green-50/50 rounded-2xl border border-green-100/50 text-center dark:bg-green-900/10 dark:border-green-900/30">
+                                <p className="text-sm font-medium text-green-700 dark:text-green-400">
+                                    ✓ Cet abonnement est <strong>payé automatiquement</strong> chaque mois via Stripe.
                                 </p>
-                                {/* We could add a link to customer portal here if implemented */}
                             </div>
                         )}
                     </div>

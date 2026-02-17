@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
     try {
+        const user = await getCurrentUser();
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+            return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        }
         const { searchParams } = new URL(req.url);
         const status = searchParams.get("status");
 
@@ -67,6 +72,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
+        const user = await getCurrentUser();
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+            return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        }
         const body = await req.json();
         const { clientId, amount, interval, startDate, durationMonths, commitmentMonths, projectId } = body;
 

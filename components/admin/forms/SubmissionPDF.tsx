@@ -72,9 +72,10 @@ export const SubmissionPDF = ({ submission, formTitle }: { submission: any, form
                 <View style={styles.header}>
                     <Text style={styles.title}>{formTitle}</Text>
                     <Text style={styles.subtitle}>
-                        Formulaire soumis le {new Date(submission.createdAt).toLocaleDateString()} à {new Date(submission.createdAt).toLocaleTimeString()}
+                        Formulaire soumis le {new Date(submission.createdAt).toLocaleDateString()}
+                        {submission.user ? ` par ${submission.user.name}` : ""}
                     </Text>
-                    <Text style={styles.subtitle}>ID: {submission.id}</Text>
+                    <Text style={styles.subtitle}>Référence: {submission.id}</Text>
                 </View>
 
                 <View style={styles.section}>

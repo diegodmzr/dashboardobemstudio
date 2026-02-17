@@ -13,6 +13,15 @@ type User = {
     avatar?: string | null;
 };
 
+type Quote = {
+    id: string;
+    reference: string;
+    total: number;
+    status: string;
+    clientId: string;
+    projectId?: string | null;
+};
+
 type Submission = {
     id: string;
     content: string;
@@ -29,7 +38,7 @@ type Props = {
 
 export type ProjectFormData = {
     name: string;
-    clientId: string;
+    clientId: string | null;
     status: string;
     progress: number;
     amount: number;
@@ -44,6 +53,12 @@ export type ProjectFormData = {
     progressConfig?: ProgressConfig | null;
     formSubmissionId?: string | null;
     assigneeIds: string[];
+    sitePrice?: number | null;
+    maintenanceAmount?: number | null;
+    maintenanceFrequency?: string | null;
+    isAmountCustom?: boolean;
+    customAmount?: number | null;
+    quoteIds?: string[];
 };
 
 const statusOptions = ["Brief", "Design", "Dev", "Tests", "Livré"];
@@ -55,6 +70,7 @@ const difficultyOptions = ["Facile", "Moyen", "Difficile"];
 export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Props) {
     const [users, setUsers] = useState<User[]>([]);
     const [submissions, setSubmissions] = useState<Submission[]>([]);
+    const [availableQuotes, setAvailableQuotes] = useState<Quote[]>([]);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
@@ -63,7 +79,7 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
 
     const [formData, setFormData] = useState<ProjectFormData>({
         name: "",
-        clientId: "",
+        clientId: null,
         status: "Brief",
         progress: 0,
         amount: 0,
@@ -78,6 +94,11 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
         progressConfig: null,
         formSubmissionId: "",
         assigneeIds: [],
+        sitePrice: null,
+        maintenanceAmount: null,
+        maintenanceFrequency: "",
+        isAmountCustom: false,
+        quoteIds: [],
     });
 
     useEffect(() => {
@@ -86,7 +107,7 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
             if (project) {
                 setFormData({
                     name: project.name || "",
-                    clientId: project.clientId || "",
+                    clientId: project.clientId || null,
                     status: project.status || "Brief",
                     progress: project.progress || 0,
                     amount: project.amount || 0,
@@ -102,6 +123,11 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
                     formSubmissionId: project.formSubmissionId || "",
                     // @ts-ignore
                     assigneeIds: project.assignees ? project.assignees.map((a: any) => a.id) : [],
+                    sitePrice: project.sitePrice || null,
+                    maintenanceAmount: project.maintenanceAmount || null,
+                    maintenanceFrequency: project.maintenanceFrequency || "",
+                    isAmountCustom: project.isAmountCustom || false,
+                    quoteIds: project.quotes ? project.quotes.map((q: any) => q.id) : [],
                 });
 
                 if (project.progressConfig) {
@@ -119,7 +145,7 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
             } else {
                 setFormData({
                     name: "",
-                    clientId: "",
+                    clientId: null,
                     status: "Brief",
                     progress: 0,
                     amount: 0,
@@ -134,6 +160,11 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
                     progressConfig: null,
                     formSubmissionId: "",
                     assigneeIds: [],
+                    sitePrice: null,
+                    maintenanceAmount: null,
+                    maintenanceFrequency: "",
+                    isAmountCustom: false,
+                    quoteIds: [],
                 });
                 setProgressConfig(null);
             }
@@ -154,6 +185,13 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
                 if (Array.isArray(data)) setSubmissions(data);
             })
             .catch(console.error);
+
+        fetch("/api/quotes")
+            .then((res) => res.json())
+            .then((data) => {
+                if (Array.isArray(data)) setAvailableQuotes(data);
+            })
+            .catch(console.error);
     }, []);
 
     const handleClose = () => {
@@ -164,7 +202,6 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
     const validate = () => {
         const newErrors: Record<string, string> = {};
         if (!formData.name.trim()) newErrors.name = "Le nom du projet est requis";
-        if (!formData.clientId) newErrors.clientId = "Veuillez sélectionner un client";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -254,13 +291,13 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
                             </div>
 
                             <div className="col-span-2 sm:col-span-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">Client *</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">Client</label>
                                 <select
-                                    value={formData.clientId}
-                                    onChange={(e) => setFormData({ ...formData, clientId: e.target.value })}
+                                    value={formData.clientId || ""}
+                                    onChange={(e) => setFormData({ ...formData, clientId: e.target.value || null })}
                                     className={`w-full rounded-xl border ${errors.clientId ? "border-rose-500" : "border-gray-200"} px-3 py-2.5 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white`}
                                 >
-                                    <option value="">Sélectionner un client...</option>
+                                    <option value="">Aucun client (Temporaire)</option>
                                     {users.map(u => (
                                         <option key={u.id} value={u.id}>{u.name}</option>
                                     ))}
@@ -269,13 +306,136 @@ export default function ProjectDrawer({ isOpen, project, onClose, onSave }: Prop
                             </div>
 
                             <div className="col-span-2 sm:col-span-1">
-                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">Montant (€)</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">
+                                    Montant Global (€)
+                                    <span className="ml-2 text-[10px] text-gray-400 font-normal">
+                                        (Automatique si devis liés)
+                                    </span>
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={formData.amount}
+                                        disabled={!formData.isAmountCustom && (formData.quoteIds?.length || 0) > 0}
+                                        onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0, customAmount: parseFloat(e.target.value) || 0 })}
+                                        className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-black transition disabled:bg-gray-50 dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white dark:disabled:bg-[#111]"
+                                    />
+                                    {formData.quoteIds && formData.quoteIds.length > 0 && (
+                                        <div className="mt-2 flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                id="isAmountCustom"
+                                                checked={formData.isAmountCustom}
+                                                onChange={(e) => {
+                                                    const isCustom = e.target.checked;
+                                                    let amount = formData.amount;
+                                                    if (!isCustom) {
+                                                        const sum = availableQuotes
+                                                            .filter(q => formData.quoteIds?.includes(q.id))
+                                                            .reduce((acc, q) => acc + q.total, 0);
+                                                        amount = sum;
+                                                    }
+                                                    setFormData({ ...formData, isAmountCustom: isCustom, amount });
+                                                }}
+                                                className="rounded border-gray-300 dark:border-[#333]"
+                                            />
+                                            <label htmlFor="isAmountCustom" className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer">
+                                                Utiliser un montant personnalisé
+                                            </label>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Financial Details Section */}
+                    <div className="space-y-6">
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Détails Financiers</h3>
+
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-400">Devis liés</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {(formData.clientId
+                                        ? availableQuotes.filter(q => q.clientId === formData.clientId || q.projectId === project?.id)
+                                        : availableQuotes
+                                    ).map(quote => {
+                                        const isSelected = formData.quoteIds?.includes(quote.id);
+                                        return (
+                                            <button
+                                                type="button"
+                                                key={quote.id}
+                                                onClick={() => {
+                                                    const current = formData.quoteIds || [];
+                                                    const next = isSelected
+                                                        ? current.filter(id => id !== quote.id)
+                                                        : [...current, quote.id];
+
+                                                    let amount = formData.amount;
+                                                    if (!formData.isAmountCustom) {
+                                                        amount = availableQuotes
+                                                            .filter(q => next.includes(q.id))
+                                                            .reduce((acc, q) => acc + q.total, 0);
+                                                    }
+
+                                                    setFormData({ ...formData, quoteIds: next, amount });
+                                                }}
+                                                className={`flex items-center justify-between px-4 py-2.5 rounded-xl border text-left transition ${isSelected
+                                                    ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
+                                                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-[#111] dark:text-gray-300 dark:border-[#333]"
+                                                    }`}
+                                            >
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-bold">{quote.reference}</span>
+                                                    <span className="text-[10px] opacity-70">
+                                                        {new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(quote.total)}
+                                                    </span>
+                                                </div>
+                                                {isSelected && <span className="text-xs">✓</span>}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                {availableQuotes.length === 0 && (
+                                    <p className="text-xs text-gray-400 italic">Aucun devis disponible pour ce client</p>
+                                )}
+                            </div>
+
+                            <div className="col-span-2 sm:col-span-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">Prix du site (€)</label>
                                 <input
                                     type="number"
-                                    value={formData.amount}
-                                    onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
+                                    value={formData.sitePrice || ""}
+                                    onChange={(e) => setFormData({ ...formData, sitePrice: e.target.value ? parseFloat(e.target.value) : null })}
                                     className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                    placeholder="Ex: 1500"
                                 />
+                            </div>
+
+                            <div className="col-span-2 sm:col-span-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">Montant Maintenance (€)</label>
+                                <input
+                                    type="number"
+                                    value={formData.maintenanceAmount || ""}
+                                    onChange={(e) => setFormData({ ...formData, maintenanceAmount: e.target.value ? parseFloat(e.target.value) : null })}
+                                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                    placeholder="Ex: 50"
+                                />
+                            </div>
+
+                            <div className="col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400">Fréquence Maintenance</label>
+                                <select
+                                    value={formData.maintenanceFrequency || ""}
+                                    onChange={(e) => setFormData({ ...formData, maintenanceFrequency: e.target.value })}
+                                    className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-black transition dark:bg-black dark:border-[#333] dark:text-white dark:focus:border-white"
+                                >
+                                    <option value="">Sélectionner...</option>
+                                    <option value="MONTHLY">Mensuel</option>
+                                    <option value="QUARTERLY">Trimestriel</option>
+                                    <option value="YEARLY">Annuel</option>
+                                </select>
                             </div>
                         </div>
                     </div>

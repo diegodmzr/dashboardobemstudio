@@ -187,16 +187,17 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
     };
 
     return (
-        <div className="min-h-screen bg-[#f8f6fb] font-sans">
-            <header className="sticky top-0 z-30 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
+        <div className="min-h-screen bg-[#f8f6fb] font-sans dark:bg-black transition-colors duration-300">
+            <header className="sticky top-0 z-30 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md dark:bg-black/80 dark:border-[#222]">
                 <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center gap-3">
                         <div className="relative h-8 w-8 overflow-hidden">
-                            <img src="/logonoir.png" alt="Logo" className="h-full w-full object-contain" />
+                            <img src="/logonoir.png" alt="Logo" className="h-full w-full object-contain block dark:hidden" />
+                            <img src="/logonoir.png" alt="Logo" className="h-full w-full object-contain hidden dark:block invert" />
                         </div>
-                        <span className="text-sm font-bold text-gray-900">Demande de Projet</span>
+                        <span className="text-sm font-bold text-gray-900 dark:text-white">Demande de Projet</span>
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                         Étape {currentStep}/{totalSteps}
                     </div>
                 </div>
@@ -216,17 +217,17 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
                                             onClick={() => goToStep(step)}
                                             disabled={step > currentStep}
                                             className={`relative z-10 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${isCompleted
-                                                ? "bg-black text-white hover:bg-gray-800"
+                                                ? "bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black"
                                                 : isCurrent
-                                                    ? "bg-black text-white shadow-lg shadow-black/30 scale-110"
-                                                    : "bg-white border-2 border-gray-100 text-gray-300"
+                                                    ? "bg-black text-white shadow-lg shadow-black/30 scale-110 dark:bg-white dark:text-black dark:shadow-white/10"
+                                                    : "bg-white border-2 border-gray-100 text-gray-300 dark:bg-[#111] dark:border-[#222] dark:text-gray-600"
                                                 }`}
                                         >
                                             {isCompleted ? <Check className="h-4 w-4" strokeWidth={3} /> : step}
                                         </button>
                                         {step < totalSteps && (
                                             <div
-                                                className={`h-[2px] w-6 sm:w-10 md:w-14 transition-colors duration-500 ease-in-out ${isCompleted ? "bg-black" : "bg-gray-100"
+                                                className={`h-[2px] w-6 sm:w-10 md:w-14 transition-colors duration-500 ease-in-out ${isCompleted ? "bg-black dark:bg-white" : "bg-gray-100 dark:bg-[#222]"
                                                     }`}
                                             />
                                         )}
@@ -237,7 +238,7 @@ export default function PublicProjectRequestForm({ currentUser }: Props) {
                     </div>
                 </div>
 
-                <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-xl shadow-black/5 sm:p-10">
+                <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-xl shadow-black/5 sm:p-10 dark:bg-[#0a0a0a] dark:border-[#222] dark:shadow-none transition-all duration-300">
                     {renderStep()}
                 </div>
             </main>

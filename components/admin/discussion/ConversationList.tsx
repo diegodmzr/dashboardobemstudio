@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Search, Plus } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useSearchParams } from "next/navigation";
 import NewConversationModal from "./NewConversationModal";
 
 type Props = {
@@ -17,13 +18,23 @@ export default function ConversationList({ selectedId, onSelect }: Props) {
     const [loading, setLoading] = useState(true);
     const [showNewModal, setShowNewModal] = useState(false);
 
+    const [showArchived, setShowArchived] = useState(false);
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams.get("action") === "create") {
+            setShowNewModal(true);
+        }
+    }, [searchParams]);
+
     useEffect(() => {
         fetchConversations();
-    }, []);
+    }, [showArchived]);
 
     const fetchConversations = async () => {
+        setLoading(true);
         try {
-            const res = await fetch("/api/discussions");
+            const res = await fetch(`/api/discussions?archived=${showArchived}`);
             if (res.ok) {
                 const data = await res.json();
                 setConversations(data);
@@ -61,6 +72,23 @@ export default function ConversationList({ selectedId, onSelect }: Props) {
                         <Plus className="w-4 h-4" />
                     </button>
                 </div>
+
+                {/* Tabs */}
+                <div className="flex bg-gray-100 p-1 rounded-xl mb-4 dark:bg-[#1a1a1a]">
+                    <button
+                        onClick={() => setShowArchived(false)}
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition ${!showArchived ? 'bg-white shadow text-black dark:bg-[#222] dark:text-white' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                        Actifs
+                    </button>
+                    <button
+                        onClick={() => setShowArchived(true)}
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition ${showArchived ? 'bg-white shadow text-black dark:bg-[#222] dark:text-white' : 'text-gray-500 hover:text-gray-700'}`}
+                    >
+                        Archivés
+                    </button>
+                </div>
+
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
@@ -76,9 +104,16 @@ export default function ConversationList({ selectedId, onSelect }: Props) {
             {/* List */}
             <div className="flex-1 overflow-y-auto">
                 {loading ? (
-                    <div className="p-4 text-center text-gray-400 text-sm">Chargement...</div>
+                    <div className="p-4 text-center text-gray-400 text-sm italic animate-pulse">Chargement des messages...</div>
                 ) : filtered.length === 0 ? (
-                    <div className="p-4 text-center text-gray-400 text-sm">Aucune conversation</div>
+                    <div className="p-8 text-center flex flex-col items-center">
+                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3 dark:bg-[#1a1a1a]">
+                            <Search className="w-6 h-6 text-gray-300" />
+                        </div>
+                        <p className="text-sm text-gray-400">
+                            {search ? "Aucun résultat trouvé" : `Aucune discussion ${showArchived ? 'archivée' : 'active'}`}
+                        </p>
+                    </div>
                 ) : (
                     filtered.map((conv) => {
                         // Find the "other" participant (Client usually) to show avatar

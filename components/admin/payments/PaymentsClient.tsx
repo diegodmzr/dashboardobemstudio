@@ -99,6 +99,42 @@ export default function PaymentsClient({ initialPayments, initialStats, clients,
         success("Relance envoyée au client");
     };
 
+    const handleDelete = async (id: string) => {
+        try {
+            const res = await fetch(`/api/payments/${id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Delete failed");
+
+            setPayments(prev => prev.filter(p => p.id !== id));
+            setIsDrawerOpen(false);
+            success("Paiement supprimé");
+
+            // Refresh stats (simple way: reload or recalculate)
+            window.location.reload();
+        } catch (e) {
+            error("Erreur lors de la suppression");
+        }
+    };
+
+    const handleArchive = async (id: string) => {
+        try {
+            const res = await fetch(`/api/payments/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isArchived: true })
+            });
+            if (!res.ok) throw new Error("Archive failed");
+
+            setPayments(prev => prev.filter(p => p.id !== id));
+            setIsDrawerOpen(false);
+            success("Paiement archivé");
+
+            // Refresh stats
+            window.location.reload();
+        } catch (e) {
+            error("Erreur lors de l'archivage");
+        }
+    };
+
     const getStatusBadge = (status: string) => {
         const styles: Record<string, string> = {
             PENDING: "bg-gray-100 text-gray-600 dark:bg-[#222] dark:text-gray-400",
@@ -108,7 +144,7 @@ export default function PaymentsClient({ initialPayments, initialStats, clients,
             REFUNDED: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400"
         };
         const labels: Record<string, string> = {
-            PENDING: "En attente",
+            PENDING: "Non payé",
             PAID: "Payé",
             LATE: "En retard",
             FAILED: "Échoué",
@@ -157,7 +193,7 @@ export default function PaymentsClient({ initialPayments, initialStats, clients,
                         <div className="mt-2 text-3xl font-light text-black dark:text-white">{formatCurrency(stats.totalRevenue)}</div>
                     </div>
                     <div className="p-6 rounded-2xl border border-gray-100 bg-gray-50/50 dark:bg-[#1a1a1a] dark:border-[#333]">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">En attente</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Non payé</span>
                         <div className="mt-2 text-3xl font-light text-gray-600 dark:text-gray-300">{formatCurrency(stats.pendingAmount)}</div>
                     </div>
                     <div className={`p-6 rounded-2xl border border-gray-100 ${stats.lateCount > 0 ? 'bg-red-50/50 dark:bg-red-900/10' : 'bg-gray-50/50 dark:bg-[#1a1a1a]'} dark:border-[#333]`}>
@@ -291,6 +327,8 @@ export default function PaymentsClient({ initialPayments, initialStats, clients,
                 payment={selectedPayment}
                 onSave={handleSave}
                 onRemind={handleReminder}
+                onDelete={handleDelete}
+                onArchive={handleArchive}
                 clients={clients}
                 projects={projects}
             />

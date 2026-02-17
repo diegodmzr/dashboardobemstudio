@@ -23,6 +23,24 @@ async function getClients() {
                         updatedAt: true,
                     },
                 },
+                quotes: {
+                    select: {
+                        id: true,
+                        reference: true,
+                        status: true,
+                        total: true,
+                        createdAt: true,
+                    }
+                },
+                formSubmissions: {
+                    include: {
+                        form: {
+                            select: {
+                                title: true
+                            }
+                        }
+                    }
+                }
             },
             orderBy: {
                 createdAt: "desc",
@@ -47,6 +65,15 @@ async function getClients() {
                     ...p,
                     createdAt: p.createdAt ? p.createdAt.toISOString() : null,
                     updatedAt: p.updatedAt ? p.updatedAt.toISOString() : null,
+                })),
+                quotes: client.quotes.map((q: any) => ({
+                    ...q,
+                    createdAt: q.createdAt ? q.createdAt.toISOString() : null,
+                })),
+                formSubmissions: client.formSubmissions.map((s: any) => ({
+                    ...s,
+                    createdAt: s.createdAt ? s.createdAt.toISOString() : null,
+                    updatedAt: s.updatedAt ? s.updatedAt.toISOString() : null,
                 })),
                 // Handle optional fields that might be null from DB
                 phone: client.phone || undefined,

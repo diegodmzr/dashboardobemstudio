@@ -183,12 +183,20 @@ export default function ProjectRequestForm({ userName, userEmail, userId }: Prop
                 userName={userName}
                 userEmail={userEmail}
                 rightContent={
-                    <button
-                        onClick={() => router.push("/dashboard/projets")}
-                        className="rounded-full border border-[#ece7ef] bg-white px-4 py-2 text-sm font-medium text-[#4a4a4a] transition hover:bg-gray-50 dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white dark:hover:bg-[#222]"
-                    >
-                        Annuler
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => router.push("/dashboard")}
+                            className="rounded-full border border-[#ece7ef] bg-white px-4 py-2 text-sm font-medium text-[#4a4a4a] transition hover:bg-gray-50 dark:bg-[#111] dark:border-[#333] dark:text-white dark:hover:bg-[#222]"
+                        >
+                            Dashboard
+                        </button>
+                        <button
+                            onClick={() => router.push("/dashboard/projets")}
+                            className="rounded-full border border-[#ece7ef] bg-[#2f2f2f] px-4 py-2 text-sm font-medium text-white transition hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        >
+                            Annuler
+                        </button>
+                    </div>
                 }
             />
 

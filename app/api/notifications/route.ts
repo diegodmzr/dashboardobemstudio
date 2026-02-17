@@ -8,17 +8,29 @@ export async function GET(req: Request) {
         if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
         const { searchParams } = new URL(req.url);
-        const filter = searchParams.get("filter"); // ALL, PROJECT, PAYMENT, etc.
+        const filter = searchParams.get("filter"); // ALL, UNREAD, PROJECT, PAYMENT, DISCUSSION
+        const search = searchParams.get("search");
+        const sortBy = searchParams.get("sortBy") || "desc";
 
         const where: any = { userId: user.id };
-        if (filter && filter !== "ALL") {
+
+        if (filter === "UNREAD") {
+            where.isRead = false;
+        } else if (filter && filter !== "ALL") {
             where.type = filter;
+        }
+
+        if (search) {
+            where.OR = [
+                { title: { contains: search, mode: "insensitive" } },
+                { message: { contains: search, mode: "insensitive" } },
+            ];
         }
 
         const notifications = await prisma.notification.findMany({
             where,
-            orderBy: { createdAt: "desc" },
-            take: 50 // Limit to 50 for now
+            orderBy: { createdAt: sortBy as "asc" | "desc" },
+            take: 100 // Increased limit
         });
 
         return NextResponse.json(notifications);

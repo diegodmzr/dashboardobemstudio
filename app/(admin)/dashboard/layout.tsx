@@ -11,7 +11,8 @@ import {
   AnimatedFinance,
   AnimatedGoals,
   AnimatedStats,
-  AnimatedUsers
+  AnimatedUsers,
+  AnimatedProspects
 } from "@/components/ui/AnimatedIcons";
 
 const defaultNavItems: NavItem[] = [
@@ -56,6 +57,11 @@ const defaultNavItems: NavItem[] = [
         label: "Paiements",
         href: "/dashboard/finances/paiements",
         icon: null
+      },
+      {
+        label: "Abonnements",
+        href: "/dashboard/finances/abonnements",
+        icon: null
       }
     ]
   },
@@ -63,6 +69,11 @@ const defaultNavItems: NavItem[] = [
     label: "Objectifs",
     href: "/dashboard/objectifs",
     icon: <AnimatedGoals />,
+  },
+  {
+    label: "Prospection",
+    href: "/dashboard/prospection",
+    icon: <AnimatedProspects />,
   },
   {
     label: "Statistiques",

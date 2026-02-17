@@ -39,10 +39,17 @@ export default function ClientQuoteViewer({ quote, user }: Props) {
             });
 
             if (res.ok) {
+                const data = await res.json();
                 setStatus("ACCEPTED");
-                success("Devis signé avec succès !");
+
+                if (data.paymentRequired) {
+                    success("Devis signé ! Merci. Veuillez maintenant procéder au règlement.");
+                } else {
+                    success("Devis signé avec succès !");
+                }
+
                 // Force reload to show signed state nicely
-                setTimeout(() => window.location.reload(), 1500);
+                setTimeout(() => window.location.reload(), 2500);
             } else {
                 throw new Error("Erreur");
             }

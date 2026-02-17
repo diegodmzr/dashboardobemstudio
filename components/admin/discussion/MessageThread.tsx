@@ -276,7 +276,14 @@ export default function MessageThread({ conversationId, currentUserId, onBack }:
                     </button>
                 )}
                 <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white line-clamp-1">{data.subject}</h3>
+                    <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-gray-900 dark:text-white line-clamp-1">{data.subject}</h3>
+                        {data.isArchived && (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-wider dark:bg-amber-900/30 dark:text-amber-400">
+                                Archivée
+                            </span>
+                        )}
+                    </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
                         {otherParticipant?.name} • Démarré le {new Date(data.createdAt).toLocaleDateString()}
                     </p>
@@ -467,13 +474,14 @@ export default function MessageThread({ conversationId, currentUserId, onBack }:
                         value={message}
                         onChange={handleTextChange}
                         onKeyDown={handleKeyDown}
-                        placeholder="Écrivez votre message..."
-                        className="flex-1 max-h-32 min-h-[44px] bg-transparent py-2.5 text-sm outline-none resize-none dark:text-white"
+                        placeholder={data.isArchived ? "Cette conversation est archivée" : "Écrivez votre message..."}
+                        className="flex-1 max-h-32 min-h-[44px] bg-transparent py-2.5 text-sm outline-none resize-none dark:text-white disabled:opacity-50"
                         rows={1}
+                        disabled={data.isArchived}
                     />
                     <button
                         onClick={handleSend}
-                        disabled={(!message.trim() && attachments.length === 0) || attachments.some(a => a.uploading)}
+                        disabled={data.isArchived || (!message.trim() && attachments.length === 0) || attachments.some(a => a.uploading)}
                         className="p-2 bg-black text-white rounded-lg hover:bg-gray-800 transition disabled:opacity-50 dark:bg-white dark:text-black"
                     >
                         <Send className="w-4 h-4" />

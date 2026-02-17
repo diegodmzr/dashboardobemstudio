@@ -12,7 +12,17 @@ export async function GET(request: Request) {
         // @ts-ignore
         const submissions = await prisma.formSubmission.findMany({
             orderBy: { createdAt: "desc" },
-            include: { form: true }
+            include: {
+                form: true,
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        avatar: true
+                    }
+                }
+            }
         });
         return NextResponse.json(submissions);
     } catch (error) {

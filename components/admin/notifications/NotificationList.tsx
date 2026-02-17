@@ -83,6 +83,10 @@ export default function NotificationList({ notifications, onRead }: Props) {
                                 router.push(`/dashboard/projets/${notif.entityId}`);
                             } else if (notif.entityType === "Payment" && notif.entityId) {
                                 router.push(`/dashboard/finances/paiements?open=${notif.entityId}`);
+                            } else if ((notif.type === "DISCUSSION" || notif.entityType === "Discussion") && notif.entityId) {
+                                router.push(`/dashboard/discussion?id=${notif.entityId}`);
+                            } else if (notif.type === "DISCUSSION" || notif.entityType === "Discussion") {
+                                router.push(`/dashboard/discussion`);
                             }
                         }}
                         className={cn(

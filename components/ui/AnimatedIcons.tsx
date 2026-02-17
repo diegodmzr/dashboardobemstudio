@@ -290,3 +290,25 @@ export const AnimatedUsers = () => (
         />
     </motion.svg>
 );
+
+export const AnimatedProspects = () => (
+    <motion.svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        variants={iconVariants}
+    >
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <motion.circle
+            cx="12" cy="10" r="3"
+            variants={{
+                hover: { scale: [1, 1.2, 1], transition: { repeat: Infinity, duration: 1.5 } }
+            }}
+        />
+    </motion.svg>
+);

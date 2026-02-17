@@ -29,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             );
         }
 
-        // Validate client if changing
+        // Validate client if changing and provided
         if (body.clientId && body.clientId !== existingProject.clientId) {
             const client = await prisma.user.findUnique({
                 where: { id: body.clientId },
@@ -77,6 +77,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         }
         if (body.progress !== undefined) updateData.progress = body.progress;
         if (body.amount !== undefined) updateData.amount = body.amount;
+        if (body.isAmountCustom !== undefined) updateData.isAmountCustom = body.isAmountCustom;
+        if (body.customAmount !== undefined) updateData.customAmount = body.customAmount;
+        if (body.sitePrice !== undefined) updateData.sitePrice = body.sitePrice;
+        if (body.maintenanceAmount !== undefined) updateData.maintenanceAmount = body.maintenanceAmount;
+        if (body.maintenanceFrequency !== undefined) updateData.maintenanceFrequency = body.maintenanceFrequency;
         if (body.type !== undefined) updateData.type = body.type;
         if (body.technology !== undefined) updateData.technology = body.technology;
         if (body.paymentType !== undefined) updateData.paymentType = body.paymentType;
@@ -102,8 +107,22 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             const updated = await tx.project.update({
                 where: { id },
                 data: updateData,
-                include: { client: true, assignees: true },
+                include: { client: true, assignees: true, quotes: true },
             });
+
+            // 1.5 handle quote links
+            if (body.quoteIds !== undefined && Array.isArray(body.quoteIds)) {
+                // Clear old links for THIS project
+                await tx.quote.updateMany({
+                    where: { projectId: id },
+                    data: { projectId: null }
+                });
+                // Set new links
+                await tx.quote.updateMany({
+                    where: { id: { in: body.quoteIds } },
+                    data: { projectId: id }
+                });
+            }
 
             // 2. Status History if changed
             if (body.status && body.status !== existingProject.status) {

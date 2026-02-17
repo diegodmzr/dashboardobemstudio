@@ -82,6 +82,9 @@ export default async function PaymentsPage() {
 
     // ADMIN VIEW: Show all payments with stats
     const payments = await prisma.payment.findMany({
+        where: {
+            isArchived: false,
+        } as any,
         include: {
             client: {
                 select: { id: true, name: true, companyName: true, email: true }
@@ -111,8 +114,15 @@ export default async function PaymentsPage() {
         select: { id: true, name: true, clientId: true },
     });
 
-    const serializedPayments = payments.map(p => ({
-        ...p,
+    const serializedPayments = (payments as any[]).map(p => ({
+        id: p.id,
+        amount: p.amount,
+        status: p.status,
+        method: p.method,
+        client: p.client,
+        stripePaymentIntentId: p.stripePaymentIntentId,
+        invoiceUrl: p.invoiceUrl,
+        projectId: p.projectId,
         dueDate: p.dueDate ? p.dueDate.toISOString() : null,
         paidAt: p.paidAt ? p.paidAt.toISOString() : null,
         scheduledDate: p.scheduledDate ? p.scheduledDate.toISOString() : null,

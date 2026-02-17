@@ -32,6 +32,18 @@ type Client = {
         amount: number;
         createdAt: string;
     }[];
+    quotes: {
+        id: string;
+        reference: string;
+        status: string;
+        total: number;
+        createdAt: string;
+    }[];
+    formSubmissions: {
+        id: string;
+        form: { title: string };
+        createdAt: string;
+    }[];
 };
 
 type Props = {

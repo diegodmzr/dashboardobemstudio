@@ -4,11 +4,15 @@ import { getCurrentUser } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
     try {
+        const user = await getCurrentUser();
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+            return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        }
         const { searchParams } = new URL(req.url);
         const status = searchParams.get("status");
         const search = searchParams.get("search");
 
-        const where: any = {};
+        const where: any = { isArchived: false };
         if (status) where.status = status;
         if (search) {
             where.OR = [
@@ -51,9 +55,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        // Auth is already handled by the /dashboard layout middleware
-        // const user = await getCurrentUser();
-        // if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        const user = await getCurrentUser();
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+            return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        }
 
         const body = await req.json();
 

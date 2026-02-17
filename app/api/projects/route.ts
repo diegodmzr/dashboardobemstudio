@@ -6,30 +6,33 @@ import { Prisma } from "@prisma/client";
 export async function POST(req: NextRequest) {
   try {
     const user = await getCurrentUser();
-    if (!user) {
+    if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
 
     const body = await req.json();
 
     // Validate required fields
-    if (!body.name || !body.clientId) {
+    if (!body.name) {
       return NextResponse.json(
-        { error: "Le nom du projet et le client sont requis" },
+        { error: "Le nom du projet est requis" },
         { status: 400 }
       );
     }
 
-    // Validate client exists
-    const client = await prisma.user.findUnique({
-      where: { id: body.clientId },
-    });
+    // Validate client exists if provided
+    let client = null;
+    if (body.clientId) {
+      client = await prisma.user.findUnique({
+        where: { id: body.clientId },
+      });
 
-    if (!client) {
-      return NextResponse.json(
-        { error: "Client introuvable" },
-        { status: 404 }
-      );
+      if (!client) {
+        return NextResponse.json(
+          { error: "Client introuvable" },
+          { status: 404 }
+        );
+      }
     }
 
     // Parse attributes/progressConfig
@@ -47,6 +50,7 @@ export async function POST(req: NextRequest) {
     const project = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Create Project
       const newProject = await tx.project.create({
+        // @ts-ignore
         data: {
           name: body.name,
           clientId: body.clientId,
@@ -59,6 +63,11 @@ export async function POST(req: NextRequest) {
                     body.status === "Livré" ? 100 : 20 // Default to 20 if Brief/Unknown
           ),
           amount: parseFloat(body.amount) || 0,
+          isAmountCustom: body.isAmountCustom || false,
+          customAmount: body.customAmount ? parseFloat(body.customAmount) : 0,
+          sitePrice: body.sitePrice ? parseFloat(body.sitePrice) : null,
+          maintenanceAmount: body.maintenanceAmount ? parseFloat(body.maintenanceAmount) : null,
+          maintenanceFrequency: body.maintenanceFrequency || null,
           type: body.type || null,
           technology: body.technology || null,
           paymentType: body.paymentType || null,
@@ -77,8 +86,17 @@ export async function POST(req: NextRequest) {
         include: {
           client: true,
           assignees: true,
+          quotes: true,
         },
       });
+
+      // 1.5. Link Quotes
+      if (body.quoteIds && Array.isArray(body.quoteIds)) {
+        await tx.quote.updateMany({
+          where: { id: { in: body.quoteIds } },
+          data: { projectId: newProject.id },
+        });
+      }
 
       // 2. Initial Status History
       await tx.projectStatusHistory.create({
@@ -97,7 +115,7 @@ export async function POST(req: NextRequest) {
           action: "CREATE_PROJECT",
           entity: "Project",
           entityId: newProject.id,
-          metadata: JSON.stringify({ name: newProject.name, client: client.name }),
+          metadata: JSON.stringify({ name: newProject.name, client: client?.name || "Aucun" }),
         },
       });
 
@@ -116,10 +134,22 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
+    const user = await getCurrentUser();
+    if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
     const projects = await prisma.project.findMany({
       include: {
         client: true,
         assignees: true,
+        quotes: {
+          select: {
+            id: true,
+            reference: true,
+            total: true,
+            status: true,
+          }
+        },
       },
       orderBy: {
         createdAt: "desc",

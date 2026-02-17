@@ -24,5 +24,7 @@ export default async function PublicFormPage({ params }: { params: Promise<{ slu
 
     if (!form || !form.isActive) return notFound();
 
-    return <PublicFormClient form={form} />
+    const user = await getCurrentUser();
+
+    return <PublicFormClient form={form} currentUser={user} />
 }

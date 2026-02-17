@@ -29,14 +29,18 @@ export async function GET() {
                 _sum: { amount: true },
                 where: {
                     status: "PAID",
-                    paidAt: { gte: firstDayOfMonth }
-                }
+                    paidAt: { gte: firstDayOfMonth },
+                    isArchived: false
+                } as any
             });
 
             // Pending Payments (Total)
             const pendingPayments = await prisma.payment.aggregate({
                 _sum: { amount: true },
-                where: { status: "PENDING" }
+                where: {
+                    status: "PENDING",
+                    isArchived: false
+                } as any
             });
 
             // Open Demandes (Conversations not CLOSED)
@@ -47,10 +51,9 @@ export async function GET() {
             // Pending Invoices (Quotes sent but not accepted could be interesting, but stick to payments)
 
             data.kpis = {
-                monthlyRevenue: monthlyRevenue._sum.amount || 0,
-                pendingPayments: pendingPayments._sum.amount || 0,
+                monthlyRevenue: monthlyRevenue?._sum?.amount || 0,
+                pendingPayments: pendingPayments?._sum?.amount || 0,
                 openDiscussions,
-                // Maybe calculate a % change compared to last month here if needed, keeping it simple for now
             };
 
             // 2. Activity (Audit Logs + Notifications simulated)
@@ -59,13 +62,45 @@ export async function GET() {
                 orderBy: { createdAt: "desc" },
                 include: { user: { select: { name: true, avatar: true } } }
             });
-            data.activity = logs.map(log => ({
-                id: log.id,
-                type: log.action,
-                text: `${log.user.name} a effectué ${log.action} sur ${log.entity}`,
-                date: log.createdAt,
-                icon: "activity"
-            }));
+            // Fetch related project names for better context
+            const projectIds = logs
+                .filter(log => log.entity === "Project" && log.entityId)
+                .map(log => log.entityId);
+
+            const projects = await prisma.project.findMany({
+                where: { id: { in: projectIds } },
+                select: { id: true, name: true }
+            });
+
+            const projectMap = new Map(projects.map(p => [p.id, p.name]));
+
+            data.activity = logs.map(log => {
+                let actionText = log.action;
+                let entityName = log.entity;
+
+                if (log.entity === "Project") {
+                    const projectName = projectMap.get(log.entityId);
+                    entityName = projectName ? `le projet "${projectName}"` : "un projet";
+
+                    if (log.action === "UPDATE_PROJECT") actionText = "a mis à jour";
+                    else if (log.action === "CREATE_PROJECT") actionText = "a créé";
+                    else if (log.action === "DELETE_PROJECT") actionText = "a supprimé";
+                }
+
+                // Fallback for other entities or unhandled actions
+                if (actionText === log.action) {
+                    // Try to make it a bit more readable if not mapped
+                    actionText = actionText.replace(/_/g, " ").toLowerCase();
+                }
+
+                return {
+                    id: log.id,
+                    type: log.action,
+                    text: `${log.user.name} ${actionText} ${entityName}`,
+                    date: log.createdAt,
+                    icon: "activity"
+                };
+            });
 
             // 3. Projects (Recently updated)
             data.projects = await prisma.project.findMany({
@@ -76,6 +111,7 @@ export async function GET() {
 
             // 4. Payments (Recent & Overdue)
             data.payments = await prisma.payment.findMany({
+                where: { isArchived: false } as any,
                 take: 5,
                 orderBy: { createdAt: "desc" },
                 include: { client: { select: { name: true } } }
@@ -98,8 +134,9 @@ export async function GET() {
                 _sum: { amount: true },
                 where: {
                     clientId: user.id,
-                    status: "PAID"
-                }
+                    status: "PAID",
+                    isArchived: false
+                } as any
             });
 
             // Pending Payments
@@ -107,14 +144,15 @@ export async function GET() {
                 _sum: { amount: true },
                 where: {
                     clientId: user.id,
-                    status: "PENDING"
-                }
+                    status: "PENDING",
+                    isArchived: false
+                } as any
             });
 
             data.kpis = {
                 activeProjects: activeProjectsCount,
-                totalSpent: totalSpent._sum.amount || 0,
-                pendingAmount: myPendingPayments._sum.amount || 0
+                totalSpent: totalSpent?._sum?.amount || 0,
+                pendingAmount: myPendingPayments?._sum?.amount || 0
             };
 
             // 2. Activity (Project updates, Payment confirmations)
@@ -145,7 +183,10 @@ export async function GET() {
 
             // 4. My Payments
             data.payments = await prisma.payment.findMany({
-                where: { clientId: user.id },
+                where: {
+                    clientId: user.id,
+                    isArchived: false
+                } as any,
                 take: 5,
                 orderBy: { createdAt: "desc" }
             });

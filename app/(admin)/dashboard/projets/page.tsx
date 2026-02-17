@@ -88,19 +88,26 @@ export default async function ProjectsPage({
           id: true,
           form: { select: { title: true } }
         }
+      },
+      quotes: {
+        select: {
+          id: true,
+          reference: true,
+          total: true,
+          status: true,
+        }
       }
     },
     orderBy: {
       createdAt: "desc",
     },
-  });
+  }) as any[];
 
   const projects = projectsData.map((p) => ({
     id: p.id,
     name: p.name,
     clientId: p.clientId,
-    // @ts-ignore
-    clientName: p.client.name,
+    clientName: p.client?.name || "Aucun client",
     status: p.status,
     progress: p.progress,
     amount: p.amount,
@@ -119,7 +126,12 @@ export default async function ProjectsPage({
     // @ts-ignore
     formSubmissionTitle: p.formSubmission?.form.title,
     // @ts-ignore
-    assignees: p.assignees || []
+    assignees: p.assignees || [],
+    sitePrice: p.sitePrice,
+    maintenanceAmount: p.maintenanceAmount,
+    maintenanceFrequency: p.maintenanceFrequency,
+    isAmountCustom: p.isAmountCustom,
+    quotes: p.quotes
   }));
 
   return <ProjectsAdminClient projects={projects} />;

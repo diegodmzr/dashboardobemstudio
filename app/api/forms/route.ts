@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     if (user?.role !== "ADMIN") return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 
     const body = await request.json();
-    const { title, description } = body;
+    const { title, description, fields } = body;
 
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Math.random().toString(36).substring(2, 7);
 
@@ -16,11 +16,29 @@ export async function POST(request: Request) {
             title,
             description,
             slug,
-            fields: JSON.stringify([
-                { label: "Nom complet", type: "text", required: true },
-                { label: "Email", type: "email", required: true },
-                { label: "Message", type: "textarea", required: true }
-            ])
+            fields: typeof fields === 'string' ? fields : JSON.stringify(fields || [])
+        }
+    });
+
+    return NextResponse.json(form);
+}
+
+export async function PATCH(request: Request) {
+    const user = await getCurrentUser();
+    if (user?.role !== "ADMIN") return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+
+    const body = await request.json();
+    const { id, title, description, fields, isActive } = body;
+
+    if (!id) return NextResponse.json({ error: "ID is required" }, { status: 400 });
+
+    const form = await prisma.form.update({
+        where: { id },
+        data: {
+            title,
+            description,
+            fields: typeof fields === 'string' ? fields : JSON.stringify(fields || []),
+            isActive
         }
     });
 

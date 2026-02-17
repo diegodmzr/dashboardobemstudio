@@ -9,16 +9,26 @@ import { cn } from "@/lib/utils";
 export default function NotificationsClient() {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [filter, setFilter] = useState("ALL");
+    const [search, setSearch] = useState("");
+    const [sortBy, setSortBy] = useState("desc");
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchNotifications();
-    }, [filter]);
+        const timer = setTimeout(() => {
+            fetchNotifications();
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [filter, search, sortBy]);
 
     const fetchNotifications = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/notifications?filter=${filter}`);
+            const params = new URLSearchParams({
+                filter,
+                search,
+                sortBy
+            });
+            const res = await fetch(`/api/notifications?${params.toString()}`);
             if (res.ok) {
                 const data = await res.json();
                 setNotifications(data);
@@ -55,7 +65,9 @@ export default function NotificationsClient() {
     const filterOptions = [
         { label: "Tout", value: "ALL" },
         { label: "Non lues", value: "UNREAD" },
-        { label: "Urgent", value: "URGENT" }
+        { label: "Paiements", value: "PAYMENT" },
+        { label: "Projets", value: "PROJECT" },
+        { label: "Messages", value: "DISCUSSION" },
     ];
 
     return (
@@ -73,33 +85,57 @@ export default function NotificationsClient() {
                     </div>
                 </div>
 
-                {/* Filters & Actions bar */}
-                <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/50 dark:bg-white/5 p-2 rounded-[24px] border border-white/20 backdrop-blur-sm">
-                    <div className="flex p-1 bg-gray-100/50 dark:bg-black/20 rounded-2xl w-full sm:w-auto">
-                        {filterOptions.map((opt) => (
-                            <button
-                                key={opt.value}
-                                onClick={() => setFilter(opt.value)}
-                                className={cn(
-                                    "flex-1 sm:flex-none px-4 sm:px-6 py-2 text-xs font-semibold rounded-[14px] transition-all duration-300 whitespace-nowrap",
-                                    filter === opt.value
-                                        ? "bg-black text-white shadow-lg dark:bg-white dark:text-black"
-                                        : "text-[#8a8a8a] hover:text-black dark:text-gray-400 dark:hover:text-white"
-                                )}
-                            >
-                                {opt.label}
-                            </button>
-                        ))}
+                {/* Search and Filters */}
+                <div className="flex flex-col gap-4">
+                    <div className="relative w-full">
+                        <input
+                            type="text"
+                            placeholder="Rechercher une notification..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl px-12 py-4 text-sm outline-none focus:ring-2 focus:ring-black dark:focus:ring-white transition-all shadow-sm"
+                        />
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <Settings2 className="w-5 h-5" />
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-2 ml-auto w-full sm:w-auto px-2 sm:px-0">
-                        <button
-                            onClick={handleMarkAllRead}
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2 text-xs font-semibold text-[#8a8a8a] hover:text-black transition-colors rounded-2xl hover:bg-white dark:hover:bg-[#111] dark:hover:text-white"
+                    <div className="flex flex-col lg:flex-row items-center gap-4 bg-white/50 dark:bg-white/5 p-2 rounded-[24px] border border-white/20 backdrop-blur-sm overflow-x-auto scrollbar-hide">
+                        <div className="flex p-1 bg-gray-100/50 dark:bg-black/20 rounded-2xl w-full lg:w-auto">
+                            {filterOptions.map((opt) => (
+                                <button
+                                    key={opt.value}
+                                    onClick={() => setFilter(opt.value)}
+                                    className={cn(
+                                        "flex-1 lg:flex-none px-4 py-2 text-xs font-semibold rounded-[14px] transition-all duration-300 whitespace-nowrap",
+                                        filter === opt.value
+                                            ? "bg-black text-white shadow-lg dark:bg-white dark:text-black"
+                                            : "text-[#8a8a8a] hover:text-black dark:text-gray-400 dark:hover:text-white"
+                                    )}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="bg-gray-100/50 dark:bg-black/20 text-[#8a8a8a] py-2 px-4 rounded-2xl text-xs font-semibold outline-none border-none cursor-pointer hover:bg-white dark:hover:bg-white/10 transition-colors w-full lg:w-auto"
                         >
-                            <Check className="w-4 h-4" />
-                            Tout marquer comme lu
-                        </button>
+                            <option value="desc">Plus récentes</option>
+                            <option value="asc">Plus anciennes</option>
+                        </select>
+
+                        <div className="flex items-center gap-2 ml-auto w-full lg:w-auto px-2 lg:px-0">
+                            <button
+                                onClick={handleMarkAllRead}
+                                className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-3 lg:py-2 text-xs font-semibold text-[#8a8a8a] hover:text-black transition-colors rounded-2xl hover:bg-white dark:hover:bg-[#111] dark:hover:text-white"
+                            >
+                                <Check className="w-4 h-4" />
+                                Tout lire
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

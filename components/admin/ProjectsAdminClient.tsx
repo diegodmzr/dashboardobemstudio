@@ -32,6 +32,12 @@ export type AdminProject = {
   formSubmissionId?: string | null;
   formSubmissionTitle?: string | null;
   assignees?: { id: string; name: string; avatar: string | null }[];
+  sitePrice?: number | null;
+  maintenanceAmount?: number | null;
+  maintenanceFrequency?: string | null;
+  isAmountCustom?: boolean;
+  customAmount?: number;
+  quotes?: { id: string; reference: string; total: number; status: string }[];
 };
 
 type Props = {
@@ -74,7 +80,7 @@ export default function ProjectsAdminClient({ projects }: Props) {
   const [stepLoading, setStepLoading] = useState(false);
 
   // Unique clients for filter
-  const uniqueClients = Array.from(new Set(projects.map(p => JSON.stringify({ id: p.clientId, name: p.clientName }))))
+  const uniqueClients = Array.from(new Set(projects.filter(p => p.clientId).map(p => JSON.stringify({ id: p.clientId, name: p.clientName }))))
     .map(s => JSON.parse(s))
     .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -282,7 +288,7 @@ export default function ProjectsAdminClient({ projects }: Props) {
     <>
       {/* ... keeping topbar ... */}
       <Topbar
-        title="Projets (Admin)"
+        title="Projets"
         rightContent={
           <div className="flex w-full md:w-auto flex-col md:flex-row items-center gap-3">
             <input
@@ -408,7 +414,7 @@ export default function ProjectsAdminClient({ projects }: Props) {
                       <span className="rounded-full bg-[#e0e0e0] px-2 py-0.5 text-xs font-semibold text-[#2f2f2f] dark:bg-[#333] dark:text-white">{p.type}</span>
                     )}
                   </div>
-                  <p className="text-sm text-[#6a6a6a] dark:text-gray-400">{p.clientName}</p>
+                  <p className="text-sm text-[#6a6a6a] dark:text-gray-400">{p.clientId ? p.clientName : "Aucun client"}</p>
 
                   {/* Assignees Avatars */}
                   {p.assignees && p.assignees.length > 0 && (
@@ -549,7 +555,7 @@ const EnhancedProjectDrawer = ({ project, onClose, onStepNavigation, getNextStep
         <div className="sticky top-0 z-10 bg-white border-b border-gray-100 p-6 flex items-center justify-between dark:bg-black dark:border-[#333]">
           <div>
             <h2 className="text-xl font-bold text-black dark:text-white">{project.name}</h2>
-            <p className="text-sm text-gray-400 dark:text-gray-500">Client: {project.clientName}</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">Client: {project.clientId ? project.clientName : "Aucun"}</p>
           </div>
           <button onClick={handleClose} className="rounded-full p-2 hover:bg-gray-100 transition dark:hover:bg-[#222]">✕</button>
         </div>
@@ -615,7 +621,17 @@ const EnhancedProjectDrawer = ({ project, onClose, onStepNavigation, getNextStep
               <DetailItem label="Type" value={project.type} />
               <DetailItem label="Technologie" value={project.technology} />
               <DetailItem label="Difficulté" value={project.level} />
-              <DetailItem label="Montant" value={formatCurrency(project.amount)} />
+              <DetailItem label="Montant Global" value={formatCurrency(project.amount)} />
+              <DetailItem
+                label="Prix du projet"
+                value={project.sitePrice ? formatCurrency(project.sitePrice) : "-"}
+                subValue={project.quotes?.some((q: any) => q.status === "PAID") ? "Payé" : "En attente"}
+              />
+              <DetailItem
+                label="Maintenance"
+                value={project.maintenanceAmount ? formatCurrency(project.maintenanceAmount) : "-"}
+                subValue={project.maintenanceFrequency === "MONTHLY" ? "Mensuel" : project.maintenanceFrequency === "QUARTERLY" ? "Trimestriel" : project.maintenanceFrequency === "YEARLY" ? "Annuel" : project.maintenanceFrequency}
+              />
             </div>
 
             {/* Financial Breakdown */}
@@ -669,9 +685,16 @@ const EnhancedProjectDrawer = ({ project, onClose, onStepNavigation, getNextStep
   );
 };
 
-const DetailItem = ({ label, value }: { label: string; value: string | null }) => (
+const DetailItem = ({ label, value, subValue }: { label: string; value: string | null; subValue?: string }) => (
   <div className="p-4 rounded-xl border border-gray-100 bg-white dark:bg-[#111] dark:border-[#333]">
     <p className="text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">{label}</p>
-    <p className="text-sm font-semibold text-gray-900 dark:text-white capitalize">{value || "-"}</p>
+    <div className="flex items-center justify-between gap-2">
+      <p className="text-sm font-semibold text-gray-900 dark:text-white capitalize">{value || "-"}</p>
+      {subValue && (
+        <span className="text-[10px] font-medium bg-gray-100 dark:bg-[#222] px-2 py-0.5 rounded-full text-gray-500 dark:text-gray-400">
+          {subValue}
+        </span>
+      )}
+    </div>
   </div>
 );

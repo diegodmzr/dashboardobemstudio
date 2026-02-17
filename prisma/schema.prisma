@@ -53,31 +53,36 @@ model PasswordResetToken {
 }
 
 model Project {
-  id               String                 @id @default(cuid())
-  name             String
-  clientId         String
-  status           String                 @default("En cours")
-  progress         Int                    @default(0)
-  amount           Float                  @default(0)
-  type             String?
-  technology       String?
-  paymentType      String?
-  deadline         DateTime?
-  cpp              Float?
-  commission       Float?
-  attributes       String?
-  level            String?
-  progressConfig   String?
-  formSubmissionId String?
-  createdAt        DateTime               @default(now())
-  updatedAt        DateTime               @updatedAt
-  conversations    Conversation[]
-  payments         Payment[]
-  client           User                   @relation(fields: [clientId], references: [id])
-  formSubmission   FormSubmission?        @relation(fields: [formSubmissionId], references: [id])
-  statusHistory    ProjectStatusHistory[]
-  quotes           Quote[]
-  assignees        User[]                 @relation("ProjectAssignees")
+  id                   String                 @id @default(cuid())
+  name                 String
+  clientId             String?
+  status               String                 @default("En cours")
+  progress             Int                    @default(0)
+  amount               Float                  @default(0)
+  isAmountCustom       Boolean                @default(false)
+  customAmount         Float                  @default(0)
+  maintenanceAmount    Float?
+  maintenanceFrequency String? // MONTHLY, QUARTERLY, YEARLY, etc.
+  sitePrice            Float?
+  type                 String?
+  technology           String?
+  paymentType          String?
+  deadline             DateTime?
+  cpp                  Float?
+  commission           Float?
+  attributes           String?
+  level                String?
+  progressConfig       String?
+  formSubmissionId     String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  conversations        Conversation[]
+  payments             Payment[]
+  client               User?                  @relation(fields: [clientId], references: [id])
+  formSubmission       FormSubmission?        @relation(fields: [formSubmissionId], references: [id])
+  statusHistory        ProjectStatusHistory[]
+  quotes               Quote[]
+  assignees            User[]                 @relation("ProjectAssignees")
 }
 
 model ProjectStatusHistory {
@@ -154,6 +159,7 @@ model Payment {
   metadata              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  isArchived            Boolean   @default(false)
   client                User      @relation(fields: [clientId], references: [id], onDelete: Cascade)
   project               Project?  @relation(fields: [projectId], references: [id])
   quote                 Quote?    @relation(fields: [quoteId], references: [id])
@@ -262,6 +268,7 @@ model Conversation {
   projectId     String?
   metadata      String?
   lastMessageAt DateTime      @default(now())
+  isArchived    Boolean       @default(false)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   project       Project?      @relation(fields: [projectId], references: [id])
@@ -346,4 +353,35 @@ model FormSubmission {
 
   @@index([formId])
   @@index([userId])
+}
+
+model Zone {
+  id              String     @id @default(cuid())
+  name            String
+  color           String
+  status          String     @default("TODO") // TODO, IN_PROGRESS, DONE
+  prospectionDate DateTime?
+  assignedTo      String[] // User IDs
+  coordinates     Json // Polygon coordinates: [{lat, lng}, ...]
+  prospects       Prospect[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Prospect {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  company   String?
+  status    String   @default("NOT_APPROACHED") // NOT_APPROACHED, APPROACHED, R1, R2, R3, QUOTE_SENT
+  color     String?
+  latitude  Float?
+  longitude Float?
+  zoneId    String?
+  zone      Zone?    @relation(fields: [zoneId], references: [id])
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

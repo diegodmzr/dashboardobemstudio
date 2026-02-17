@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function GET() {
     try {
+        const user = await getCurrentUser();
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+            return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        }
         const clients = await prisma.user.findMany({
             where: {
                 role: "CLIENT",
@@ -15,6 +20,16 @@ export async function GET() {
                         status: true,
                     },
                 },
+                quotes: {
+                    select: {
+                        id: true,
+                    }
+                },
+                formSubmissions: {
+                    select: {
+                        id: true,
+                    }
+                }
             },
             orderBy: {
                 createdAt: "desc",
@@ -47,6 +62,11 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
+        const user = await getCurrentUser();
+        if (!user || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+            return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        }
+
         const body = await req.json();
 
         if (!body.email || !body.name) {
