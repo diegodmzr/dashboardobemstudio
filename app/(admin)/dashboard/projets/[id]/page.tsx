@@ -56,12 +56,12 @@ export default async function ProjectDetailPage({ params }: Props) {
         level: project.level,
         createdAt: project.createdAt.toISOString(),
         updatedAt: project.updatedAt.toISOString(),
-        client: {
+        client: project.client ? {
             id: project.client.id,
             name: project.client.name,
             email: project.client.email,
             companyName: project.client.companyName,
-        },
+        } : null,
     };
 
     // For now, both roles see the client view

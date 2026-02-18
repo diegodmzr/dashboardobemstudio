@@ -18,12 +18,12 @@ type Project = {
     level?: string | null;
     createdAt: string;
     updatedAt: string;
-    client: {
+    client?: {
         id: string;
         name: string;
         email: string;
         companyName?: string | null;
-    };
+    } | null;
 };
 
 type Props = {
