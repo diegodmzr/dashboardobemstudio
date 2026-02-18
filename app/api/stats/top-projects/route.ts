@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
             projects: projects.map((p) => ({
                 id: p.id,
                 name: p.name,
-                clientName: p.client.name,
+                clientName: p.client?.name || "Sans client",
                 amount: p.amount,
                 status: p.status,
                 progress: p.progress,
