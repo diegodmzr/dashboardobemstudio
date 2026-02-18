@@ -33,7 +33,7 @@ function MapEvents({ onMapClick }: { onMapClick: (e: L.LeafletMouseEvent) => voi
     return null;
 }
 
-interface MapComponentProps {
+export interface MapComponentProps {
     zones: Zone[];
     sidebarOpen: boolean;
     onZoneClick: (zone: Zone) => void;

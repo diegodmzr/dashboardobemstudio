@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 // Since MapComponent is exported as default
-import type MapComponentProps from "./MapComponent.tsx"; // Wait, I need to export the type or define it here if I want strict typing
+import type { MapComponentProps } from "./MapComponent";
 
 const MapComponent = dynamic(
     () => import("./MapComponent"),
