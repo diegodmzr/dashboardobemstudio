@@ -50,7 +50,6 @@ export async function POST(req: NextRequest) {
     const project = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Create Project
       const newProject = await tx.project.create({
-        // @ts-ignore
         data: {
           name: body.name,
           clientId: body.clientId,
