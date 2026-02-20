@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Archive, FileText, ExternalLink, RefreshCw, X, Download, Send, Users, Check, Edit2 } from "lucide-react";
+import { Plus, Trash2, Archive, FileText, ExternalLink, RefreshCw, X, Download, Send, Users, Check, Edit2, Printer } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { SubmissionPDF } from "./SubmissionPDF";
+import { BlankFormPDF } from "./BlankFormPDF";
 import FormBuilder from "./FormBuilder";
 
 const PDFDownloadLink = dynamic(() => import("@react-pdf/renderer").then(mod => mod.PDFDownloadLink), {
     ssr: false,
-    loading: () => <span className="text-xs">Chargement...</span>
+    loading: () => <span className="text-xs opacity-60">...</span>
 });
 
 type Form = {
@@ -394,39 +395,70 @@ export default function FormsClient() {
                             <p className="text-sm text-gray-400 italic">Aucun autre formulaire créé.</p>
                         ) : (
                             <div className="grid gap-4 lg:grid-cols-3">
-                                {forms.filter(f => f.slug !== "demande-de-projet").map(form => (
-                                    <div key={form.id} className="rounded-2xl border border-gray-200 bg-white p-4 dark:bg-[#111] dark:border-[#333] hover:border-black transition-all group">
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="font-semibold text-gray-900 dark:text-white truncate">{form.title}</h3>
-                                                <p className="text-xs text-gray-500">{form._count.submissions} réponse(s)</p>
+                                {forms.filter(f => f.slug !== "demande-de-projet").map(form => {
+                                    // Parse phases for BlankFormPDF
+                                    let blankPhases: any[] = [];
+                                    try {
+                                        const parsed = JSON.parse(form.fields || "[]");
+                                        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].fields) {
+                                            blankPhases = parsed;
+                                        } else {
+                                            blankPhases = [{ id: "p1", title: "Questions", fields: parsed }];
+                                        }
+                                    } catch { blankPhases = []; }
+
+                                    return (
+                                        <div key={form.id} className="rounded-2xl border border-gray-200 bg-white p-4 dark:bg-[#111] dark:border-[#333] hover:border-black transition-all group">
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-semibold text-gray-900 dark:text-white truncate">{form.title}</h3>
+                                                    <p className="text-xs text-gray-500">{form._count.submissions} réponse(s)</p>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <button
+                                                        onClick={() => handleEditForm(form)}
+                                                        className="p-1.5 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition dark:hover:bg-[#222] dark:hover:text-white"
+                                                        title="Modifier"
+                                                    >
+                                                        <Edit2 className="h-3.5 w-3.5" />
+                                                    </button>
+                                                    <a
+                                                        href={`/f/${form.slug}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-1.5 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-blue-50 transition dark:hover:bg-blue-900/20"
+                                                        title="Voir en ligne"
+                                                    >
+                                                        <ExternalLink className="h-3.5 w-3.5" />
+                                                    </a>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-1">
-                                                <button
-                                                    onClick={() => handleEditForm(form)}
-                                                    className="p-1.5 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition dark:hover:bg-[#222] dark:hover:text-white"
-                                                    title="Modifier"
+                                            <div className="mt-3">
+                                                <div className="text-[10px] text-gray-400 font-mono bg-gray-50 p-2 rounded truncate dark:bg-[#1a1a1a]">
+                                                    {origin}/f/{form.slug}
+                                                </div>
+                                            </div>
+                                            {/* Blank PDF button */}
+                                            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-[#1a1a1a]">
+                                                <PDFDownloadLink
+                                                    document={<BlankFormPDF title={form.title} description={form.description} phases={blankPhases} />}
+                                                    fileName={`formulaire-vierge-${form.slug}.pdf`}
+                                                    className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-medium text-gray-600 hover:text-black bg-gray-50 hover:bg-gray-100 rounded-xl transition-all dark:bg-[#1a1a1a] dark:text-gray-400 dark:hover:bg-[#222] dark:hover:text-white"
                                                 >
-                                                    <Edit2 className="h-3.5 w-3.5" />
-                                                </button>
-                                                <a
-                                                    href={`/f/${form.slug}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="p-1.5 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-blue-50 transition dark:hover:bg-blue-900/20"
-                                                    title="Public"
-                                                >
-                                                    <ExternalLink className="h-3.5 w-3.5" />
-                                                </a>
+                                                    {/* @ts-ignore */}
+                                                    {({ loading }: any) => loading ? (
+                                                        <span>Préparation...</span>
+                                                    ) : (
+                                                        <>
+                                                            <Printer className="h-3.5 w-3.5" />
+                                                            Exporter formulaire vierge
+                                                        </>
+                                                    )}
+                                                </PDFDownloadLink>
                                             </div>
                                         </div>
-                                        <div className="mt-3">
-                                            <div className="text-[10px] text-gray-400 font-mono bg-gray-50 p-2 rounded truncate dark:bg-[#1a1a1a]">
-                                                {origin}/f/{form.slug}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
@@ -529,12 +561,14 @@ export default function FormsClient() {
                             <div className="flex items-center gap-2">
                                 <div className="hidden sm:block">
                                     <PDFDownloadLink
-                                        document={<SubmissionPDF submission={selectedSubmission} formTitle={selectedSubmission.form?.title} />}
+                                        document={<SubmissionPDF submission={{ ...selectedSubmission, form: { ...selectedSubmission.form, fields: selectedSubmission.form?.fields } }} formTitle={selectedSubmission.form?.title} />}
                                         fileName={`reponse-${selectedSubmission.id}.pdf`}
-                                        className="flex items-center gap-2 rounded-lg bg-black px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-800 transition dark:bg-white dark:text-black"
+                                        className="flex items-center gap-2 rounded-lg bg-black px-3 py-1.5 text-xs font-semibold text-white hover:bg-gray-800 transition dark:bg-white dark:text-black"
                                     >
                                         {/* @ts-ignore */}
-                                        {({ loading }) => (loading ? 'Chargement...' : <><Download className="h-3 w-3" /> PDF</>)}
+                                        {({ loading }: any) => loading
+                                            ? <span className="opacity-60">Préparation...</span>
+                                            : <><Download className="h-3.5 w-3.5" /> Exporter PDF</>}
                                     </PDFDownloadLink>
                                 </div>
                                 <button onClick={() => setSelectedSubmission(null)} className="p-2 hover:bg-gray-100 rounded-lg dark:hover:bg-[#333] text-gray-500"><X className="h-5 w-5" /></button>

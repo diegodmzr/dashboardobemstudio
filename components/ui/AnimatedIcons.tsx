@@ -312,3 +312,31 @@ export const AnimatedProspects = () => (
         />
     </motion.svg>
 );
+
+export const AnimatedPartner = () => (
+    <motion.svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        variants={iconVariants}
+    >
+        <motion.path
+            d="M20.5 14.5l-5.5 5.5-2.5-2.5"
+            variants={{
+                hover: { pathLength: [1, 0, 1], transition: { repeat: Infinity, duration: 1.5 } }
+            }}
+        />
+        <path d="M9 13l-2 2-1-1" />
+        <motion.path
+            d="M12 3c-1.2 5.4-5 7-7 8.5 1 2 3 3 7 .5 4 2.5 6 1.5 7-.5-2-1.5-5.8-3.1-7-8.5z"
+            variants={{
+                hover: { scale: [1, 1.05, 1], transition: { repeat: Infinity, duration: 2 } }
+            }}
+        />
+    </motion.svg>
+);

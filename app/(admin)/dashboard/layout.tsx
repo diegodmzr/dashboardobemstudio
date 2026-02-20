@@ -12,7 +12,8 @@ import {
   AnimatedGoals,
   AnimatedStats,
   AnimatedUsers,
-  AnimatedProspects
+  AnimatedProspects,
+  AnimatedPartner
 } from "@/components/ui/AnimatedIcons";
 
 const defaultNavItems: NavItem[] = [
@@ -74,6 +75,11 @@ const defaultNavItems: NavItem[] = [
     label: "Prospection",
     href: "/dashboard/prospection",
     icon: <AnimatedProspects />,
+  },
+  {
+    label: "Partenaires",
+    href: "/dashboard/partenaires",
+    icon: <AnimatedPartner />,
   },
   {
     label: "Statistiques",

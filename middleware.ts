@@ -12,6 +12,7 @@ const ADMIN_ROUTES = [
   "/dashboard/objectifs",
   "/dashboard/paiements",
   "/dashboard/statistiques",
+  "/dashboard/partenaires",
 ];
 
 // Routes accessible uniquement aux SUPER_ADMIN
@@ -50,7 +51,20 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Check if route is shared (allow all roles)
+  // ── Partner routes ──────────────────────────────────────────────────────
+  if (pathname.startsWith("/partner/")) {
+    if (role !== "PARTNER") {
+      return NextResponse.redirect(new URL("/forbidden", req.url));
+    }
+    return NextResponse.next();
+  }
+
+  // Prevent partners from accessing admin/client dashboard
+  if (pathname.startsWith("/dashboard") && role === "PARTNER") {
+    return NextResponse.redirect(new URL("/partner/dashboard", req.url));
+  }
+
+  // Check if route is shared (allow all roles except PARTNER)
   const isSharedRoute = SHARED_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );

@@ -5,7 +5,7 @@ export type SessionUser = {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "CLIENT" | "SUPER_ADMIN";
+  role: "ADMIN" | "CLIENT" | "SUPER_ADMIN" | "PARTNER";
   avatar?: string | null;
   firstName?: string | null;
   lastName?: string | null;
@@ -79,6 +79,6 @@ export async function hasRole(role: AllowedRole): Promise<boolean> {
 
 export async function getRoleFromCookies(): Promise<AllowedRole | null> {
   const role = await readCookie(USER_ROLE_COOKIE);
-  if (role === "ADMIN" || role === "CLIENT" || role === "SUPER_ADMIN") return role as AllowedRole;
+  if (role === "ADMIN" || role === "CLIENT" || role === "SUPER_ADMIN" || role === "PARTNER") return role as AllowedRole;
   return null;
 }

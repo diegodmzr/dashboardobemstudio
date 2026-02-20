@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const redirectPath = "/dashboard";
+  const redirectPath = user.role === "PARTNER" ? "/partner/dashboard" : "/dashboard";
   const res = NextResponse.json({ success: true, redirect: redirectPath });
 
   const isFirstLogin = !user.lastLoginAt;

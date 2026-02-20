@@ -9,39 +9,63 @@ datasource db {
 }
 
 model User {
-  id                         String           @id @default(cuid())
-  email                      String           @unique
+  id                         String               @id @default(cuid())
+  email                      String               @unique
   name                       String
   firstName                  String?
   lastName                   String?
   avatar                     String?
   address                    String?
-  theme                      String?          @default("light")
-  role                       String           @default("CLIENT")
+  theme                      String?              @default("light")
+  role                       String               @default("CLIENT")
   password                   String?
   phone                      String?
   companyName                String?
   companyLogo                String?
   siret                      String?
   sector                     String?
-  twoFactorEnabled           Boolean          @default(false)
+  twoFactorEnabled           Boolean              @default(false)
   twoFactorSecret            String?
-  status                     String           @default("Active")
-  createdAt                  DateTime         @default(now())
-  updatedAt                  DateTime         @default(now()) @updatedAt
+  status                     String               @default("Active")
+  commissionRate             Float?               // % commission for PARTNER accounts
+  createdAt                  DateTime             @default(now())
+  updatedAt                  DateTime             @default(now()) @updatedAt
   lastLoginAt                DateTime?
   auditLogs                  AuditLog[]
   formSubmissions            FormSubmission[]
   goals                      Goal[]
-  messagesSent               Message[]        @relation("MessagesSent")
+  messagesSent               Message[]            @relation("MessagesSent")
   notifications              Notification[]
-  conversationParticipations Participant[]    @relation("ConversationParticipations")
+  conversationParticipations Participant[]        @relation("ConversationParticipations")
   payments                   Payment[]
   projects                   Project[]
   quotes                     Quote[]
   subscriptions              Subscription[]
   tickets                    Ticket[]
-  assignedProjects           Project[]        @relation("ProjectAssignees")
+  assignedProjects           Project[]            @relation("ProjectAssignees")
+  partnerCommissions         PartnerCommission[]
+}
+
+model PartnerCommission {
+  id              String   @id @default(cuid())
+  partnerId       String
+  projectId       String?
+  quoteId         String?
+  label           String   // Description / context
+  commissionRate  Float    // % at time of creation (snapshot)
+  baseAmount      Float    // Project/quote amount used as base
+  commissionAmount Float   // Calculated: baseAmount * commissionRate / 100
+  status          String   @default("PENDING") // PENDING, IN_PROGRESS, PAID
+  paidAt          DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  partner         User     @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  project         Project? @relation(fields: [projectId], references: [id])
+  quote           Quote?   @relation(fields: [quoteId], references: [id])
+
+  @@index([partnerId])
+  @@index([status])
 }
 
 model PasswordResetToken {
@@ -83,6 +107,7 @@ model Project {
   statusHistory        ProjectStatusHistory[]
   quotes               Quote[]
   assignees            User[]                 @relation("ProjectAssignees")
+  partnerCommissions   PartnerCommission[]
 }
 
 model ProjectStatusHistory {
@@ -135,6 +160,7 @@ model Quote {
   payments       Payment[]
   client         User      @relation(fields: [clientId], references: [id])
   project        Project?  @relation(fields: [projectId], references: [id])
+  partnerCommissions PartnerCommission[]
 }
 
 model Payment {
